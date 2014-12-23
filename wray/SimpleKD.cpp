@@ -2,7 +2,7 @@
 #include "SimpleKD.h"
 const char WSimpleKD::otherAxis[3][2] = {{1,2},{0,2},{0,1}};
 WSimpleKD::WSimpleKD(void)
-{
+{ 
 	KT = 1;
 	KI = 80;
 	triangles = NULL;
