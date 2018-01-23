@@ -48,10 +48,10 @@ bool isComputing=false;
 bool isEyeChanged = false;
 //#define PRODUCTION_RENDER
 //#define PACKET_INTERSECT
-int numCores = 4;//这个变量用于设定线程数,可以适当增加线程数来提高渲染效率 
-int threadIDArray[8] = {0,1,2,3,4,5,6,7};
+int numCores = 32;//这个变量用于设定线程数,可以适当增加线程数来提高渲染效率 
+int threadIDArray[32] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31};
 //clock_t renderTime[8];
-int isThreadComputing[8];
+int isThreadComputing[32];
 
 bool isInitiate = true;
 
@@ -245,7 +245,7 @@ void init()
 	gluPerspective(fovDeg,float(winWidth)/float(winHeight), 0.1f,1000.0f);
 
 	//D:\\dance\\tiaowu_OBJ_Seq\\tiaowu.0001.obj
-	reader.readFile("sushe.obj");
+	reader.readFile("teapots.obj");
 
 
 	//设置光线，具体用法还不确定，似乎没起到作用
@@ -671,7 +671,7 @@ void keyFcn(GLubyte key,GLint xMouse,GLint yMouse)
 					&dwThreadId);
 				if(hThread==NULL)
 				{
-					cout<<"创建线程失败"<<endl;
+					cout<<"create render thread."<<endl;
 				}
 				//Sleep(100);
 			}
