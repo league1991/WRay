@@ -66,11 +66,11 @@ void WKDTree::buildMailBoxes(WScene&scene)
 {
 	nMailBoxes=scene.getSubPrimNum();
 	mailBoxes=new WMailBox[nMailBoxes];
-	WPrimitive*prims;
+	MeshObject*prims;
 	unsigned int nPrims;
 	WSubPrimitive*subPs;
 	unsigned int nSubPs;
-	scene.getPrimitives(prims,nPrims);
+	scene.getObjects(prims,nPrims);
 	unsigned int currBoxID=0;//当前mailbox的下标
 	for(unsigned int i=0;i<nPrims;i++)
 	{

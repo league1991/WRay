@@ -11,17 +11,17 @@ void WSubPrimitive::draw(bool isFill)
 		tri.draw(false,isFill);
 	}
 }
-WPrimitive::WPrimitive(void)
+MeshObject::MeshObject(void)
 {
 	this->nFacesPerSubP=50;
 	isSelected=false;
 }
 
-WPrimitive::~WPrimitive(void)
+MeshObject::~MeshObject(void)
 {
 	this->clear();
 }
-bool WPrimitive::getTriangle(unsigned int nthFace,WTriangle&tri)
+bool MeshObject::getTriangle(unsigned int nthFace,WTriangle&tri)
 {
 	if(nthFace>=nFaces||nthFace<0)
 		return false;
@@ -53,7 +53,7 @@ bool WPrimitive::getTriangle(unsigned int nthFace,WTriangle&tri)
 	tri.mtlId=mtlIndices[nthFace];
 	return true;
 }
-void WPrimitive::buildBBox()
+void MeshObject::buildBBox()
 {
 	if(nVertices<1)
 		return;
@@ -68,11 +68,11 @@ void WPrimitive::buildBBox()
 	}
 	return;
 }
-void WPrimitive::drawBBox()
+void MeshObject::drawBBox()
 {
 	box.draw();
 }
-void WPrimitive::drawPrimitive(bool showNormal,bool fillMode)
+void MeshObject::drawPrimitive(bool showNormal,bool fillMode)
 {
 	WTriangle t;
 	for(unsigned int i=0;i<nFaces;i++)
@@ -81,7 +81,7 @@ void WPrimitive::drawPrimitive(bool showNormal,bool fillMode)
 		t.draw(showNormal,fillMode);
 	}
 }
-void WPrimitive::clear()
+void MeshObject::clear()
 {
 	delete[]vertices;
 	delete[]normals;
@@ -96,7 +96,7 @@ void WPrimitive::clear()
 	subPs = NULL;
 	nVertices=nTexcoords=nNormals=nFaces=nSubPs=0;
 }
-void WPrimitive::buildSubP()
+void MeshObject::buildSubP()
 {
 	if(nFaces==0)
 		return;
@@ -125,14 +125,14 @@ void WPrimitive::buildSubP()
 	}
 	subPs[nthSubP].nFaces=lastNFace;
 }
-void WPrimitive::drawSubPBBox()
+void MeshObject::drawSubPBBox()
 {
 	glColor3f(0.2f,0.2f,0.2f);
 	for(unsigned int i=0;i<nSubPs;i++)
 		subPs[i].box.draw();
 	return;
 }
-void WPrimitive::rebuildSubP(int inFacesPerSubP)
+void MeshObject::rebuildSubP(int inFacesPerSubP)
 {
 	if(inFacesPerSubP<=0)
 		return;
@@ -140,7 +140,7 @@ void WPrimitive::rebuildSubP(int inFacesPerSubP)
 	delete[]subPs;
 	buildSubP();
 }
-void WPrimitive::getSubPrimitives(WSubPrimitive*&isubPs,unsigned int&nSubP)
+void MeshObject::getSubPrimitives(WSubPrimitive*&isubPs,unsigned int&nSubP)
 {
 		isubPs=this->subPs;
 		nSubP=nSubPs;

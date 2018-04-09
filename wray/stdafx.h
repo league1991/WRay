@@ -27,6 +27,7 @@
 #include <math.h>
 #include <string>
 #include <algorithm>
+#include <unordered_map>
 #include <omp.h>
 #include <xmmintrin.h>
 #include <emmintrin.h>

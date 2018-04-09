@@ -89,6 +89,8 @@ public:
 	void showVertexCoords();
 	//返回质心
 	WVector3 getCentroid();
+	// 
+	void buildDG(float b1, float b2, const WVector3& rayDir, WDifferentialGeometry& DG);
 //#if INTERSECTION_METHOD==ISECTMETHOD_B
 	void buildAccelerateData(int triID = 0);			// 构建加速数据结构
 	TriAccel& getAccelerateData(){return tA;}

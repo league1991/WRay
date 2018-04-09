@@ -2,9 +2,8 @@
 #include "Scene.h"
 WScene::WScene(void)
 {
-	primitives=NULL;
 	materials=NULL;
-	nMaterials = nPrimitives = nSubPrimitives = nTriangles = 0;
+	nMaterials = nSubPrimitives = nTriangles = 0;
 	nTriangles = NULL;
 }
 
@@ -14,31 +13,29 @@ WScene::~WScene(void)
 }
 void WScene::clearScene()
 {
-	delete []primitives;
+	m_objects.clear();
 	for(unsigned int i=0;i<nMaterials;i++)
 	{
 		delete materials[i];
 	}
 	delete []materials;
-	for(unsigned int i=0;i<lights.size();i++)
+	for(unsigned int i=0;i<m_lights.size();i++)
 	{
-		delete lights[i];
+		delete m_lights[i];
 	}
-	lights.clear();
-	nPrimitives=0;
+	m_lights.clear();
 	nSubPrimitives=0;
 	nMaterials=0;
 	clearTriangleArray();
 }
 void WScene::buildScene(WObjReader &reader)
 {
-	nPrimitives=reader.primitives.size();
-	primitives=new WPrimitive[nPrimitives];
+	m_objects.resize(reader.primitives.size());
 	unsigned int n=0;//每个Primitive的SubPrimitive数量
-	for(unsigned int i=0;i<nPrimitives;i++)
+	for(unsigned int i=0;i<m_objects.size();i++)
 	{
-		reader.fillPrimitive(i,primitives[i]);
-		primitives[i].getSubPrimNum(n);
+		reader.fillPrimitive(i,m_objects[i]);
+		m_objects[i].getSubPrimNum(n);
 		nSubPrimitives+=n;
 	}
 	buildSceneBBox();
@@ -70,17 +67,18 @@ void WScene::buildScene(WObjReader &reader)
 // 			setColor(WVector3(diffuse.x,diffuse.y,diffuse.z));
 	}
 	buildTriangleArray();
+	buildLightData();
 }
 #ifdef BLENDER_INCLUDE
 void WScene::buildScene( Render* re )
 {
 	// 统计场景的面总数以及几何体总数，便于分配空间
 	// 注意： 三角形数组的元素个数可能多于三角形总数
-	nPrimitives = 0;
+	m_nObjects = 0;
 	int approNumFace = 0;							// 面总数的估计值，用于分配数组
 	for ( ObjectInstanceRen* objInsRen = (ObjectInstanceRen*)re->instancetable.first; objInsRen; objInsRen = objInsRen->next)
 	{
-		nPrimitives++;
+		m_nObjects++;
 		approNumFace += objInsRen->obr->totvlak * 2; // 假设全部都是四边面
 	}
 
@@ -202,25 +200,25 @@ void WScene::drawScene(bool showNormal,bool fillMode)
 	WVector3 color;
 //  	if(nMaterials!=0)
 //  		MessageBox(0,L"0 Mtl",L"aa",0);
-	for(unsigned int i=0;i<nPrimitives;i++)
+	for(unsigned int i=0;i<m_objects.size();i++)
 	{
-		primitives[i].getTriangle(0,tri);
+		m_objects[i].getTriangle(0,tri);
 		color=materials[tri.mtlId]->getColor();
 		glColor3f(color.x,color.y,color.z);
-		primitives[i].drawPrimitive(showNormal,fillMode);
+		m_objects[i].drawPrimitive(showNormal,fillMode);
 	}
-	for(unsigned int i=0;i<lights.size();i++)
-		lights[i]->draw();
+	for(unsigned int i=0;i<m_lights.size();i++)
+		m_lights[i]->draw();
 
 }
-void WScene::getPrimitives(WPrimitive *&iprimitives, unsigned int &nPrims)
+void WScene::getObjects(MeshObject *&iprimitives, unsigned int &nPrims)
 {
-		nPrims=nPrimitives;
-		iprimitives=this->primitives;
+		nPrims= m_objects.size();
+		iprimitives=&this->m_objects[0];
 }
-void WScene::getNthPrimitive(WPrimitive*&iprimitives,unsigned int nthPrim)
+void WScene::getObject(MeshObject*&iprimitives,unsigned int nthPrim)
 {
-	iprimitives=&(primitives[nthPrim]);
+	iprimitives=&(m_objects[nthPrim]);
 }
 void WScene::getMaterials(WMaterial**&imaterials,unsigned int&nMtl)
 {
@@ -245,25 +243,55 @@ void WScene::rebuildAllSubPs(unsigned int inFacesPerSubP)
 		return;
 	nSubPrimitives=0;
 	unsigned int n;
-	for(unsigned int i=0;i<nPrimitives;i++)
+	for(unsigned int i=0;i<m_objects.size();i++)
 	{
-		primitives[i].rebuildSubP(inFacesPerSubP);
-		primitives[i].getSubPrimNum(n);
+		m_objects[i].rebuildSubP(inFacesPerSubP);
+		m_objects[i].getSubPrimNum(n);
 		nSubPrimitives+=n;
 	}
 	return;
 }
 void WScene::buildSceneBBox()
 {
-	if(nPrimitives==0)
+	if(m_objects.size() ==0)
 		return;
-	sceneBox=primitives[0].getBBox();
-	for(unsigned int i=1;i<nPrimitives;i++)
+	sceneBox=m_objects[0].getBBox();
+	for(unsigned int i=1;i<m_objects.size();i++)
 	{
 		//cout<<"mergebox"<<endl;
-		sceneBox.merge(primitives[i].getBBox());
+		sceneBox.merge(m_objects[i].getBBox());
 	}
 	return;
+}
+void WScene::buildLightData()
+{
+	std::unordered_map<WMaterial*, ObjectLight*> lightMap;
+
+	for (int ithObj = 0; ithObj < m_objects.size(); ithObj++)
+	{
+		auto& object = m_objects[ithObj];
+		WTriangle tri;
+		unsigned int nTriangle;
+		object.getFaceNum(nTriangle);
+		for (int ithTri = 0; ithTri < nTriangle; ithTri++)
+		{
+			object.getTriangle(ithTri, tri);
+			WMaterial* material = materials[tri.mtlId];
+			if (material->isEmissive())
+			{
+				if (lightMap.find(material) == lightMap.end())
+				{
+					lightMap[material] = new ObjectLight(WVector3(1000.0), tri.mtlId, this, true);
+				}
+				lightMap[material]->addTriangle(ithObj, ithTri);
+			}
+		}
+	}
+
+	for (auto& lightPair: lightMap)
+	{
+		m_lights.push_back(lightPair.second);
+	}
 }
 void WScene::drawSceneBBox()
 {
@@ -272,30 +300,30 @@ void WScene::drawSceneBBox()
 }
 void WScene::addLight(WLight *light)
 {
-	lights.push_back(light);
+	m_lights.push_back(light);
 }
 WLight* WScene::getLightPointer(unsigned int nthLight)
 {
-	return lights[nthLight];
+	return m_lights[nthLight];
 }
 unsigned int WScene::getLightNum()
 {
-	return lights.size();
+	return m_lights.size();
 }
 void WScene::clearSelect()
 {
-	for(unsigned int i=0;i<nPrimitives;i++)
-		primitives[i].isSelected=false;
+	for(unsigned int i=0;i<m_objects.size();i++)
+		m_objects[i].isSelected=false;
 }
 
 void WScene::buildTriangleArray()
 {
 	unsigned int totalTris=0;
 	for(unsigned int nthPrimitive=0;
-		nthPrimitive<nPrimitives;nthPrimitive++)
+		nthPrimitive<m_objects.size();nthPrimitive++)
 	{
 		unsigned int nFaces;
-		primitives[nthPrimitive].getFaceNum(nFaces);
+		m_objects[nthPrimitive].getFaceNum(nFaces);
 		totalTris+=nFaces;
 	}
 	triangles=new WTriangle[totalTris];
@@ -303,15 +331,15 @@ void WScene::buildTriangleArray()
 
 	totalTris=0;
 	for(unsigned int nthPrimitive=0;
-		nthPrimitive<nPrimitives;nthPrimitive++)
+		nthPrimitive<m_objects.size();nthPrimitive++)
 	{
 		unsigned int nFaces;
-		primitives[nthPrimitive].getFaceNum(nFaces);
+		m_objects[nthPrimitive].getFaceNum(nFaces);
 		for(unsigned int nthFace=0;
 			nthFace<nFaces; nthFace++)
 		{
 			WTriangle face;
-			primitives[nthPrimitive].getTriangle(nthFace,face);
+			m_objects[nthPrimitive].getTriangle(nthFace,face);
 			//忽略退化三角形
 			if (face.point1 == face.point2 ||
 				face.point2 == face.point3 ||
@@ -420,21 +448,21 @@ void WScene::getLightArrayFloat4Uint2(
 {
 	//分配索引像素的空间
 	//材质索引像素为uint2类型
-	nIDPixels = lights.size();
+	nIDPixels = m_lights.size();
 	lightIDs = new unsigned int[nIDPixels * 2];
 	vector<float> dataVector, temp;
 	unsigned int lightAddress = 0;
-	for (unsigned int ithLight = 0; ithLight < lights.size(); ithLight++)
+	for (unsigned int ithLight = 0; ithLight < m_lights.size(); ithLight++)
 	{
 		//lightIDs的一条记录，
 		//第一个是材质的类型
 		//第二个是材质的起始地址,
 		//由于材质属性纹理为float4类型的
 		//所以需要除以4，也就是向右移2位
-		lightIDs[ithLight<<1] = lights[ithLight]->type;
+		lightIDs[ithLight<<1] = m_lights[ithLight]->type;
 		lightIDs[(ithLight<<1) + 1] = dataVector.size()>>2;
 		//把材质数据导到一个暂存向量中
-		lights[ithLight]->getProperties(temp);
+		m_lights[ithLight]->getProperties(temp);
 		dataVector.insert(dataVector.end(), temp.begin(), temp.end());
 	}
 	//从暂存的向量把数据正式输出

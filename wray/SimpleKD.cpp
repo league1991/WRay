@@ -697,7 +697,7 @@ bool WSimpleKD::intersect( WRay& r,WDifferentialGeometry& DG,
 	if (!bestTriangle)
 		return false;
 	if (endNode)
-		*endNode = (pNode - kdLeafs) / sizeof(WSKDLeaf);
+		*endNode = (static_cast<WSKDLeaf*>(pNode) - kdLeafs) / sizeof(WSKDLeaf);
 	bestTriangle->intersect(r,DG);
 	return true;
 }

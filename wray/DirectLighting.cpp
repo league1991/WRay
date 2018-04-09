@@ -59,5 +59,5 @@ WVector3 WDirectLighting::sampleAllLights(WBSDF *bsdf, WSample3D &lightSample, W
 //		color.showCoords();
 	}
 //	color.showCoords();
-	return color + bsdf->getEmission();
+	return color +bsdf->getEmission();
 }

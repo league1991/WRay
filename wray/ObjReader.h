@@ -63,7 +63,7 @@ public:
 	void showObj();
 	void showMtl();
 	void clear();
-	void WObjReader::fillPrimitive(unsigned int nthPrimitive,WPrimitive&pri);
+	void WObjReader::fillPrimitive(unsigned int nthPrimitive,MeshObject&pri);
 	int getReadingProcess(){return readingProcess;}
 
 /*

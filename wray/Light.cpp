@@ -145,7 +145,7 @@ void ObjectLight::addPrimitive(unsigned int nthPrimitive)
 		nthPrimitive<0)
 		return;
 	Primitive*prim;
-	scene->getNthPrimitive(prim,nthPrimitive);
+	scene->getObject(prim,nthPrimitive);
 	unsigned int nFace;
 	prim->getFaceNum(nFace);
 	for(int i=0;i<nFace;i++)
@@ -180,3 +180,43 @@ void ObjectLight::sampleLight(
 	PDF=distanceSquared/(t.area*cosTheta);
 }
 */
+
+void ObjectLight::addTriangle(int objectID, int triangleID)
+{
+	m_faceIDList.emplace_back(FaceID{ objectID, triangleID });
+}
+
+void ObjectLight::sampleLight(float u1, float u2, float u3, WBSDF & bsdf, WVector3 & position, WVector3 & intensity, float & PDF)
+{
+	unsigned faceID = u1 * m_faceIDList.size();
+	faceID = max(0, min(m_faceIDList.size()-1, faceID));
+
+	auto& faceData = m_faceIDList[faceID];
+	MeshObject* object;
+	m_scene->getObject(object, faceData.m_objectID);
+	WTriangle triangle;
+	object->getTriangle(faceData.m_triangleID, triangle);
+
+	float u, v;
+	WMonteCarlo::uniformSampleTriangle(u2, u3, u, v);
+	WVector3 edge21 = triangle.point2 - triangle.point1;
+	WVector3 edge31 = triangle.point3 - triangle.point1;
+	position = triangle.point1 + edge21 * u + edge31 * v;
+	WVector3 dir=bsdf.DG.position - position;
+	float distanceSquared = dir.lengthSquared();
+	dir.normalize();
+	WDifferentialGeometry DG;
+	triangle.buildDG(u, v, dir, DG);
+
+	WMaterial* material;
+	m_scene->getNthMaterial(material, triangle.mtlId);
+	WBSDF* lightBSDF;
+	material->buildBSDF(DG, lightBSDF);
+	intensity = m_intensity * lightBSDF->getEmission() / distanceSquared;
+
+	float cosTheta = dir.dot(DG.normal);
+	if (m_isDoubleSide)
+		cosTheta = abs(cosTheta);
+	float area = edge21.cross(edge31).length() * 0.5;
+	PDF = distanceSquared / (area*cosTheta*m_faceIDList.size());
+}

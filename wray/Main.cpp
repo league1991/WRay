@@ -244,10 +244,7 @@ void init()
 	glLoadIdentity();
 	gluPerspective(fovDeg,float(winWidth)/float(winHeight), 0.1f,1000.0f);
 
-	//D:\\dance\\tiaowu_OBJ_Seq\\tiaowu.0001.obj
-	reader.readFile("sushe.obj");
-
-
+	reader.readFile("areaLight.obj");
 	//设置光线，具体用法还不确定，似乎没起到作用
 	//myRay.point=WVector3(0,0,0);
 	//myRay.direction=WVector3(1.01,0.01,0.01);
@@ -316,8 +313,8 @@ void init()
 
 	//添加灯光
 	//只是一个点光源
-	myLight=new WPointLight(WVector3(5000), WVector3(1,-5,100));
-	myScene.addLight(myLight);
+	myLight=new WPointLight(WVector3(40), WVector3(1,-5,1));
+	//myScene.addLight(myLight);
 	myLight=new WPointLight(WVector3(50), WVector3(0,-2,3));
 //	myScene.addLight(myLight);
 

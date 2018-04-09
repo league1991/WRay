@@ -26,8 +26,8 @@ public:
 	//此函数重建所有物体的subPrimitive,参数表示每个SubPrimitive包含的最大面数,调用此函数后必须重建KD树
 	void rebuildAllSubPs(unsigned int inFacesPerSubP);
 	//获得基本体的指针，以及基本体的个数
-	void getPrimitives(WPrimitive*&iprimitives,unsigned int&nPrims);
-	void getNthPrimitive(WPrimitive*&iprimitives,unsigned int nthPrim);
+	void getObjects(MeshObject*&iprimitives,unsigned int&nPrims);
+	void getObject(MeshObject*&iprimitives,unsigned int nthPrim);
 	//获得材质指针数组的指针，以及材质的个数
 	void getMaterials(WMaterial**&imaterials,unsigned int&nMtl);
 	//获得第nthMtl个材质
@@ -35,7 +35,7 @@ public:
 	//设置第nthMtl个材质
 	void setNthMaterial(WMaterial*imaterial,unsigned int nthMtl);
 	//返回基本体的总数
-	unsigned int getPrimNum(){return nPrimitives;}
+	unsigned int getPrimNum(){return m_objects.size();}
 	//返回子基本体的总数
 	unsigned int getSubPrimNum(){return nSubPrimitives;}
 	//返回场景的包围盒
@@ -84,11 +84,10 @@ public:
 	}
 
 private:
-	vector<WLight*>lights;					//存储灯光指针
+	vector<WLight*>m_lights;					//存储灯光指针
 	WMaterial**materials;					//Material指针数组
 	unsigned int nMaterials;				//Material总数
-	WPrimitive*primitives;					//Primitive数组
-	unsigned int nPrimitives;				//Primitive总数
+	std::vector<MeshObject>m_objects;		//Primitive数组
 	unsigned int nSubPrimitives;			//SubPrimitive总数
 	WBoundingBox sceneBox;					//整个场景的包围盒
 
@@ -98,4 +97,5 @@ private:
 	void clearTriangleArray();				//清除三角形数组
 
 	void buildSceneBBox();					//创建场景包围盒
+	void buildLightData();					// Build light data
 };

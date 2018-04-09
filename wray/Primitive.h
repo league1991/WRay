@@ -3,23 +3,23 @@
 #include <gl/glut.h>
 #include "Triangle.h"
 #include "BoundingBox.h"
-class WPrimitive;
+class MeshObject;
 struct WSubPrimitive
 {
 	unsigned int beginIndex;
 	unsigned int nFaces;
 	WBoundingBox box;
-	WPrimitive*pPrimitive;//到所在Primitive的指针
+	MeshObject*pPrimitive;//到所在Primitive的指针
 	void draw(bool isFill);//画出包含的三角形
 };
-class WPrimitive
+class MeshObject
 {
 	//ObjReader是Primitive的友元类，可以直接访问它的私有成员
 	friend class WObjReader;
 	friend class WScene;
 public:
-	WPrimitive(void);
-	virtual ~WPrimitive(void);
+	MeshObject(void);
+	virtual ~MeshObject(void);
 
 	bool isSelected;			//表示其是否被选中
 

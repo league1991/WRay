@@ -154,51 +154,7 @@ void WTriangle::intersect(WRay&r,WDifferentialGeometry&DG)
 	float b1=S1.dot(T)/S1E1;
 	float b2=S2.dot(r.direction)/S1E1;
 	r.tMax=t;
-	DG.position=(1.0f-b1-b2)*point1+b1*point2+b2*point3;
-	DG.normal=(1.0f-b1-b2)*normal1+b1*normal2+b2*normal3;
-	DG.texCoord=(1.0f-b1-b2)*texCoord1+b1*texCoord2+b2*texCoord3;
-	DG.normal.normalize();
-	DG.mtlId=this->mtlId;
 
-	//算出副切线
-	DG.bitangent=DG.normal.cross(DG.rayDir);
-	if(DG.bitangent.lengthSquared()<1e-4f)
-	{
-		//认为是零向量，此时normal和rayDir或者共线，或者至少一个为0
-		if(abs(DG.normal.x)>abs(DG.normal.y))
-		{
-			DG.bitangent=WVector3(-DG.normal.z,0.0f,DG.normal.x);
-		}
-		else
-		{
-			DG.bitangent=WVector3(0.0f,DG.normal.z,-DG.normal.y);
-		}
-	}
-	//算出主切线
-	DG.bitangent.normalize();
-	DG.tangent=DG.bitangent.cross(DG.normal);
-	DG.rayDir=-1*r.direction;
-
-	//算出dpdu dpdv dndu dndv
-	float a=texCoord3.x-texCoord1.x;
-	float b=texCoord3.y-texCoord1.y;
-	float c=texCoord2.x-texCoord1.x;
-	float d=texCoord2.y-texCoord1.y;
-	float det=a*d-b*c;
-	if(abs(det)>1e-5f)
-	{/*
-		float invDet=1.0f/det;
-		DG.dpdu=(d*E2-b*E1)*invDet;
-		DG.dpdv=(a*E1-c*E2)*invDet;
-		WVector3 N1=normal2-normal1;
-		WVector3 N2=normal3-normal1;
-		DG.dndu=(d*N2-b*N1)*invDet;
-		DG.dndv=(a*N1-c*N2)*invDet;*/
-	}
-	else
-	{
-		DG.dpdu=DG.dpdv=DG.dndu=DG.dndv=WVector3(0.0f,0.0f,0.0f);
-	}
 #else
 	unsigned ci = tA.ci >> 25;
 	unsigned char w = ci & 0x3;	ci >>= 2;
@@ -227,53 +183,9 @@ void WTriangle::intersect(WRay&r,WDifferentialGeometry&DG)
 	float b1= detu * rdet;
 	float b2= detv * rdet;
 	r.tMax=t;
-	float b3= 1.0f-b1-b2;
-	DG.position=b3*point1+b1*point2+b2*point3;
-	DG.normal=b3*normal1+b1*normal2+b2*normal3;
-	DG.texCoord=b3*texCoord1+b1*texCoord2+b2*texCoord3;
-	DG.normal.normalize();
-	DG.mtlId=this->mtlId;
 
-	//算出副切线
-	DG.bitangent=DG.normal.cross(DG.rayDir);
-	if(DG.bitangent.lengthSquared()<1e-4f)
-	{
-		//认为是零向量，此时normal和rayDir或者共线，或者至少一个为0
-		if(abs(DG.normal.x)>abs(DG.normal.y))
-		{
-			DG.bitangent=WVector3(-DG.normal.z,0.0f,DG.normal.x);
-		}
-		else
-		{
-			DG.bitangent=WVector3(0.0f,DG.normal.z,-DG.normal.y);
-		}
-	}
-	//算出主切线
-	DG.bitangent.normalize();
-	DG.tangent=DG.bitangent.cross(DG.normal);
-	DG.rayDir=-1*r.direction;
-
-	//算出dpdu dpdv dndu dndv
-	float a=texCoord3.x-texCoord1.x;
-	float b=texCoord3.y-texCoord1.y;
-	float c=texCoord2.x-texCoord1.x;
-	float d=texCoord2.y-texCoord1.y;
-	det=a*d-b*c;
-	if(abs(det)>1e-5f)
-	{/*
-		float invDet=1.0f/det;
-		DG.dpdu=(d*E2-b*E1)*invDet;
-		DG.dpdv=(a*E1-c*E2)*invDet;
-		WVector3 N1=normal2-normal1;
-		WVector3 N2=normal3-normal1;
-		DG.dndu=(d*N2-b*N1)*invDet;
-		DG.dndv=(a*N1-c*N2)*invDet;*/
-	}
-	else
-	{
-		DG.dpdu=DG.dpdv=DG.dndu=DG.dndv=WVector3(0.0f,0.0f,0.0f);
-	}
 #endif
+	buildDG(b1, b2, r.direction, DG);
 }
 
 
@@ -334,6 +246,58 @@ void WTriangle::showCoords()
 WVector3 WTriangle::getCentroid()
 {
 	return (point1+point2+point3)/3.0f;
+}
+
+void WTriangle::buildDG(float b1, float b2, const WVector3& rayDir, WDifferentialGeometry& DG)
+{
+	float b3 = 1.f - b1 - b2;
+	DG.position = b3*point1 + b1*point2 + b2*point3;
+	DG.normal = b3*normal1 + b1*normal2 + b2*normal3;
+	DG.texCoord = b3*texCoord1 + b1*texCoord2 + b2*texCoord3;
+	DG.normal.normalize();
+	DG.mtlId = this->mtlId;
+
+	//算出副切线
+	DG.rayDir = -1 * rayDir;
+	DG.bitangent = DG.normal.cross(DG.rayDir);
+	if (DG.bitangent.lengthSquared()<1e-4f)
+	{
+		//认为是零向量，此时normal和rayDir或者共线，或者至少一个为0
+		if (abs(DG.normal.x)>abs(DG.normal.y))
+		{
+			DG.bitangent = WVector3(-DG.normal.z, 0.0f, DG.normal.x);
+		}
+		else
+		{
+			DG.bitangent = WVector3(0.0f, DG.normal.z, -DG.normal.y);
+		}
+	}
+	//算出主切线
+	DG.bitangent.normalize();
+	DG.tangent = DG.bitangent.cross(DG.normal);
+
+	//算出dpdu dpdv dndu dndv
+	float a = texCoord3.x - texCoord1.x;
+	float b = texCoord3.y - texCoord1.y;
+	float c = texCoord2.x - texCoord1.x;
+	float d = texCoord2.y - texCoord1.y;
+	float det = a*d - b*c;
+	if (abs(det)>1e-5f)
+	{
+		float invDet = 1.0f / det;
+		WVector3 E1 = point2 - point1;
+		WVector3 E2 = point3 - point1;
+		DG.dpdu = (d*E2 - b*E1)*invDet;
+		DG.dpdv = (a*E1 - c*E2)*invDet;
+		WVector3 N1 = normal2 - normal1;
+		WVector3 N2 = normal3 - normal1;
+		DG.dndu = (d*N2 - b*N1)*invDet;
+		DG.dndv = (a*N1 - c*N2)*invDet;
+	}
+	else
+	{
+		DG.dpdu = DG.dpdv = DG.dndu = DG.dndv = WVector3(0.0f, 0.0f, 0.0f);
+	}
 }
 
 void WTriangle::showVertexCoords()

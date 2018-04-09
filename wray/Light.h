@@ -80,20 +80,32 @@ private:
 //1）创建一个物体灯光对象
 //2）把要发光的面加到灯光对象里面
 //3）调用灯光对象的函数，修改要发光的面的材质
-/*
+
 class ObjectLight:public WLight
 {
 public:
-	ObjectLight(WVector3 iintensity,Scene*iscene,bool iisDoubleSide):WLight(LIGHT_OBJECT,false),intensity(iintensity),scene(iscene),isDoubleSide(iisDoubleSide){}
-	void addPrimitive(unsigned int nthPrimitive);
+	ObjectLight(WVector3 iintensity, int materialID, WScene*iscene,bool iisDoubleSide):
+		WLight(LIGHT_OBJECT,false), m_materialID(materialID), m_intensity(iintensity),m_scene(iscene),m_isDoubleSide(iisDoubleSide)
+	{}
+
+	void addTriangle(int objectID, int triangleID);
+
 	void sampleLight(
-		float u1,float u2,float u3,WBSDF&bsdf,
-		WVector3&iposition,WVector3&iintensity,float&PDF);
+		float u1, float u2, float u3, WBSDF&bsdf,
+		WVector3&iposition, WVector3&iintensity, float&PDF);
 	void draw(){};
-	void clear();
+	void clear() { m_faceIDList.clear(); }
 private:
-	Scene*scene;
-	WVector3<Triangle>faces;
-	WVector3 intensity;
-	bool isDoubleSide;
-};*/
+	WScene*m_scene;
+	struct FaceID
+	{
+		int m_objectID;
+		int m_triangleID;
+	};
+    std::vector<FaceID> m_faceIDList; // object id -> face id
+
+	WVector3 m_intensity;
+
+	bool m_isDoubleSide;
+	int m_materialID;
+};

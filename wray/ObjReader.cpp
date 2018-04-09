@@ -380,7 +380,7 @@ void WObjReader::getIndexArray(unsigned int*&pArray,unsigned int &nInts,
 	}
 	return;
 }
-void WObjReader::fillPrimitive(unsigned int nthPrimitive,WPrimitive&pri)
+void WObjReader::fillPrimitive(unsigned int nthPrimitive,MeshObject&pri)
 {
 	float*vertices,*texcoords,*normals;
 	unsigned int*vertIndices,*texcoordIndices,*normalIndices;
