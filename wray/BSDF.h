@@ -5,45 +5,44 @@
 class WBSDF
 {
 public:
-	enum BSDFType{
-		BSDF_LAMBERT=0,
-		BSDF_PHONG=1,
-		BSDF_PERFECTREFLECTION=2,
-		BSDF_PERFECTREFRACTION=3,
-		BSDF_METAL=4,
-		BSDF_DIELECTRIC=5
+	enum BSDFType {
+		BSDF_LAMBERT = 0,
+		BSDF_PHONG = 1,
+		BSDF_PERFECTREFLECTION = 2,
+		BSDF_PERFECTREFRACTION = 3,
+		BSDF_METAL = 4,
+		BSDF_DIELECTRIC = 5
 	};
 
-	WBSDF(WDifferentialGeometry& iDG,BSDFType itype,
-		bool iisEmissive=false, const WVector3& iemission=WVector3(0)):
-	DG(iDG),type(itype),isEmissive(iisEmissive),emission(0){};
+	WBSDF(WDifferentialGeometry& iDG, BSDFType itype,
+		bool iisEmissive = false, const WVector3& iemission = WVector3(0)) :
+		DG(iDG), type(itype), isEmissive(iisEmissive), emission(0) {};
 	virtual ~WBSDF(void);
 
 	//对BSDF求值,顺带乘以入射角余弦
 	//ri ro必须先单位化
-	virtual WVector3 evaluateFCos(WVector3&ri,const WVector3&ro)=0;
+	virtual WVector3 evaluateFCos(WVector3&ri, const WVector3&ro) = 0;
 	//根据随机采样的u v值计算采样的光线
 	//pdf为对应位置的概率密度
 	//sampleWi是要计算的采样光线
-	virtual void sampleRay(
-		float u,float v,WVector3&sampleWi,WVector3&wo,float&pdf)=0;
-	virtual WVector3 rho(WVector3&wo){return WVector3(0);}
-	virtual WVector3 getEmission(){return emission;}
-	virtual void     setEmission(const WVector3& emi){emission = emi;}
-
+	virtual void sampleRay(float u, float v, WVector3&sampleWi, const WVector3&wo, float&pdf) = 0;
+	virtual WVector3 rho(WVector3&wo) { return WVector3(0); }
+	virtual WVector3 getEmission() { return emission; }
+	virtual void     setEmission(const WVector3& emi) { emission = emi; }
+	virtual bool isDeltaBSDF() = 0;
 	//各种get函数
-	BSDFType getType(){return type;}
-	WVector3 getPosition(){return DG.position;}
-	WVector3 getNormal(){return DG.normal;}
-	WVector3 getBitangent(){return DG.bitangent;}
-	WVector3 getTangent(){return DG.tangent;}
-	WVector2 getTexCoord(){return DG.texCoord;}
+	BSDFType getType() { return type; }
+	WVector3 getPosition() { return DG.position; }
+	WVector3 getNormal() { return DG.normal; }
+	WVector3 getBitangent() { return DG.bitangent; }
+	WVector3 getTangent() { return DG.tangent; }
+	WVector2 getTexCoord() { return DG.texCoord; }
 
 	//各种set函数
 	//设置DG
 	void setDifferentialGeometry(
 		WDifferentialGeometry&iDG);
-	unsigned int getMtlID(){return DG.mtlId;}	
+	unsigned int getMtlID() { return DG.mtlId; }
 	BSDFType type;
 	WDifferentialGeometry DG;
 	bool isEmissive;
@@ -52,18 +51,18 @@ private:
 
 };
 
-class WLambertBSDF:public WBSDF
+class WLambertBSDF :public WBSDF
 {
 public:
-	WLambertBSDF(WDifferentialGeometry& iDG,WVector3 &icolor):
-	  WBSDF(iDG,BSDF_LAMBERT),color(icolor){}
-	~WLambertBSDF(){}
+	WLambertBSDF(WDifferentialGeometry& iDG, WVector3 &icolor) :
+		WBSDF(iDG, BSDF_LAMBERT), color(icolor) {}
+	~WLambertBSDF() {}
 
 	//随机选择一条光线方向
 	//光线的方向服从余弦分布
 	void sampleRay(
-		float u,float v,
-		WVector3&sampleWi,WVector3&wo,float&pdf);
+		float u, float v,
+		WVector3&sampleWi, const WVector3&wo, float&pdf);
 	//此为BSDF求值函数
 	//返回颜色值/PI
 	//因为根据能量守恒，应有Integrate[F*cos(thetaI)*dwi]<=1
@@ -82,35 +81,39 @@ public:
 	//F为1/PI
 	//当存在吸收，即颜色不为纯白时，只需在此基础上乘以
 	//颜色的规格化向量（白色为（1,1,1））
-	WVector3 evaluateFCos(WVector3&ri,const WVector3&ro);
-	WVector3 rho(WVector3&wo){return color;}
+	WVector3 evaluateFCos(WVector3&ri, const WVector3&ro);
+	WVector3 rho(WVector3&wo) { return color; }
+	virtual bool isDeltaBSDF() { return false; }
 protected:
 	WVector3 color;
 };
 
-class WPhongBSDF:public WLambertBSDF
+class WPhongBSDF :public WLambertBSDF
 {
 public:
-	WPhongBSDF(WDifferentialGeometry& iDG,WVector3& icolor,
-		float ispecular,float iglossiness):
-	WLambertBSDF(iDG,icolor),specular(ispecular),glossiness(iglossiness)
-	{type=BSDF_PHONG;}
-	WVector3 evaluateFCos(WVector3&ri,const WVector3&ro);
+	WPhongBSDF(WDifferentialGeometry& iDG, WVector3& icolor,
+		float ispecular, float iglossiness) :
+		WLambertBSDF(iDG, icolor), specular(ispecular), glossiness(iglossiness)
+	{
+		type = BSDF_PHONG;
+	}
+	WVector3 evaluateFCos(WVector3&ri, const WVector3&ro);
+	virtual bool isDeltaBSDF() { return false; }
 private:
-	float specular,glossiness;
+	float specular, glossiness;
 };
 
 
 //这个BSDF模拟完全光滑表面的反射
-class WPerfectReflectionBSDF:public WBSDF
+class WPerfectReflectionBSDF :public WBSDF
 {
 public:
 	WPerfectReflectionBSDF(WDifferentialGeometry& iDG,
-		WVector3& icolor):WBSDF(iDG,WBSDF::BSDF_PERFECTREFLECTION),color(icolor){}
-	~WPerfectReflectionBSDF(){};
+		WVector3& icolor) :WBSDF(iDG, WBSDF::BSDF_PERFECTREFLECTION), color(icolor) {}
+	~WPerfectReflectionBSDF() {};
 	void sampleRay(
-		float u,float v,
-		WVector3&sampleWi,WVector3&wo,
+		float u, float v,
+		WVector3&sampleWi, const WVector3&wo,
 		float&pdf);
 
 	//注意，由于为完全光滑表面，反射光线方向严格遵循反射定律
@@ -119,30 +122,32 @@ public:
 	//在一个特定出射方向上贡献的能量占其总能量的比值
 	//故对于完全光滑表面，bsdf不为一个常数，而是一个delta函数
 	//所以不能用MC方法估计，但可以通过直接计算积分来求得反射光
-	WVector3 evaluateFCos(WVector3&ri,const WVector3&ro);
+	WVector3 evaluateFCos(WVector3&ri, const WVector3&ro);
+	virtual bool isDeltaBSDF() { return true; }
 private:
 	WVector3 color;
 };
 //这个BSDF模拟完全光滑表面的折射
-class WPerfectRefractionBSDF:public WBSDF
+class WPerfectRefractionBSDF :public WBSDF
 {
 public:
 	WPerfectRefractionBSDF(WDifferentialGeometry& iDG,
-		WVector3& icolor,float iIOR):WBSDF(iDG,WBSDF::BSDF_PERFECTREFRACTION),color(icolor),IOR(iIOR){}
-	~WPerfectRefractionBSDF(){}
+		WVector3& icolor, float iIOR) :WBSDF(iDG, WBSDF::BSDF_PERFECTREFRACTION), color(icolor), IOR(iIOR) {}
+	~WPerfectRefractionBSDF() {}
 	void sampleRay(
-		float u,float v,
-		WVector3&sampleWi,WVector3&wo,
+		float u, float v,
+		WVector3&sampleWi, const WVector3&wo,
 		float&pdf);
 
-	WVector3 evaluateFCos(WVector3&ri,const WVector3&ro);
+	WVector3 evaluateFCos(WVector3&ri, const WVector3&ro);
+	virtual bool isDeltaBSDF() { return true; }
 private:
 	WVector3 color;
 	float IOR;
 
 	//计算折射光线方向，已包含全反射效果
 	WVector3 refractionDirection(
-		WVector3&i,const WVector3&normal);
+		const WVector3&i, const WVector3&normal);
 };
 
 //辅助类，用于计算菲涅尔系数
@@ -150,16 +155,17 @@ private:
 class WFresnelDielectric
 {
 public:
-	WFresnelDielectric(float iIOR,WVector3 inormal);
+	WFresnelDielectric(float iIOR, WVector3 inormal);
 
 	//计算折射光线方向，已包含全反射效果
 	WVector3 refractionDirection(
-		WVector3&i,const WVector3&normal);
+		const WVector3&i, const WVector3&normal);
 	float evaluateF(WVector3&wi);
-	void setNormal(WVector3&inormal){normal=inormal;}
+	void setNormal(WVector3&inormal) { normal = inormal; }
+	virtual bool isDeltaBSDF() { return false; }
 private:
 	//计算r值 ，etaTO为折射率
-	float computeR(float cosWi,float cosWt,float etaTO);
+	float computeR(float cosWi, float cosWt, float etaTO);
 	//IOR为折射率，IOR=物体折射率/空气折射率
 	float IOR;
 	WVector3 normal;
@@ -168,58 +174,60 @@ private:
 class WFresnelConductor
 {
 public:
-	WFresnelConductor(WVector3 ieta,WVector3 ik,WVector3 inormal);
+	WFresnelConductor(WVector3 ieta, WVector3 ik, WVector3 inormal);
 	WVector3 evaluateF(WVector3&wi);
-	void setNormal(WVector3&inormal){normal=inormal;}
+	void setNormal(WVector3&inormal) { normal = inormal; }
 private:
-	WVector3 eta,k,normal;
+	WVector3 eta, k, normal;
 
 };
 
 //模拟金属材质
-class WMetalBSDF:public WBSDF
+class WMetalBSDF :public WBSDF
 {
 public:
 	WMetalBSDF(WDifferentialGeometry iDG,
-		WVector3 ieta,WVector3 ik,float iexp):
-	  WBSDF(iDG,BSDF_METAL),
-		  fresnel(ieta,ik,iDG.normal),
-		  exp(iexp){}
-	  ~WMetalBSDF(){}
-	  void sampleRay(
-		  float u,float v,
-		  WVector3&sampleWi,WVector3&wo,
-		  float&pdf);
+		WVector3 ieta, WVector3 ik, float iexp) :
+		WBSDF(iDG, BSDF_METAL),
+		fresnel(ieta, ik, iDG.normal),
+		exp(iexp) {}
+	~WMetalBSDF() {}
+	void sampleRay(
+		float u, float v,
+		WVector3&sampleWi, const WVector3&wo,
+		float&pdf);
 
-	  WVector3 evaluateFCos(WVector3&ri,const WVector3&ro);
+	WVector3 evaluateFCos(WVector3&ri, const WVector3&ro);
+	virtual bool isDeltaBSDF() { return false; }
 private:
 	float computeD(const WVector3&wh);
-	float computeG(const WVector3&wi,const WVector3&wo,const WVector3&wh);
-	float computePDF(WVector3&wi,WVector3&wo);
+	float computeG(const WVector3&wi, const WVector3&wo, const WVector3&wh);
+	float computePDF(const WVector3&wi, const WVector3&wo);
 	WFresnelConductor fresnel;
 	float exp;
 };
 
 //此BSDF表示不透明绝缘体的BSDF
-class WDielectricBSDF:public WBSDF
+class WDielectricBSDF :public WBSDF
 {
 public:
-	WDielectricBSDF(WDifferentialGeometry iDG,float iior,
-		WVector3 icolor,float iexp):
-	WBSDF(iDG,BSDF_DIELECTRIC),
-		fresnel(iior,iDG.normal),
-		color(icolor),exp(iexp){}
-	~WDielectricBSDF(){}
+	WDielectricBSDF(WDifferentialGeometry iDG, float iior,
+		WVector3 icolor, float iexp) :
+		WBSDF(iDG, BSDF_DIELECTRIC),
+		fresnel(iior, iDG.normal),
+		color(icolor), exp(iexp) {}
+	~WDielectricBSDF() {}
 	void sampleRay(
-		float u,float v,
-		WVector3&sampleWi,WVector3&wo,
+		float u, float v,
+		WVector3&sampleWi, const WVector3&wo,
 		float&pdf);
 
-	WVector3 evaluateFCos(WVector3&ri,const WVector3&ro);
+	WVector3 evaluateFCos(WVector3&ri, const WVector3&ro);
+	virtual bool isDeltaBSDF() { return false; }
 private:
 	float computeD(const WVector3&wh);
-	float computeG(const WVector3&wi,const WVector3&wo,const WVector3&wh);
-	float computePDF(WVector3&wi,WVector3&wo);
+	float computeG(const WVector3&wi, const WVector3&wo, const WVector3&wh);
+	float computePDF(const WVector3&wi, const WVector3&wo);
 	WFresnelDielectric fresnel;
 	float IOR;
 	float exp;

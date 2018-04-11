@@ -13,4 +13,5 @@ public:
 	static void cosineSampleHemisphere(const float u1, const float u2, WVector3 &sample,float&PDF);
 	static void uniformSampleTriangle(float u1,float u2,
 		float &u,float &v);
+	static float powerHeuristic(int nf, float fPdf, int ng, float gPdf);
 };

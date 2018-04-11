@@ -31,3 +31,10 @@ void WMonteCarlo::uniformSampleTriangle(float u1, float u2, float &u, float &v)
 	u=1-squrU1;
 	v=u2*squrU1;
 }
+
+float WMonteCarlo::powerHeuristic(int nf, float fPdf, int ng, float gPdf)
+{
+	float f = nf * fPdf;
+	float g = ng * gPdf;
+	return (f*f) / (f*f + g*g);
+}

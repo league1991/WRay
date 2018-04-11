@@ -58,6 +58,8 @@ public:
 	WVector3 reflect(const WVector3 normal)const;
 	WVector3 sqrtElement()const;
 
+	bool isZero() { return x == 0 && y == 0 && z == 0; }
+
 	//µã³Ë
 	float dot(const WVector3&i)const;
 	//²æ³Ë

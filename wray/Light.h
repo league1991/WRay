@@ -26,6 +26,7 @@ public:
 	virtual void getProperties(vector<float>& properties){};
 	//获得属性数组的大小
 	virtual void getPropertySize(int& nFloat4s){}
+	virtual bool isDeltaLight() = 0;
 };
 
 class WPointLight:public WLight
@@ -46,6 +47,7 @@ public:
 	//属性的顺序是：强度 r g b a ， 位置 x y z w
 	//a w为 1.0f
 	virtual void getProperties(vector<float>& properties);
+	virtual bool isDeltaLight() { return true; }
 private :
 	WVector3 intensity;
 	WVector3 position;
@@ -67,6 +69,7 @@ public:
 	//属性的顺序是：强度 r g b a ， 位置 x y z w
 	//a w为 1.0f
 	virtual void getProperties(vector<float>& properties);
+	virtual bool isDeltaLight() { return false; }
 private:
 	WVector3 position;
 	WVector3 direction;
@@ -95,6 +98,7 @@ public:
 		WVector3&iposition, WVector3&iintensity, float&PDF);
 	void draw(){};
 	void clear() { m_faceIDList.clear(); }
+	virtual bool isDeltaLight() { return false; }
 private:
 	WScene*m_scene;
 	struct FaceID

@@ -24,25 +24,51 @@ WVector3 WDirectLighting::computeDirectLight(WLight *light, WBSDF *bsdf, WSample
 {
 	float LSu,LSv,LSw;
 	lightSample.get3D(LSu,LSv,LSw);
-	float BSu,BSv;
-	bsdfSample.get2D(BSu,BSv);
 	float LPDF;//对灯光采样的密度函数
 	WVector3 lightPosition,intensity;
-//	lightPosition.showCoords();
 	light->sampleLight(LSu,LSv,LSw,*bsdf,lightPosition,intensity,LPDF);
-//	lightPosition.showCoords();
 	bool visibilityTest=isVisible(bsdf->DG.position,lightPosition, nodeInfo);
-	if(!visibilityTest)
-		return WVector3(0);
-	WVector3 ri=lightPosition-bsdf->DG.position;
-	ri.normalize();
-	WVector3 fCos=bsdf->evaluateFCos(ri,ro);
-//	fCos.showCoords();
-	WVector3 Ld=fCos*intensity/LPDF;
+
+	float BSu, BSv;
+	bsdfSample.get2D(BSu, BSv);
+	WVector3 sampleWi, sampleWo;
+	float BPDF;
+	bsdf->sampleRay(BSu, BSv, sampleWi, sampleWo, BPDF);
+	
+	WVector3 Ld(0);
+	if (visibilityTest)
+	{
+		WVector3 ri = lightPosition - bsdf->DG.position;
+		ri.normalize();
+		WVector3 fCos = bsdf->evaluateFCos(ri, ro);
+		float weight = 1.0;
+		if (!light->isDeltaLight())
+		{
+			weight = WMonteCarlo::powerHeuristic(1, LPDF, 1, BPDF);
+		}
+		Ld = fCos*intensity*weight / LPDF;
+	}
 
 //	Ld.showCoords();
 	//这里还有对bsdf采样的部分未实现
-
+	WRay ray(bsdf->DG.position, sampleWi);
+	WDifferentialGeometry DG;
+	int beginNode = 0, endNode;
+	if (tree->intersect(ray, DG, &endNode, beginNode))
+	{
+		WMaterial*mtl;
+		scene->getNthMaterial(mtl, DG.mtlId);
+		WBSDF* sourceBSDF;
+		mtl->buildBSDF(DG, sourceBSDF);
+		WVector3 emission = sourceBSDF->getEmission();
+		if (!emission.isZero())
+		{
+			WVector3 fCos = bsdf->evaluateFCos(sampleWi, ro);
+			float weight = WMonteCarlo::powerHeuristic(1, BPDF, 1, LPDF);
+			Ld += fCos*emission* weight / BPDF;
+		}
+		delete sourceBSDF;
+	}
 	return Ld;
 }
 WVector3 WDirectLighting::sampleAllLights(WBSDF *bsdf, WSample3D &lightSample, WSample2D &bsdfSample, const WVector3 &ro, int* nodeInfo)
