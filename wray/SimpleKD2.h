@@ -127,7 +127,7 @@ protected:
 	void drawTreeRecursive( WSKDNode2* node, const WBoundingBox& box );
 
 	//对于一条与包围盒相交的光线，计算出光线从包围盒哪个面上离开
-	int computeExitFace( WSKDLeaf2& node, const WRay& r, WVector3& exitPoint, float& farT);
+	int computeExitFace( WSKDLeaf2& node, const WRay& r, Vector3& exitPoint, float& farT);
 
 	void buildCacheFriendlyNode();
 

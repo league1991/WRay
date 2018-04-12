@@ -15,7 +15,7 @@ public:
 
 	WMaterial(
 		MaterialType itype,string iName,unsigned int iID,
-		WVector3 icolor=WVector3(1),WVector3 iLight=WVector3(0)):
+		Vector3 icolor=Vector3(1),Vector3 iLight=Vector3(0)):
 	type(itype),name(iName),ID(iID),
 	color(icolor),light(iLight){}
 
@@ -25,15 +25,15 @@ public:
 	virtual void buildBSDF(
 		WDifferentialGeometry DG,WBSDF*&bsdf)=0;
 
-	virtual void setColor(WVector3 icolor){color=icolor;}
-	WVector3 getColor(){return color;}
-	WVector3 getLight(){return light;}
+	virtual void setColor(Vector3 icolor){color=icolor;}
+	Vector3 getColor(){return color;}
+	Vector3 getLight(){return light;}
 	virtual void getProperties(vector<float>& properties){};
 	MaterialType getType(){return type;}
 	bool     isEmissive(){return light.lengthSquared() > 1e-3f;}
 protected:
-	WVector3 light;
-	WVector3 color;
+	Vector3 light;
+	Vector3 color;
 	MaterialType type;
 	string name;
 	unsigned int ID;
@@ -42,12 +42,12 @@ class WLambertMaterial:public WMaterial
 {
 public:
 	WLambertMaterial(string iName,unsigned int iID,
-		WVector3 icolor, WVector3 ilight=WVector3(0)):
+		Vector3 icolor, Vector3 ilight=Vector3(0)):
 	WMaterial(MATERIAL_LAMBERT,iName,iID,icolor,ilight){}
 	~WLambertMaterial(){}
 
 	//设置颜色
-//	void setColor(WVector3 icolor){color=icolor;}
+//	void setColor(Vector3 icolor){color=icolor;}
 	//创建一个LambertBSDF
 	void buildBSDF(WDifferentialGeometry DG,WBSDF*&bsdf);
 	void getProperties(vector<float>& properties);
@@ -57,7 +57,7 @@ class WPhongMaterial:public WLambertMaterial
 {
 public:
 	WPhongMaterial(string iName,unsigned int iID,
-		WVector3 icolor,float ispecular,float iglossiness, WVector3 ilight=WVector3(0)):
+		Vector3 icolor,float ispecular,float iglossiness, Vector3 ilight=Vector3(0)):
 	WLambertMaterial(iName,iID,icolor,ilight),
 		specular(ispecular),
 		glossiness(iglossiness){type=MATERIAL_PHONG;}
@@ -78,14 +78,14 @@ class WPerfectReflectionMaterial:public WMaterial
 {
 public:
 	WPerfectReflectionMaterial(string iName,unsigned int iID,
-		WVector3 icolor=WVector3(1), WVector3 ilight=WVector3(0)):
+		Vector3 icolor=Vector3(1), Vector3 ilight=Vector3(0)):
 	  WMaterial(
 		  MATERIAL_PERFECTREFLECTION,iName,iID,icolor,ilight)
 	  {}
 	  ~WPerfectReflectionMaterial(){}
 
 
-//	  void setColor(WVector3 icolor){color=icolor;}
+//	  void setColor(Vector3 icolor){color=icolor;}
 	  void buildBSDF(WDifferentialGeometry DG,WBSDF*&bsdf);
 	  void getProperties(vector<float>& properties);
 private:
@@ -96,7 +96,7 @@ class WPerfectRefractionMaterial:public WMaterial
 {
 public:
 	WPerfectRefractionMaterial(string iName,unsigned int iID,
-		WVector3 icolor=WVector3(1),float iIOR=1.33, WVector3 ilight=WVector3(0)):
+		Vector3 icolor=Vector3(1),float iIOR=1.33, Vector3 ilight=Vector3(0)):
 	WMaterial(
 		  MATERIAL_PERFECTREFRACTION,iName,iID,
 		  icolor,ilight),IOR(iIOR){}
@@ -113,21 +113,21 @@ private:
 class WMetalMaterial:public WMaterial
 {
 public:
-	WMetalMaterial(string iName,unsigned int iID,WVector3 Fr,float iexp, WVector3 ilight=WVector3(0));
+	WMetalMaterial(string iName,unsigned int iID,Vector3 Fr,float iexp, Vector3 ilight=Vector3(0));
 	~WMetalMaterial(){}
 	void buildBSDF(WDifferentialGeometry DG,WBSDF*&bsdf);
 	void refreshColor();
 	void setGlossiness(float iglossiness)
 	{exp=iglossiness;}
 private:
-	WVector3 k,eta;
+	Vector3 k,eta;
 	float exp;
 };
 class WDielectricMaterial:public WMaterial
 {
 public:
 	WDielectricMaterial(string iName,unsigned int iID,
-		WVector3 icolor,float iexp,float iior, WVector3 ilight=WVector3(0)):
+		Vector3 icolor,float iexp,float iior, Vector3 ilight=Vector3(0)):
 	WMaterial(WMaterial::MATERIAL_DIELECTRIC,iName,iID,icolor,ilight),
 	exp(iexp),ior(iior){}
 	~WDielectricMaterial(){}

@@ -1,7 +1,7 @@
 #pragma once
 #include "Vector2.h"
 
-class WVector3
+class Vector3
 {
 public:
 	//这样既可以通过 x y z 访问，也可以用数组访问
@@ -15,55 +15,55 @@ public:
 	};
 //	float x,y,z;
 	//构造函数
-	WVector3();
-	WVector3(float i);
-	WVector3(const WVector3&v);
-	WVector3(const WVector2&v);
-	WVector3(float ix,float iy,float iz);
+	Vector3();
+	Vector3(float i);
+	Vector3(const Vector3&v);
+	Vector3(const Vector2&v);
+	Vector3(float ix,float iy,float iz);
 
 	//析构函数
-	WVector3::~WVector3(void);
+	Vector3::~Vector3(void);
 	//加法
-	WVector3 operator+(const WVector3&i)const;
-	WVector3 operator+=(const WVector3&i);
+	Vector3 operator+(const Vector3&i)const;
+	Vector3 operator+=(const Vector3&i);
 
 	//减法
-	WVector3 operator-(const WVector3&i)const;
-	WVector3 operator-=(const WVector3&i);
+	Vector3 operator-(const Vector3&i)const;
+	Vector3 operator-=(const Vector3&i);
 
 	//数乘
-	friend WVector3 operator*(const WVector3&i,float n);
-	friend WVector3 operator*(float n,const WVector3&i);
-	friend WVector3 operator*(const WVector3&i1,const WVector3&i2);
+	friend Vector3 operator*(const Vector3&i,float n);
+	friend Vector3 operator*(float n,const Vector3&i);
+	friend Vector3 operator*(const Vector3&i1,const Vector3&i2);
 
-	WVector3 operator*=(float f);
-	WVector3 operator*=(const WVector3&i);
+	Vector3 operator*=(float f);
+	Vector3 operator*=(const Vector3&i);
 
 	//数除
-	friend WVector3 operator/(const WVector3&i,float n);
-	friend WVector3 operator/(float n,const WVector3&i);
-	friend WVector3 operator/(const WVector3&i,const WVector3&n);
+	friend Vector3 operator/(const Vector3&i,float n);
+	friend Vector3 operator/(float n,const Vector3&i);
+	friend Vector3 operator/(const Vector3&i,const Vector3&n);
 
-	WVector3 operator/=(float f);
-	WVector3 operator=(const WVector3&i);
+	Vector3 operator/=(float f);
+	Vector3 operator=(const Vector3&i);
 
-	bool operator==(const WVector3& i)const;
+	bool operator==(const Vector3& i)const;
 
 	//长度
 	float length()const;
 	float lengthSquared()const;
 	//单位化
-	WVector3 normalize();
+	Vector3 normalize();
 	//计算反射向量
-	WVector3 reflect(const WVector3 normal)const;
-	WVector3 sqrtElement()const;
+	Vector3 reflect(const Vector3 normal)const;
+	Vector3 sqrtElement()const;
 
 	bool isZero() { return x == 0 && y == 0 && z == 0; }
 
 	//点乘
-	float dot(const WVector3&i)const;
+	float dot(const Vector3&i)const;
 	//叉乘
-	WVector3 cross(const WVector3&i)const;
+	Vector3 cross(const Vector3&i)const;
 
 	//输出值，调试时用
 	void showCoords()const;

@@ -7,9 +7,9 @@ WDirectLighting::~WDirectLighting(void)
 {
 }
 
-bool WDirectLighting::isVisible(WVector3 pos1, WVector3 pos2, int* beginNode)
+bool WDirectLighting::isVisible(Vector3 pos1, Vector3 pos2, int* beginNode)
 {
-	WVector3 delta=pos2-pos1;
+	Vector3 delta=pos2-pos1;
 	float length=delta.length();
 	delta.normalize();
 	//注意：参数tMin（就是这里的1e-1）会影响阴影的质量
@@ -20,37 +20,32 @@ bool WDirectLighting::isVisible(WVector3 pos1, WVector3 pos2, int* beginNode)
 	int begNode = beginNode ? *beginNode : -1;
 	return !tree->isIntersect(r, begNode);
 }
-WVector3 WDirectLighting::computeDirectLight(WLight *light, WBSDF *bsdf, WSample3D &lightSample, WSample2D &bsdfSample,const WVector3&ro, int* nodeInfo)
+Vector3 WDirectLighting::computeDirectLight(WLight *light, WBSDF *bsdf, WSample3D &lightSample, WSample2D &bsdfSample,const Vector3&ro, int* nodeInfo)
 {
+	// Sample light
 	float LSu,LSv,LSw;
 	lightSample.get3D(LSu,LSv,LSw);
-	float LPDF;//对灯光采样的密度函数
-	WVector3 lightPosition,intensity;
-	light->sampleLight(LSu,LSv,LSw,*bsdf,lightPosition,intensity,LPDF);
-	bool visibilityTest=isVisible(bsdf->DG.position,lightPosition, nodeInfo);
-
-	float BSu, BSv;
-	bsdfSample.get2D(BSu, BSv);
-	WVector3 sampleWi, sampleWo;
-	float BPDF;
-	bsdf->sampleRay(BSu, BSv, sampleWi, sampleWo, BPDF);
-	
-	WVector3 Ld(0);
-	if (visibilityTest)
+	float lightPDF;
+	Vector3 lightPosition, intensity;
+	light->sampleLight(LSu,LSv,LSw,*bsdf,lightPosition,intensity,lightPDF);
+	lightPDF /= scene->getLightNum();
+	Vector3 lightRadiance(0.0);
+	if (!intensity.isZero() && lightPDF > 0 && isVisible(bsdf->DG.position, lightPosition, nodeInfo))
 	{
-		WVector3 ri = lightPosition - bsdf->DG.position;
+		Vector3 ri = lightPosition - bsdf->DG.position;
 		ri.normalize();
-		WVector3 fCos = bsdf->evaluateFCos(ri, ro);
-		float weight = 1.0;
-		if (!light->isDeltaLight())
-		{
-			weight = WMonteCarlo::powerHeuristic(1, LPDF, 1, BPDF);
-		}
-		Ld = fCos*intensity*weight / LPDF;
+		Vector3 fCos = bsdf->evaluateFCos(ri, ro);
+		lightRadiance = fCos*intensity / lightPDF;
 	}
 
-//	Ld.showCoords();
-	//这里还有对bsdf采样的部分未实现
+	// Get bsdf sample ray
+	float BSu, BSv;
+	bsdfSample.get2D(BSu, BSv);
+	Vector3 sampleWi;
+	float bsdfPDF;
+	bsdf->sampleRay(BSu, BSv, sampleWi, ro, bsdfPDF);
+
+	Vector3 bsdfRadiance(0.0);
 	WRay ray(bsdf->DG.position, sampleWi);
 	WDifferentialGeometry DG;
 	int beginNode = 0, endNode;
@@ -60,30 +55,32 @@ WVector3 WDirectLighting::computeDirectLight(WLight *light, WBSDF *bsdf, WSample
 		scene->getNthMaterial(mtl, DG.mtlId);
 		WBSDF* sourceBSDF;
 		mtl->buildBSDF(DG, sourceBSDF);
-		WVector3 emission = sourceBSDF->getEmission();
-		if (!emission.isZero())
+		Vector3 emission = sourceBSDF->getEmission();
+		if (!emission.isZero() && bsdfPDF > 0)
 		{
-			WVector3 fCos = bsdf->evaluateFCos(sampleWi, ro);
-			float weight = WMonteCarlo::powerHeuristic(1, BPDF, 1, LPDF);
-			Ld += fCos*emission* weight / BPDF;
+			Vector3 fCos = bsdf->evaluateFCos(sampleWi, ro);
+			bsdfRadiance = fCos*emission / bsdfPDF;
 		}
 		delete sourceBSDF;
 	}
-	return Ld;
+
+	if (lightPDF <= 0 && bsdfPDF <= 0)
+	{
+		return Vector3(0.0);
+	}
+	float lightWeight = WMonteCarlo::powerHeuristic(1, lightPDF, 1, bsdfPDF);
+	float bsdfWeight = WMonteCarlo::powerHeuristic(1, bsdfPDF, 1, lightPDF);
+	return lightRadiance * lightWeight + bsdfRadiance * bsdfWeight;
 }
-WVector3 WDirectLighting::sampleAllLights(WBSDF *bsdf, WSample3D &lightSample, WSample2D &bsdfSample, const WVector3 &ro, int* nodeInfo)
+
+Vector3 WDirectLighting::sampleAllLights(WBSDF *bsdf, WSample3D &lightSample, WSample2D &bsdfSample, const Vector3 &ro, int* nodeInfo)
 {	
 	WLight*pLight;
-	WVector3 color(0);
+	Vector3 color(0);
 	unsigned int lightNum=scene->getLightNum();
-//	cout<<lightNum<<endl;
-	for(unsigned int nthLight=0;nthLight<lightNum;nthLight++)
-	{
-		pLight=scene->getLightPointer(nthLight);
-//		cout<<nthLight<<endl;
-		color+=computeDirectLight(pLight,bsdf,lightSample,bsdfSample,ro, nodeInfo);
-//		color.showCoords();
-	}
-//	color.showCoords();
-	return color +bsdf->getEmission();
+	
+	int ithLight = WMonteCarlo::randomInt(lightNum);
+	pLight = scene->getLightPointer(ithLight);
+	color += computeDirectLight(pLight, bsdf, lightSample, bsdfSample, ro, nodeInfo);
+	return color + bsdf->getEmission();
 }

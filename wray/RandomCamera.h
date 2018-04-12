@@ -22,7 +22,7 @@ public:
 	//减去摄像机观察点的坐标得到	
 	void setColor(
 		float R,float G,float B,
-		WVector3 dir);
+		Vector3 dir);
 	//下面3个方法的功能与Camera类相同，
 	//不过同时也把内置的记录像素样本采样数的数组
 	//重新设置

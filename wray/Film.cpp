@@ -87,9 +87,9 @@ void WFilm::accumulateColor(unsigned int x,unsigned int y,float R,float G,float 
 	color[2] = (color[2] * count + B) / (count + 1);
 	count++;
 }
-WVector3 WFilm::getColor(unsigned int x,unsigned int y)
+Vector3 WFilm::getColor(unsigned int x,unsigned int y)
 {
-	return WVector3(colors[3*(x+resolutionX*y)],
+	return Vector3(colors[3*(x+resolutionX*y)],
 		colors[3*(x+resolutionX*y)+1],
 		colors[3*(x+resolutionX*y)+2]);
 }

@@ -18,12 +18,12 @@ public:
 
 	//设置分辨率
 	void setResolution(unsigned int resX,unsigned int resY);
-	WVector2 getResolution()
-	{return WVector2(resolutionX,resolutionY);}
+	Vector2 getResolution()
+	{return Vector2(resolutionX,resolutionY);}
 
 
 	//设置指定坐标位置的颜色，坐标原点在屏幕左下角
-	WVector3 getColor(unsigned int x,unsigned int y);
+	Vector3 getColor(unsigned int x,unsigned int y);
 	void setColor(unsigned int x,unsigned int y,float R,float G,float B);
 	void accumulateColor(unsigned int x,unsigned int y,float R,float G,float B);
 

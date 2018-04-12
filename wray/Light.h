@@ -18,7 +18,7 @@ public:
 
 	virtual void sampleLight(
 		float u1,float u2,float u3,WBSDF&bsdf,
-		WVector3&iposition,WVector3&iintensity,float&PDF)=0;
+		Vector3&iposition,Vector3&iintensity,float&PDF)=0;
 	virtual void draw()=0;
 	//获得属性数组,
 	//此函数用于把所有灯光的属性打包到一个float4纹理中
@@ -32,16 +32,16 @@ public:
 class WPointLight:public WLight
 {
 public:
-	WPointLight(WVector3 iintensity,WVector3 iposition):
+	WPointLight(Vector3 iintensity,Vector3 iposition):
 	  WLight(LIGHT_POINT,true),intensity(iintensity),
 	  position(iposition){}
 	~WPointLight(){}
 
-	void setIntensity(WVector3 iintensity)
+	void setIntensity(Vector3 iintensity)
 	{intensity=iintensity;}
-	void setPosition(WVector3 iposition)
+	void setPosition(Vector3 iposition)
 	{position=iposition;}
-	void sampleLight(float u1,float u2,float u3, WBSDF&bsdf,WVector3&iposition,WVector3&iintensity,float&PDF);
+	void sampleLight(float u1,float u2,float u3, WBSDF&bsdf,Vector3&iposition,Vector3&iintensity,float&PDF);
 	void draw();
 	//获得属性数组，包括灯光的强度，灯光的位置
 	//属性的顺序是：强度 r g b a ， 位置 x y z w
@@ -49,21 +49,21 @@ public:
 	virtual void getProperties(vector<float>& properties);
 	virtual bool isDeltaLight() { return true; }
 private :
-	WVector3 intensity;
-	WVector3 position;
+	Vector3 intensity;
+	Vector3 position;
 };
 
 class WRectangleLight:public WLight
 {
 public:
-	WRectangleLight(WVector3 iposition,WVector3 idirection,
-		WVector3 up,float width,float height,
-		WVector3 iintensity,bool iisDoubleSide=true);
-	void setIntensity(WVector3 iintensity)
+	WRectangleLight(Vector3 iposition,Vector3 idirection,
+		Vector3 up,float width,float height,
+		Vector3 iintensity,bool iisDoubleSide=true);
+	void setIntensity(Vector3 iintensity)
 	{intensity=iintensity;}
-	void setPosition(WVector3 iposition)
+	void setPosition(Vector3 iposition)
 	{position=iposition;}
-	void sampleLight(float u1,float u2,float u3,WBSDF&bsdf, WVector3&iposition,WVector3&iintensity,float&PDF);
+	void sampleLight(float u1,float u2,float u3,WBSDF&bsdf, Vector3&iposition,Vector3&iintensity,float&PDF);
 	void draw();
 	//获得属性数组，包括灯光的强度，灯光的位置
 	//属性的顺序是：强度 r g b a ， 位置 x y z w
@@ -71,10 +71,10 @@ public:
 	virtual void getProperties(vector<float>& properties);
 	virtual bool isDeltaLight() { return false; }
 private:
-	WVector3 position;
-	WVector3 direction;
-	WVector3 x,y;
-	WVector3 intensity;
+	Vector3 position;
+	Vector3 direction;
+	Vector3 x,y;
+	Vector3 intensity;
 	float area;
 	bool isDoubleSide;
 };
@@ -87,7 +87,7 @@ private:
 class ObjectLight:public WLight
 {
 public:
-	ObjectLight(WVector3 iintensity, int materialID, WScene*iscene,bool iisDoubleSide):
+	ObjectLight(Vector3 iintensity, int materialID, WScene*iscene,bool iisDoubleSide):
 		WLight(LIGHT_OBJECT,false), m_materialID(materialID), m_intensity(iintensity),m_scene(iscene),m_isDoubleSide(iisDoubleSide)
 	{}
 
@@ -95,7 +95,7 @@ public:
 
 	void sampleLight(
 		float u1, float u2, float u3, WBSDF&bsdf,
-		WVector3&iposition, WVector3&iintensity, float&PDF);
+		Vector3&iposition, Vector3&iintensity, float&PDF);
 	void draw(){};
 	void clear() { m_faceIDList.clear(); }
 	virtual bool isDeltaLight() { return false; }
@@ -108,7 +108,7 @@ private:
 	};
     std::vector<FaceID> m_faceIDList; // object id -> face id
 
-	WVector3 m_intensity;
+	Vector3 m_intensity;
 
 	bool m_isDoubleSide;
 	int m_materialID;

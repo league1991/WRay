@@ -50,14 +50,14 @@ void WRecursivePathIntegrator::computeSamples()
 	sampler->computeSamples(lightSamples);
 }
 
-WVector3 WRecursivePathIntegrator::integrateCore( WRay ray,unsigned int depth,int beginNode /*= 0*/ )
+Vector3 WRecursivePathIntegrator::integrateCore( WRay ray,unsigned int depth,int beginNode /*= 0*/ )
 {
 //	computeSamples();
 // 	if(depth==maxDepth)
-// 		return WVector3(0);
+// 		return Vector3(0);
 	WDifferentialGeometry DG;
-	WVector3 totalLight(0),directLight,indirectLight(0);
-	WVector3 ri,ro;
+	Vector3 totalLight(0),directLight,indirectLight(0);
+	Vector3 ri,ro;
 	float rayPDF;
 	WBSDF*bsdf;
 	WMaterial*mtl;
@@ -88,9 +88,9 @@ WVector3 WRecursivePathIntegrator::integrateCore( WRay ray,unsigned int depth,in
 			ray.tMax=M_INF_BIG;
 			//发射一条光线
 
-			WVector3 L=integrateCore(ray,depth+1,endNode);
+			Vector3 L=integrateCore(ray,depth+1,endNode);
 			//L.showCoords();
-// 			WVector3 F=bsdf->evaluateFCos(ri,ro);
+// 			Vector3 F=bsdf->evaluateFCos(ri,ro);
 //			F.showCoords();
 			indirectLight+=L*bsdf->evaluateFCos(ri,ro)/rayPDF*multiplier;
 		}
@@ -102,7 +102,7 @@ WVector3 WRecursivePathIntegrator::integrateCore( WRay ray,unsigned int depth,in
 //	totalLight.showCoords();
 	return totalLight;
 }
-WVector3 WRecursivePathIntegrator::integrate(WRay&ray)
+Vector3 WRecursivePathIntegrator::integrate(WRay&ray)
 {
 //	allocateSamples();
 	computeSamples();

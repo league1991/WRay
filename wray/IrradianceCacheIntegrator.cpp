@@ -93,11 +93,11 @@ void WIrradianceCacheIntegrator::clearTree()
 	octTree.clear();
 }
 
-WVector3 WIrradianceCacheIntegrator::integrate(WRay&ray)
+Vector3 WIrradianceCacheIntegrator::integrate(WRay&ray)
 {
 	WDifferentialGeometry DG;
 	WBSDF*bsdf=NULL;
-	WVector3 ro,directLight=WVector3(0),indirectLight=WVector3(0);
+	Vector3 ro,directLight=Vector3(0),indirectLight=Vector3(0);
 	int beginNode = 0, endNode;
 	if(tree->intersect(ray,DG,&endNode,beginNode))
 	{
@@ -122,11 +122,11 @@ WVector3 WIrradianceCacheIntegrator::integrate(WRay&ray)
 		if(!(bsdf->type==WBSDF::BSDF_LAMBERT||
 			bsdf->type==WBSDF::BSDF_PHONG))
 		{
-//				return WVector3(0);
+//				return Vector3(0);
 			float bsdfU,bsdfV;
 			unsigned int nIntersectedRays=0;
 			WRay ray;				//需要再次发射的光线
-			WVector3 ri,ro,L;
+			Vector3 ri,ro,L;
 			float PDF;
 			sampler->computeSamples(SpecularBSDFSamples);
 
@@ -147,8 +147,8 @@ WVector3 WIrradianceCacheIntegrator::integrate(WRay&ray)
 
 				//对每一条光线进行路径跟踪，直到到达
 				//漫反射表面为止
-				WVector3 pathDirectLight;
-				WVector3 pathThroughPut=
+				Vector3 pathDirectLight;
+				Vector3 pathThroughPut=
 					bsdf->evaluateFCos(ri,ro)/PDF;
 //				WBSDF*pathBSDF;
 				WDifferentialGeometry pathDG;
@@ -222,23 +222,23 @@ WVector3 WIrradianceCacheIntegrator::integrate(WRay&ray)
 		//对于漫反射，用irradianceCache办法解决
 		else
 		{
-//			return WVector3(0);
+//			return Vector3(0);
 			indirectLight+=computeIndirectLight(bsdf);
 			delete bsdf;
 			return directLight+indirectLight;
 		}
 	}
 	delete bsdf;
-	return WVector3(0);
+	return Vector3(0);
 }
 
 
 void WIrradianceCacheIntegrator::pathTracing(
 	WRay&ray, 
-	WVector3&indirectLight,WVector3&pathThroughPut)
+	Vector3&indirectLight,Vector3&pathThroughPut)
 {
-	WVector3 pathDirectLight;
-	WVector3 ri,ro;
+	Vector3 pathDirectLight;
+	Vector3 ri,ro;
 	WBSDF*pathBSDF;
 	WDifferentialGeometry pathDG;
 	WMaterial*pathMtl;
@@ -302,9 +302,9 @@ void WIrradianceCacheIntegrator::pathTracing(
 }
 
 bool WIrradianceCacheIntegrator::interpolate(
-	WVector3&point,
-	WVector3&normal,
-	WVector3&E)
+	Vector3&point,
+	Vector3&normal,
+	Vector3&E)
 {
 	//初始化结构
 	interpolator.refresh(point,normal);
@@ -314,7 +314,7 @@ bool WIrradianceCacheIntegrator::interpolate(
 	//否则返回false
 	return interpolator.finalInterpolate(E);
 }
-WVector3 WIrradianceCacheIntegrator::computeNewSamples(WBSDF*bsdf)
+Vector3 WIrradianceCacheIntegrator::computeNewSamples(WBSDF*bsdf)
 {
 	float bsdfU,bsdfV;
 	float rayTotalLength=0;
@@ -322,13 +322,13 @@ WVector3 WIrradianceCacheIntegrator::computeNewSamples(WBSDF*bsdf)
 	float cosThetaAbs;
 	unsigned int nIntersectedRays=0;
 	sampler->computeSamples(LambertBSDFSamples);
-	WVector3 L(0);
-	WVector3 Li;
+	Vector3 L(0);
+	Vector3 Li;
 	WDifferentialGeometry DG;
 	WRay ray;
-	WVector3 ri,ro;
+	Vector3 ri,ro;
 	ro=bsdf->DG.rayDir;
-	WVector3 directLight;
+	Vector3 directLight;
 	float PDF;
 
 	//发射nSecondaryRays条光线
@@ -359,13 +359,13 @@ WVector3 WIrradianceCacheIntegrator::computeNewSamples(WBSDF*bsdf)
 		}
 	}
 //	L.showCoords();
-	WVector3 E;
+	Vector3 E;
 	if(nIntersectedRays>0)
 	{
 		E=L/(float)nIntersectedRays;
 	}
 	else
-		E=WVector3(0);
+		E=Vector3(0);
 //	cout<<nIntersectedRays<<endl;
 //	E.showCoords();
 	WIrradianceSample irSample;
@@ -382,9 +382,9 @@ WVector3 WIrradianceCacheIntegrator::computeNewSamples(WBSDF*bsdf)
 	return E;
 }
 
-WVector3 WIrradianceCacheIntegrator::computeIndirectLight(WBSDF *bsdf)
+Vector3 WIrradianceCacheIntegrator::computeIndirectLight(WBSDF *bsdf)
 {
-	WVector3 E;
+	Vector3 E;
 	if(!interpolate(bsdf->DG.position,bsdf->DG.normal,E))
 	{
 //		cout<<"directcompute"<<endl;

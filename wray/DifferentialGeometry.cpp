@@ -6,13 +6,13 @@
 #include <gl/glut.h>
 WDifferentialGeometry::WDifferentialGeometry(void)
 {
-// 	position=WVector3(0.0f,0.0f,0.0f);
-// 	normal=WVector3(0.0f,0.0f,1.0f);
-// 	tangent=WVector3(1.0f,0.0f,0.0f);
-// 	bitangent=WVector3(0.0f,1.0f,0.0f);
-// 	rayDir=WVector3(1.0f,0.0f,1.0f);
+// 	position=Vector3(0.0f,0.0f,0.0f);
+// 	normal=Vector3(0.0f,0.0f,1.0f);
+// 	tangent=Vector3(1.0f,0.0f,0.0f);
+// 	bitangent=Vector3(0.0f,1.0f,0.0f);
+// 	rayDir=Vector3(1.0f,0.0f,1.0f);
 // 	texCoord=Vector2(0.0f,0.0f);
-// 	dpdu=dpdv=dndu=dndv=WVector3(0.0f,0.0f,0.0f);
+// 	dpdu=dpdv=dndu=dndv=Vector3(0.0f,0.0f,0.0f);
 // 	mtlId=0;
 }
 WDifferentialGeometry::WDifferentialGeometry(const WDifferentialGeometry&DG)
@@ -20,10 +20,10 @@ WDifferentialGeometry::WDifferentialGeometry(const WDifferentialGeometry&DG)
 	*this=DG;
 }
 WDifferentialGeometry::WDifferentialGeometry(
-				 const WVector3&iposition,const WVector3&inormal,
-				 const WVector3&irayDir,const WVector2&itexCoord,
-				 const WVector3&idpdu,const WVector3&idpdv,
-				 const WVector3&idndu,const WVector2&idndv,
+				 const Vector3&iposition,const Vector3&inormal,
+				 const Vector3&irayDir,const Vector2&itexCoord,
+				 const Vector3&idpdu,const Vector3&idpdv,
+				 const Vector3&idndu,const Vector2&idndv,
 				 unsigned int imtlId):
 position(iposition),normal(inormal),
 rayDir(irayDir),
@@ -37,22 +37,22 @@ dndu(idndu),dndv(idndv),mtlId(imtlId)
 		//认为是零向量，此时normal和rayDir或者共线，或者至少一个为0
 		if(abs(normal.x)>abs(normal.y))
 		{
-			bitangent=WVector3(-normal.z,0.0f,normal.x);
+			bitangent=Vector3(-normal.z,0.0f,normal.x);
 		}
 		else
 		{
-			bitangent=WVector3(0.0f,normal.z,-normal.y);
+			bitangent=Vector3(0.0f,normal.z,-normal.y);
 		}
 	}
 	bitangent.normalize();
 	tangent=bitangent.cross(normal);
 }
 WDifferentialGeometry::WDifferentialGeometry(
-				 const WVector3&iposition,const WVector3&inormal,
-				 const WVector3&itangent,const WVector3&ibitangent,
-				 const WVector3&irayDir,const WVector2&itexCoord,
-				 const WVector3&idpdu,const WVector3&idpdv,
-				 const WVector3&idndu,const WVector2&idndv,
+				 const Vector3&iposition,const Vector3&inormal,
+				 const Vector3&itangent,const Vector3&ibitangent,
+				 const Vector3&irayDir,const Vector2&itexCoord,
+				 const Vector3&idpdu,const Vector3&idpdv,
+				 const Vector3&idndu,const Vector2&idndv,
 				 unsigned int imtlId
 				 ):position(iposition),normal(inormal),
 				 tangent(itangent),bitangent(ibitangent),
@@ -66,9 +66,9 @@ void WDifferentialGeometry::draw()
 	glBegin(GL_POINTS);
 	glVertex3f(position.x,position.y,position.z);
 	glEnd();
-	WVector3 normalEnd=position+0.5*normal;
-	WVector3 tangentEnd=position+0.5*tangent;
-	WVector3 bitangentEnd=position+0.5*bitangent;
+	Vector3 normalEnd=position+0.5*normal;
+	Vector3 tangentEnd=position+0.5*tangent;
+	Vector3 bitangentEnd=position+0.5*bitangent;
 	glLineWidth(3.0f);
 	glBegin(GL_LINES);
 	glColor3f(0.0f,0.0f,1.0f);

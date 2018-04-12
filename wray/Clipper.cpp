@@ -37,7 +37,7 @@ void WBoxClipper::setClipBox(float box[2][3])
 	memcpy((void*)clipBox.pMax.v, (void*)box[1], sizeof(float)*3);
 }
 
-void WBoxClipper::displayPolygon( vector<WVector3>& vertices )
+void WBoxClipper::displayPolygon( vector<Vector3>& vertices )
 {
 	glBegin(GL_LINE_LOOP);
 	for(unsigned int i = 0; i< vertices.size(); i++)
@@ -50,7 +50,7 @@ void WBoxClipper::displayPolygon( vector<WVector3>& vertices )
 }
 
 
-bool WBoxClipper::clipTriangle(const WTriangle& tri, vector<WVector3>& outVertices)
+bool WBoxClipper::clipTriangle(const WTriangle& tri, vector<Vector3>& outVertices)
 {
 	// 确定包围盒和三角形类型
 	// 对于包围盒： 0表示x轴向厚度为0， 1表示y轴向厚度为0，2表示z轴向厚度为0, 3表示一般情况
@@ -202,12 +202,12 @@ bool WBoxClipper::clipTriangle(const WTriangle& tri, vector<WVector3>& outVertic
 	// 新建结果的包围盒
 	for (char e = 0; e < numEdges; e++)
 	{
-		outVertices.push_back(WVector3(srcPoly[e][0],srcPoly[e][1],srcPoly[e][2]));
+		outVertices.push_back(Vector3(srcPoly[e][0],srcPoly[e][1],srcPoly[e][2]));
 	}
 	return true;
 }
 
-void WBoxClipper::drawPolygon( vector<WVector3>& vertices )
+void WBoxClipper::drawPolygon( vector<Vector3>& vertices )
 {
 	glBegin(GL_POINTS);
 	for (unsigned i = 0; i < vertices.size(); i++)

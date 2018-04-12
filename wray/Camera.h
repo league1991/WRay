@@ -7,16 +7,16 @@ public:
 	WCamera(void);
 	virtual ~WCamera(void);
 	void setParameter(
-		WVector3 iori=WVector3(0,0,1),
-		WVector3 itar=WVector3(0,0,0),
-		WVector3 iup=WVector3(0,0,1),
+		Vector3 iori=Vector3(0,0,1),
+		Vector3 itar=Vector3(0,0,0),
+		Vector3 iup=Vector3(0,0,1),
 		float ifov= 3.14159265/3.0f,
 		float iratio=1.33f
 		);
 	void setDirectionParams(
-		WVector3 iori=WVector3(0,0,1),
-		WVector3 itar=WVector3(0,0,0),
-		WVector3 iup=WVector3(0,0,1));
+		Vector3 iori=Vector3(0,0,1),
+		Vector3 itar=Vector3(0,0,0),
+		Vector3 iup=Vector3(0,0,1));
 
 	//设置胶片分辨率，竖直方向分辨率根据宽高比算出
 	virtual void setFilmResolutionX(unsigned int resX);
@@ -38,7 +38,7 @@ public:
 	void setColor(float R,float G,float B);
 	void setColor(float R, float G, float B, int x, int y);
 	void accumulateColor( float R, float G, float B, int x, int y );
-	WVector3 getColor(unsigned int x,unsigned int y);
+	Vector3 getColor(unsigned int x,unsigned int y);
 	//检查是不是所有像素都被设置了
 	virtual bool isFilmFull();
 	//表示重新开始渲染,会重新设置底片颜色
@@ -49,20 +49,20 @@ public:
 	virtual void changeSampler(WSampler::WSamplerType type);
 	//返回当前渲染进度
 	virtual float currProgress();
-	virtual WVector3 getDirection(){return dir;}
-	virtual WVector3 getOrigin(){return origin;}
-	virtual void getXY(WVector3&ix,WVector3&iy)
+	virtual Vector3 getDirection(){return dir;}
+	virtual Vector3 getOrigin(){return origin;}
+	virtual void getXY(Vector3&ix,Vector3&iy)
 	{ix=x;iy=y;	}
 	virtual int*getFilmBitPointer();
 	virtual unsigned int getSampleSize(){return filmSampleSize;};
 	virtual float getRatio(){return ratio;}
 
 protected:
-	WVector3 origin;		//起点
-	WVector3 target;		//目标点	
-	WVector3 dir;		//由起点指向目标点的单位向量，长度为1
-	WVector3 up;			//向上向量
-	WVector3 x,y;		//屏幕x y坐标的空间方向,不是单位向量
+	Vector3 origin;		//起点
+	Vector3 target;		//目标点	
+	Vector3 dir;		//由起点指向目标点的单位向量，长度为1
+	Vector3 up;			//向上向量
+	Vector3 x,y;		//屏幕x y坐标的空间方向,不是单位向量
 						//屏幕跟起点的距离为1
 	float fov;
 	float ratio;		//宽高比（宽/高）

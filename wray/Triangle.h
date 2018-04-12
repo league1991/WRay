@@ -36,21 +36,21 @@ class WTriangle
 private:
 public:
 	TriAccel tA;
-	WVector3 point1,point2,point3;
-	WVector2 texCoord1,texCoord2,texCoord3;
-	WVector3 normal1,normal2,normal3;
+	Vector3 point1,point2,point3;
+	Vector2 texCoord1,texCoord2,texCoord3;
+	Vector3 normal1,normal2,normal3;
 	unsigned int mtlId;
 
 	WTriangle(
-		const WVector3&ipoint1,
-		const WVector3&ipoint2,
-		const WVector3&ipoint3,
-		const WVector2&itexCoord1,
-		const WVector2&itexCoord2,
-		const WVector2&itexCoord3,
-		const WVector3&inormal1,
-		const WVector3&inormal2,
-		const WVector3&inormal3,
+		const Vector3&ipoint1,
+		const Vector3&ipoint2,
+		const Vector3&ipoint3,
+		const Vector2&itexCoord1,
+		const Vector2&itexCoord2,
+		const Vector2&itexCoord3,
+		const Vector3&inormal1,
+		const Vector3&inormal2,
+		const Vector3&inormal3,
 		unsigned int mtlId
 		);
 
@@ -79,7 +79,7 @@ public:
 	//由uv参数获得表面一点及其法向量
 	//用于灯光的采样
 	void getPoint(float u,float v,
-		WVector3&position,WVector3&normal,WVector2&texCoord);
+		Vector3&position,Vector3&normal,Vector2&texCoord);
 
 	//在openGL中画出三角形，调试时用
 	void draw(bool showNormal=false,bool fillMode=false);
@@ -88,9 +88,9 @@ public:
 	//输出三角形顶点数据，调试时用
 	void showVertexCoords();
 	//返回质心
-	WVector3 getCentroid();
+	Vector3 getCentroid();
 	// 
-	void buildDG(float b1, float b2, const WVector3& rayDir, WDifferentialGeometry& DG);
+	void buildDG(float b1, float b2, const Vector3& rayDir, WDifferentialGeometry& DG);
 //#if INTERSECTION_METHOD==ISECTMETHOD_B
 	void buildAccelerateData(int triID = 0);			// 构建加速数据结构
 	TriAccel& getAccelerateData(){return tA;}

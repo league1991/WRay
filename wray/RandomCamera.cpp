@@ -46,10 +46,10 @@ void WRandomCamera::changeSampleSize( unsigned int size )
 	film.changeSampleSize(1);
 }
 
-void WRandomCamera::setColor( float R,float G,float B, WVector3 idir )
+void WRandomCamera::setColor( float R,float G,float B, Vector3 idir )
 {
 	//nDir为屏幕中心到idir在屏幕上的中心投影点的向量
-	WVector3 nDir = idir / (idir.dot(this->dir)) - dir;
+	Vector3 nDir = idir / (idir.dot(this->dir)) - dir;
 	float xRatio = nDir.dot(this->x) / x.lengthSquared();
 	float yRatio = nDir.dot(this->y) / y.lengthSquared();
 	
@@ -59,8 +59,8 @@ void WRandomCamera::setColor( float R,float G,float B, WVector3 idir )
 	if(xPos>=resolutionX || yPos>=resolutionY)
 		return;
 	unsigned int* currSamplePtr = &(this->nSamples[xPos + resolutionX * yPos]);
-	WVector3 currColor = film.getColor(xPos, yPos) * (*currSamplePtr);
-	currColor = (currColor + WVector3(R, G, B)) / (float)(++(*currSamplePtr));
+	Vector3 currColor = film.getColor(xPos, yPos) * (*currSamplePtr);
+	currColor = (currColor + Vector3(R, G, B)) / (float)(++(*currSamplePtr));
 //	cout<<*currSamplePtr<<endl;
 //	printf("the position in screen is %d %d \n",xPos,yPos);
 	film.setColor(xPos, yPos, currColor.x, currColor.y, currColor.z);

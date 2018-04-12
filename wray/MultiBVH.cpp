@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "BoundingBox.h"
 #include "MultiBVH.h"
-const WBoundingBox WMultiBVH::invalidBox = WBoundingBox(WVector3(0.0f,0.0f,0.0f),WVector3(-0.0f,-0.0f,-0.0f));
+const WBoundingBox WMultiBVH::invalidBox = WBoundingBox(Vector3(0.0f,0.0f,0.0f),Vector3(-0.0f,-0.0f,-0.0f));
 
 WMultiBVH::WMultiBVH():WSimpleBVH()
 {
@@ -798,8 +798,8 @@ void WMultiBVH::drawTreeRecursive( WMultiBVHNode* pNode )
 	pMin[2] = (float*)&node.bMin[2];	pMax[2] = (float*)&node.bMax[2];
 	for (int i = 0; i < 4; i++)
 	{
-		WBoundingBox box(WVector3(*pMin[0],*pMin[1],*pMin[2]),
-			WVector3(*pMax[0],*pMax[1],*pMax[2]));
+		WBoundingBox box(Vector3(*pMin[0],*pMin[1],*pMin[2]),
+			Vector3(*pMax[0],*pMax[1],*pMax[2]));
 		box.draw();
 		pMin[0]++; pMax[0]++;
 		pMin[1]++; pMax[1]++;

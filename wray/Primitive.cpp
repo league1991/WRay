@@ -28,27 +28,27 @@ bool MeshObject::getTriangle(unsigned int nthFace,WTriangle&tri)
 	float*p;
 	//找到顶点位置
 	p=&vertices[vertexIndices[nthFace*3]*3];
-	tri.point1=WVector3(*p,*(p+1),*(p+2));
+	tri.point1=Vector3(*p,*(p+1),*(p+2));
 	p=&vertices[vertexIndices[nthFace*3+1]*3];
-	tri.point2=WVector3(*p,*(p+1),*(p+2));
+	tri.point2=Vector3(*p,*(p+1),*(p+2));
 	p=&vertices[vertexIndices[nthFace*3+2]*3];
-	tri.point3=WVector3(*p,*(p+1),*(p+2));
+	tri.point3=Vector3(*p,*(p+1),*(p+2));
 
 	//找到法向量
 	p=&normals[normalIndices[nthFace*3]*3];
-	tri.normal1=WVector3(*p,*(p+1),*(p+2));
+	tri.normal1=Vector3(*p,*(p+1),*(p+2));
 	p=&normals[normalIndices[nthFace*3+1]*3];
-	tri.normal2=WVector3(*p,*(p+1),*(p+2));
+	tri.normal2=Vector3(*p,*(p+1),*(p+2));
 	p=&normals[normalIndices[nthFace*3+2]*3];
-	tri.normal3=WVector3(*p,*(p+1),*(p+2));
+	tri.normal3=Vector3(*p,*(p+1),*(p+2));
 
 	//找到贴图坐标
 	p=&texcoords[texCoordIndices[nthFace*3]*2];
-	tri.texCoord1=WVector2(*p,*(p+1));
+	tri.texCoord1=Vector2(*p,*(p+1));
 	p=&texcoords[texCoordIndices[nthFace*3+1]*2];
-	tri.texCoord2=WVector2(*p,*(p+1));
+	tri.texCoord2=Vector2(*p,*(p+1));
 	p=&texcoords[texCoordIndices[nthFace*3+2]*2];
-	tri.texCoord3=WVector2(*p,*(p+1));
+	tri.texCoord3=Vector2(*p,*(p+1));
 
 	tri.mtlId=mtlIndices[nthFace];
 	return true;
@@ -57,13 +57,13 @@ void MeshObject::buildBBox()
 {
 	if(nVertices<1)
 		return;
-	WVector3 delta=WVector3(WBoundingBox::delta);
-	box.pMin=WVector3(vertices[0],vertices[1],vertices[2])-delta;
-	box.pMax=WVector3(vertices[0],vertices[1],vertices[2])+delta;
+	Vector3 delta=Vector3(WBoundingBox::delta);
+	box.pMin=Vector3(vertices[0],vertices[1],vertices[2])-delta;
+	box.pMax=Vector3(vertices[0],vertices[1],vertices[2])+delta;
 	for(unsigned int i=1;i<nVertices;i++)
 	{
 		box.merge(
-			WVector3(vertices[3*i],vertices[3*i+1],vertices[3*i+2])
+			Vector3(vertices[3*i],vertices[3*i+1],vertices[3*i+2])
 			);
 	}
 	return;
@@ -113,7 +113,7 @@ void MeshObject::buildSubP()
 		getTriangle(i,t);//获得第i个三角形
 		if(i%nFacesPerSubP==0)//获得下一个subp
 		{
-			WVector3 delta=WVector3(WBoundingBox::delta);
+			Vector3 delta=Vector3(WBoundingBox::delta);
 			nthSubP++;
 			subPs[nthSubP].box.pMin=t.point1-delta;
 			subPs[nthSubP].box.pMax=t.point1+delta;

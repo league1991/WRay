@@ -3,9 +3,9 @@
 
 WCamera::WCamera(void)
 {
-	origin=WVector3(0,0,1);
-	target=WVector3(0,0,0);
-	up=WVector3(0,1,0);
+	origin=Vector3(0,0,1);
+	target=Vector3(0,0,0);
+	up=Vector3(0,1,0);
 	fov=M_2_PI*0.5;
 	ratio=1.33f;
 	filmSampleSize=1;
@@ -15,7 +15,7 @@ WCamera::WCamera(void)
 WCamera::~WCamera(void)
 {
 }
-void WCamera::setParameter(WVector3 iori, WVector3 itar, WVector3 iup, float ifov,float iratio)
+void WCamera::setParameter(Vector3 iori, Vector3 itar, Vector3 iup, float ifov,float iratio)
 {
 	origin=iori;
 	target=itar;
@@ -24,7 +24,7 @@ void WCamera::setParameter(WVector3 iori, WVector3 itar, WVector3 iup, float ifo
 	ratio=iratio;
 	computeXY();
 }
-void WCamera::setDirectionParams(WVector3 iori, WVector3 itar, WVector3 iup)
+void WCamera::setDirectionParams(Vector3 iori, Vector3 itar, Vector3 iup)
 {
 	origin=iori;
 	target=itar;
@@ -46,8 +46,8 @@ void WCamera::computeXY()
 void WCamera::drawCamera(float R,float G,float B)
 {
 	//屏幕的四个角的空间位置
-	WVector3 xpyp,xnyp,xpyn,xnyn;
-	WVector3 center=origin+dir;
+	Vector3 xpyp,xnyp,xpyn,xnyn;
+	Vector3 center=origin+dir;
 	xpyp=center+x+y;
 	xpyn=center+x-y;
 	xnyp=center-x+y;
@@ -90,7 +90,7 @@ void WCamera::generateRay(float xRatio, float yRatio,WRay&ray)
 }
 void WCamera::drawFilmInScreen(float offsetX,float offsetY)
 {
-	WVector3 FilmPos=origin+dir-x*(1.0f+offsetX)-y*(1.0f+offsetY);
+	Vector3 FilmPos=origin+dir-x*(1.0f+offsetX)-y*(1.0f+offsetY);
 	film.draw(FilmPos.x,FilmPos.y,FilmPos.z);
 }
 void WCamera::drawFilmInWorld(float offsetX,float offsetY,float offsetZ)
@@ -117,7 +117,7 @@ void WCamera::setFilmResolutionX(unsigned int resX)
 }
 void WCamera::getFilmResolution(int&resX, int&resY)
 {
-	WVector2 res=film.getResolution();
+	Vector2 res=film.getResolution();
 	resX=(int)res.x;
 	resY=(int)res.y;
 }
@@ -125,7 +125,7 @@ void WCamera::getNextRay(WRay&ray)
 {
 	float screenX,screenY;
 	film.getSamplePosition(screenX,screenY);
-	WVector2 res=film.getResolution();
+	Vector2 res=film.getResolution();
 	screenX=screenX/res.x*2.0f-1.0f;
 	screenY=screenY/res.y*2.0f-1.0f;
 	ray.point=origin;
@@ -137,7 +137,7 @@ void WCamera::getNextRay(WRay&ray)
 
 void WCamera::getNextRay( WRay&ray, float xi, float yi )
 {
-	WVector2 res=film.getResolution();
+	Vector2 res=film.getResolution();
 	float screenX= float(xi) /res.x*2.0f-1.0f;
 	float screenY= float(yi) /res.y*2.0f-1.0f;
 	ray.point=origin;
@@ -182,7 +182,7 @@ float WCamera::currProgress()
 {
 	unsigned int currX,currY;
 	film.getCurrPos(currX,currY);
-	WVector2 res=film.getResolution();
+	Vector2 res=film.getResolution();
 	float nPoints=currY*res.x+currX;
 	float totalPoints=res.x*res.y;
 	return nPoints/totalPoints;
@@ -192,7 +192,7 @@ int*WCamera::getFilmBitPointer()
 	return film.getBitPointer();
 }
 
-WVector3 WCamera::getColor( unsigned int x,unsigned int y )
+Vector3 WCamera::getColor( unsigned int x,unsigned int y )
 {
 	return film.getColor(x,y);
 }

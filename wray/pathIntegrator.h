@@ -11,7 +11,7 @@ public:
 	virtual ~WPathIntegrator(void);
 
 	//¹âÏß×·×Ùº¯Êý
-	WVector3 integrate(WRay&ray);
+	Vector3 integrate(WRay&ray);
 
 	// prepare samples
 	void initSamples(int nSampleGroup);

@@ -5,12 +5,12 @@
 class WDifferentialGeometry
 {
 public:
-	WVector3 position;
-	WVector3 normal,tangent,bitangent;
-	WVector2 texCoord;
-	WVector3 rayDir;
-	WVector3 dpdu,dpdv;
-	WVector3 dndu,dndv;
+	Vector3 position;
+	Vector3 normal,tangent,bitangent;
+	Vector2 texCoord;
+	Vector3 rayDir;
+	Vector3 dpdu,dpdv;
+	Vector3 dndu,dndv;
 	unsigned int mtlId;
 
 	WDifferentialGeometry(void);//注意此函数没有进行初始化
@@ -18,18 +18,18 @@ public:
 
 	//此函数通过输入参数自动计算出主副切线
 	WDifferentialGeometry(
-		const WVector3&iposition,const WVector3&inormal,
-		const WVector3&irayDir,const WVector2&itexCoord,
-		const WVector3&idpdu,const WVector3&idpdv,
-		const WVector3&idndu,const WVector2&idndv,
+		const Vector3&iposition,const Vector3&inormal,
+		const Vector3&irayDir,const Vector2&itexCoord,
+		const Vector3&idpdu,const Vector3&idpdv,
+		const Vector3&idndu,const Vector2&idndv,
 		unsigned int imtlId);
 	
 	WDifferentialGeometry(
-		const WVector3&iposition,const WVector3&inormal,
-		const WVector3&itangent,const WVector3&ibitangent,
-		const WVector3&irayDir,const WVector2&itexCoord,
-		const WVector3&idpdu,const WVector3&idpdv,
-		const WVector3&idndu,const WVector2&idndv,
+		const Vector3&iposition,const Vector3&inormal,
+		const Vector3&itangent,const Vector3&ibitangent,
+		const Vector3&irayDir,const Vector2&itexCoord,
+		const Vector3&idpdu,const Vector3&idpdv,
+		const Vector3&idndu,const Vector2&idndv,
 		unsigned int imtlId);
 	virtual ~WDifferentialGeometry(void);
 

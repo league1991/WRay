@@ -2,9 +2,9 @@
 //存在八叉树里面的采样点
 struct WIrradianceSample
 {
-	WVector3 E;
-	WVector3 normal;
-	WVector3 point;
+	Vector3 E;
+	Vector3 normal;
+	Vector3 point;
 	float maxDist;
 	//显示采样点,调试时用
 	void display(bool isDisplayBox=false);
@@ -26,7 +26,7 @@ public:
 	{
 		nSamplesAccepted=nSamplesChecked=0;
 		totalWeight=0.0f;
-		totalE=WVector3(0);
+		totalE=Vector3(0);
 		maxNormalError=imaxNormalError;
 //		maxDistanceError=imaxDistanceError;
 		maxPlanarError=imaxPlanarError;
@@ -41,7 +41,7 @@ public:
 	{
 		nSamplesAccepted=nSamplesChecked=0;
 		totalWeight=0.0f;
-		totalE=WVector3(0);
+		totalE=Vector3(0);
 		maxNormalError=imaxNormalError;
 //		maxDistanceError=imaxDistanceError;
 		maxPlanarError=imaxPlanarError;
@@ -50,14 +50,14 @@ public:
 	}
 
 	//对一个新的点进行插值
-	void refresh(WVector3&iposition,WVector3&inormal)
+	void refresh(Vector3&iposition,Vector3&inormal)
 	{
 		position=iposition;normal=inormal;
 		nSamplesAccepted=nSamplesChecked=0;
 		totalWeight=0;
-		totalE=WVector3(0);
+		totalE=Vector3(0);
 	}
-	WVector3 getPosition(){return position;}
+	Vector3 getPosition(){return position;}
 	//计算当前点是否适合使用sample的采样点进行插值
 	//如果适合，修改相关参数，并返回true
 	//否则返回false
@@ -66,13 +66,13 @@ public:
 	//totalE/totalWeight得到最终的E
 	void operator()(WIrradianceSample&sample);
 	//判断是否插值成功，并返回最终插值所得的E
-	bool finalInterpolate(WVector3&E);
+	bool finalInterpolate(Vector3&E);
 private:
-	WVector3 normal;
-	WVector3 position;
+	Vector3 normal;
+	Vector3 position;
 
 	float totalWeight;
-	WVector3 totalE;
+	Vector3 totalE;
 
 	//下面是各种阈值
 	//nSamplesAccepted,nSamplesChecked分别是通过检测的样本数

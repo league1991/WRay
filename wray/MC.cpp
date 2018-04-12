@@ -19,7 +19,7 @@ void WMonteCarlo::uniformSampleDisk(const float u1, const float u2, float &x, fl
 	x=r*cos(theta);
 	y=r*sin(theta);
 }
-void WMonteCarlo::cosineSampleHemisphere(const float u1, const float u2, WVector3 &sample,float&PDF)
+void WMonteCarlo::cosineSampleHemisphere(const float u1, const float u2, Vector3 &sample,float&PDF)
 {
 	uniformSampleDisk(u1,u2,sample.x,sample.y);
 	sample.z=sqrt(max(1-sample.x*sample.x-sample.y*sample.y,0.001));

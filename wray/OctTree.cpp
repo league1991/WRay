@@ -9,7 +9,7 @@ void WIrradianceSample::display(bool isDisplayBox)
 	glEnd();
 	if(!isDisplayBox)
 		return;
-	WVector3 radius=WVector3(maxDist);
+	Vector3 radius=Vector3(maxDist);
 	WBoundingBox box;
 	box.pMin=point-radius;
 	box.pMax=point+radius;
@@ -31,7 +31,7 @@ void WIrradianceInterpolator::operator ()(WIrradianceSample&sample)
 		return;
 	}
 //	cout<<1;
-	WVector3 delta=sample.point-position;
+	Vector3 delta=sample.point-position;
 	delta.normalize();
 	if(abs(delta.dot(normal))>maxPlanarError)
 	{
@@ -55,7 +55,7 @@ void WIrradianceInterpolator::operator ()(WIrradianceSample&sample)
 // 	totalE.showCoords();
 // 	cout<<totalWeight<<endl;
 }
-bool WIrradianceInterpolator::finalInterpolate(WVector3&E)
+bool WIrradianceInterpolator::finalInterpolate(Vector3&E)
 {
 //	cout<<nSamplesAccepted<<endl;
 	if(nSamplesAccepted<minSamples)
@@ -120,8 +120,8 @@ void WOctTree::deleteNodes(WOctNode*node)
 }
 void WOctTree::addSample(const WIrradianceSample&sample)
 {
-	WVector3 point=sample.point;
-	WVector3 radius(sample.maxDist);
+	Vector3 point=sample.point;
+	Vector3 radius(sample.maxDist);
 //	radius.showCoords();
 	WBoundingBox sampleBox;
 	sampleBox.pMin=point-radius;
@@ -139,7 +139,7 @@ void WOctTree::add(
 				  unsigned int depth)
 {
 //	cout<<"add"<<endl;
-	WVector3 diag=nodeBox.pMax-nodeBox.pMin;
+	Vector3 diag=nodeBox.pMax-nodeBox.pMin;
 //	diag.showCoords();
 	if(depth==maxDepth||
 		diag.lengthSquared()<diagSquared)
@@ -148,7 +148,7 @@ void WOctTree::add(
 		node->samples.push_back(sample);
 		return;
 	}
-	WVector3 center=0.5f*(nodeBox.pMin+nodeBox.pMax);
+	Vector3 center=0.5f*(nodeBox.pMin+nodeBox.pMax);
 	//确定采样点的包围盒跟那些子节点相交
 	bool over[8];
 	over[0]=over[1]=over[2]=over[3]=
@@ -241,8 +241,8 @@ void WOctTree::lookUP( WOctNode*node, WBoundingBox&nodeBox, WIrradianceInterpola
 	{
 		interpolate(node->samples[i]);
 	}
-	WVector3 center=0.5f*(nodeBox.pMin+nodeBox.pMax);
-	WVector3 point=interpolate.getPosition();
+	Vector3 center=0.5f*(nodeBox.pMin+nodeBox.pMax);
+	Vector3 point=interpolate.getPosition();
 	//检测是在哪个子节点里面
 	int nthChild=
 		((point.z>center.z)?4:0)+

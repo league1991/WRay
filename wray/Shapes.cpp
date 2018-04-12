@@ -24,9 +24,9 @@ int main()
 // 	cout<<DG.mtlId<<endl;
 
 	WTriangle t;
-	t.point1=WVector3(0,-2,0);
-	t.point2=WVector3(1,2,0);
-	t.point3=WVector3(0,0,1);
+	t.point1=Vector3(0,-2,0);
+	t.point2=Vector3(1,2,0);
+	t.point3=Vector3(0,0,1);
 	WBoundingBox b(t);
 	b.pMin.showCoords();
 	b.pMax.showCoords();

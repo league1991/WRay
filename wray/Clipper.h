@@ -9,15 +9,15 @@ public:
 	~WBoxClipper(void);
 	void setClipBox(const WBoundingBox& box);
 	void setClipBox(float box[2][3]);
-	void displayPolygon(vector<WVector3>& vertices);
+	void displayPolygon(vector<Vector3>& vertices);
 
 	//¼ôÇÐÈý½ÇÐÎ
 	bool clipTriangle(const WTriangle& tri,
-							vector<WVector3>& outVertices);
+							vector<Vector3>& outVertices);
 
 	//bool getClipTriangleBox(const WTriangle& tri,WBoundingBox& box);
 
-	void drawPolygon(vector<WVector3>& vertices);
+	void drawPolygon(vector<Vector3>& vertices);
 
 	bool getClipBox(const WTriangle& tri, float resultBox[2][3]);
 

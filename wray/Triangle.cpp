@@ -46,15 +46,15 @@ WTriangle::WTriangle(void)
 }
 
 WTriangle::WTriangle(
-		 const WVector3&ipoint1,
-		 const WVector3&ipoint2,
-		 const WVector3&ipoint3,
-		 const WVector2&itexCoord1,
-		 const WVector2&itexCoord2,
-		 const WVector2&itexCoord3,
-		 const WVector3&inormal1,
-		 const WVector3&inormal2,
-		 const WVector3&inormal3,
+		 const Vector3&ipoint1,
+		 const Vector3&ipoint2,
+		 const Vector3&ipoint3,
+		 const Vector2&itexCoord1,
+		 const Vector2&itexCoord2,
+		 const Vector2&itexCoord3,
+		 const Vector3&inormal1,
+		 const Vector3&inormal2,
+		 const Vector3&inormal3,
 		 unsigned int imtlId
 		 ):point1(ipoint1),point2(ipoint2),point3(ipoint3),
 		 texCoord1(itexCoord1),texCoord2(itexCoord2),texCoord3(itexCoord3),
@@ -67,19 +67,19 @@ WTriangle::~WTriangle(void)
 }
 float WTriangle::area()
 {
-	WVector3 p21=point2-point1;
-	WVector3 p31=point3-point1;
+	Vector3 p21=point2-point1;
+	Vector3 p31=point3-point1;
 	return abs(0.5f*p21.cross(p31).length());
 }
 //求交函数,注意光线的方向向量必须事先单位化
 float WTriangle::intersectTest(const WRay&r)
 {
 #if INTERSECTION_TEST_METHOD == ISECTMETHOD_A
-	WVector3 E1=point2-point1;
-	WVector3 E2=point3-point1;
-	WVector3 T=r.point-point1;
-	WVector3 S1=r.direction.cross(E2);
-	WVector3 S2=T.cross(E1);
+	Vector3 E1=point2-point1;
+	Vector3 E2=point3-point1;
+	Vector3 T=r.point-point1;
+	Vector3 S1=r.direction.cross(E2);
+	Vector3 S2=T.cross(E1);
 	float S1E1=S1.dot(E1);
 
 	if(abs(S1E1)<1e-9f)		//认为分母为0 ，故求交失败
@@ -144,11 +144,11 @@ void WTriangle::intersect(WRay&r,WDifferentialGeometry&DG)
 {
 
 #if INTERSECTION_METHOD == ISECTMETHOD_A
-	WVector3 E1=point2-point1;
-	WVector3 E2=point3-point1;
-	WVector3 T=r.point-point1;
-	WVector3 S1=r.direction.cross(E2);
-	WVector3 S2=T.cross(E1);
+	Vector3 E1=point2-point1;
+	Vector3 E2=point3-point1;
+	Vector3 T=r.point-point1;
+	Vector3 S1=r.direction.cross(E2);
+	Vector3 S2=T.cross(E1);
 	float S1E1=S1.dot(E1);
 	float t=S2.dot(E2)/S1E1;
 	float b1=S1.dot(T)/S1E1;
@@ -190,9 +190,9 @@ void WTriangle::intersect(WRay&r,WDifferentialGeometry&DG)
 
 
 void WTriangle::getPoint(float b1,float b2,
-						WVector3&position,
-						WVector3&normal,
-						WVector2&texCoord)
+						Vector3&position,
+						Vector3&normal,
+						Vector2&texCoord)
 {
 	position=(1.0f-b1-b2)*point1+b1*point2+b2*point3;
 	normal=(1.0f-b1-b2)*normal1+b1*normal2+b2*normal3;
@@ -212,7 +212,7 @@ void WTriangle::draw(bool showNormal,bool fillMode)
 	glEnd();
 	if(showNormal)
 	{
-		WVector3 norEnd1,norEnd2,norEnd3;
+		Vector3 norEnd1,norEnd2,norEnd3;
 		norEnd1=point1+normal1*0.2f;
 		norEnd2=point2+normal2*0.2f;
 		norEnd3=point3+normal3*0.2f;
@@ -243,12 +243,12 @@ void WTriangle::showCoords()
 	texCoord3.showCoords();
 	cout<<"mtlID"<<mtlId<<endl;
 }
-WVector3 WTriangle::getCentroid()
+Vector3 WTriangle::getCentroid()
 {
 	return (point1+point2+point3)/3.0f;
 }
 
-void WTriangle::buildDG(float b1, float b2, const WVector3& rayDir, WDifferentialGeometry& DG)
+void WTriangle::buildDG(float b1, float b2, const Vector3& rayDir, WDifferentialGeometry& DG)
 {
 	float b3 = 1.f - b1 - b2;
 	DG.position = b3*point1 + b1*point2 + b2*point3;
@@ -265,11 +265,11 @@ void WTriangle::buildDG(float b1, float b2, const WVector3& rayDir, WDifferentia
 		//认为是零向量，此时normal和rayDir或者共线，或者至少一个为0
 		if (abs(DG.normal.x)>abs(DG.normal.y))
 		{
-			DG.bitangent = WVector3(-DG.normal.z, 0.0f, DG.normal.x);
+			DG.bitangent = Vector3(-DG.normal.z, 0.0f, DG.normal.x);
 		}
 		else
 		{
-			DG.bitangent = WVector3(0.0f, DG.normal.z, -DG.normal.y);
+			DG.bitangent = Vector3(0.0f, DG.normal.z, -DG.normal.y);
 		}
 	}
 	//算出主切线
@@ -285,18 +285,18 @@ void WTriangle::buildDG(float b1, float b2, const WVector3& rayDir, WDifferentia
 	if (abs(det)>1e-5f)
 	{
 		float invDet = 1.0f / det;
-		WVector3 E1 = point2 - point1;
-		WVector3 E2 = point3 - point1;
+		Vector3 E1 = point2 - point1;
+		Vector3 E2 = point3 - point1;
 		DG.dpdu = (d*E2 - b*E1)*invDet;
 		DG.dpdv = (a*E1 - c*E2)*invDet;
-		WVector3 N1 = normal2 - normal1;
-		WVector3 N2 = normal3 - normal1;
+		Vector3 N1 = normal2 - normal1;
+		Vector3 N2 = normal3 - normal1;
 		DG.dndu = (d*N2 - b*N1)*invDet;
 		DG.dndv = (a*N1 - c*N2)*invDet;
 	}
 	else
 	{
-		DG.dpdu = DG.dpdv = DG.dndu = DG.dndv = WVector3(0.0f, 0.0f, 0.0f);
+		DG.dpdu = DG.dpdv = DG.dndu = DG.dndv = Vector3(0.0f, 0.0f, 0.0f);
 	}
 }
 
@@ -311,7 +311,7 @@ void WTriangle::showVertexCoords()
 //#if INTERSECTION_METHOD==ISECTMETHOD_B
 void WTriangle::buildAccelerateData(int triID)
 {
-	WVector3 normal = (point2 - point1).cross(point3 - point1);
+	Vector3 normal = (point2 - point1).cross(point3 - point1);
 	int u = 0, v = 1, w = 2;
 	float maxnw = fabs(normal.z);
 	float nw = normal.z;
@@ -330,8 +330,8 @@ void WTriangle::buildAccelerateData(int triID)
 	tA.pu = point1.v[u];
 	tA.pv = point1.v[v];
 	tA.np = tA.nu * tA.pu + tA.nv * tA.pv + point1.v[w];
-	WVector3 e0 = point2 - point1;
-	WVector3 e1 = point3 - point1;
+	Vector3 e0 = point2 - point1;
+	Vector3 e1 = point3 - point1;
 	float f = (w == 1) ? -1.0f : 1.0f;
 	tA.e0u = f * e0.v[u] / (nw);
 	tA.e0v = f * e0.v[v] / (nw);

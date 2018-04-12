@@ -8,11 +8,11 @@ WLight::~WLight(void)
 }
 
 void WPointLight::sampleLight(float u1, float u2, float u3,
-							 WBSDF&bsdf,WVector3 &iposition, 
-							 WVector3 &iintensity, float&PDF)
+							 WBSDF&bsdf,Vector3 &iposition, 
+							 Vector3 &iintensity, float&PDF)
 {
 	iposition=position;
-	WVector3 delta=iposition-bsdf.DG.position;
+	Vector3 delta=iposition-bsdf.DG.position;
 	float distanceSquared=delta.lengthSquared();
 	iintensity=intensity/distanceSquared;
 	PDF=1.0f;
@@ -20,14 +20,14 @@ void WPointLight::sampleLight(float u1, float u2, float u3,
 void WPointLight::draw()
 {
 	float delta=0.1f;
-	WVector3 xn,xp,yn,yp,zn,zp;
+	Vector3 xn,xp,yn,yp,zn,zp;
 	xn=xp=yn=yp=zn=zp=position;
-	xp+=WVector3(delta,0,0);
-	xn-=WVector3(delta,0,0);	
-	yp+=WVector3(0,delta,0);
-	yn-=WVector3(0,delta,0);	
-	zp+=WVector3(0,0,delta);
-	zn-=WVector3(0,0,delta);
+	xp+=Vector3(delta,0,0);
+	xn-=Vector3(delta,0,0);	
+	yp+=Vector3(0,delta,0);
+	yn-=Vector3(0,delta,0);	
+	zp+=Vector3(0,0,delta);
+	zn-=Vector3(0,0,delta);
 	glColor3f(1.0,0.5,0);
 	glLineWidth(5.0f);
 	glBegin(GL_LINES);
@@ -51,8 +51,8 @@ void WPointLight::getProperties( vector<float>& properties )
 	properties.push_back(1.0f);
 }
 
- WRectangleLight::WRectangleLight(WVector3 iposition,WVector3 idirection,
-			   WVector3 up,float width,float height,WVector3 iintensity,bool iisDoubleSide):
+ WRectangleLight::WRectangleLight(Vector3 iposition,Vector3 idirection,
+			   Vector3 up,float width,float height,Vector3 iintensity,bool iisDoubleSide):
 WLight(LIGHT_RECTANGLE,false)
 {
 	position=iposition;
@@ -66,11 +66,11 @@ WLight(LIGHT_RECTANGLE,false)
 	intensity=iintensity;
 	isDoubleSide=iisDoubleSide;
 }
-void WRectangleLight::sampleLight(float u1, float u2, float u3, WBSDF &bsdf, WVector3 &iposition, WVector3 &iintensity, float &PDF)
+void WRectangleLight::sampleLight(float u1, float u2, float u3, WBSDF &bsdf, Vector3 &iposition, Vector3 &iintensity, float &PDF)
 {
 	u1=u1*2-1;u2=u2*2-1;
 	iposition=position+u1*x+u2*y;
-	WVector3 delta=bsdf.DG.position-iposition;
+	Vector3 delta=bsdf.DG.position-iposition;
 	float distanceSquared=delta.lengthSquared();
 	iintensity=intensity/distanceSquared;
 	delta.normalize();
@@ -81,12 +81,12 @@ void WRectangleLight::sampleLight(float u1, float u2, float u3, WBSDF &bsdf, WVe
 }
 void WRectangleLight::draw()
 {
-	WVector3 xpyp,xnyp,xpyn,xnyn;
+	Vector3 xpyp,xnyp,xpyn,xnyn;
 	xpyp=position+x+y;
 	xnyp=position-x+y;
 	xpyn=position+x-y;
 	xnyn=position-x-y;
-	WVector3 end=position+direction;
+	Vector3 end=position+direction;
 	glColor3f(1.0,0.5,0);
 	glBegin(GL_LINES);
 	glVertex3f(xpyp.x,xpyp.y,xpyp.z);
@@ -158,8 +158,8 @@ void ObjectLight::addPrimitive(unsigned int nthPrimitive)
 void ObjectLight::sampleLight(
 							  float u1,float u2,float u3,
 							  WBSDF&bsdf,
-							  WVector3&iposition,
-							  WVector3&iintensity,
+							  Vector3&iposition,
+							  Vector3&iintensity,
 							  float&PDF)
 {
 	iintensity=intensity;
@@ -167,10 +167,10 @@ void ObjectLight::sampleLight(
 	Triangle t=faces[nthTri];
 	float b1,b2;
 	MC::uniformSampleTriangle(u2,u3,b1,b2);
-	WVector3 normal;
+	Vector3 normal;
 	Vector2 texCoord;
 	t.getPoint(b1,b2,iposition,normal,texCoord);
-	WVector3 delta=bsdf.DG.position-iposition;
+	Vector3 delta=bsdf.DG.position-iposition;
 	float distanceSquared=delta.lengthSquared();
 	iintensity=intensity/distanceSquared;
 	delta.normalize();
@@ -186,7 +186,7 @@ void ObjectLight::addTriangle(int objectID, int triangleID)
 	m_faceIDList.emplace_back(FaceID{ objectID, triangleID });
 }
 
-void ObjectLight::sampleLight(float u1, float u2, float u3, WBSDF & bsdf, WVector3 & position, WVector3 & intensity, float & PDF)
+void ObjectLight::sampleLight(float u1, float u2, float u3, WBSDF & bsdf, Vector3 & position, Vector3 & intensity, float & PDF)
 {
 	unsigned faceID = u1 * m_faceIDList.size();
 	faceID = max(0, min(m_faceIDList.size()-1, faceID));
@@ -199,10 +199,10 @@ void ObjectLight::sampleLight(float u1, float u2, float u3, WBSDF & bsdf, WVecto
 
 	float u, v;
 	WMonteCarlo::uniformSampleTriangle(u2, u3, u, v);
-	WVector3 edge21 = triangle.point2 - triangle.point1;
-	WVector3 edge31 = triangle.point3 - triangle.point1;
+	Vector3 edge21 = triangle.point2 - triangle.point1;
+	Vector3 edge31 = triangle.point3 - triangle.point1;
 	position = triangle.point1 + edge21 * u + edge31 * v;
-	WVector3 dir=bsdf.DG.position - position;
+	Vector3 dir=bsdf.DG.position - position;
 	float distanceSquared = dir.lengthSquared();
 	dir.normalize();
 	WDifferentialGeometry DG;
@@ -217,6 +217,14 @@ void ObjectLight::sampleLight(float u1, float u2, float u3, WBSDF & bsdf, WVecto
 	float cosTheta = dir.dot(DG.normal);
 	if (m_isDoubleSide)
 		cosTheta = abs(cosTheta);
+	else
+		cosTheta = max(cosTheta, 0.0);
+	if (cosTheta == 0)
+	{
+		PDF = 0;
+		intensity = 0;
+		return;
+	}
 	float area = edge21.cross(edge31).length() * 0.5;
 	PDF = distanceSquared / (area*cosTheta*m_faceIDList.size());
 }

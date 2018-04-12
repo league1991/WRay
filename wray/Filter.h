@@ -22,9 +22,9 @@ public:
 	//即每调用一次setSampleClr，必须调用一次getFinalClr
 
 	//此函数通过采样颜色值计算一个像素的最终颜色
-	virtual void getFinalClr(WVector3&final)=0;
+	virtual void getFinalClr(Vector3&final)=0;
 	//此函数设置一个采样点的颜色
-	void setSampleClr(WVector3 sampClr);
+	void setSampleClr(Vector3 sampClr);
 	//用sampler重新计算样本点,同时把样本的nthPoint成员归0
 	//此函数直接调用Sampler的computeSamples接口，
 	//computeSamples会先更新Sampler的种子值，
@@ -35,7 +35,7 @@ public:
 protected:
 	WSample2D samples;
 	WSampler*sampler;
-	WVector3*sampleColors;
+	Vector3*sampleColors;
 	unsigned int seed;
 };
 //最简单的过滤器，把样本点简单取平均
@@ -46,5 +46,5 @@ public:
 		WSampler::WSamplerType sampType=WSampler::SAMPLER_RANDOM,
 		unsigned int iseed=65535):
 	WFilter(size,sampType,iseed,WFilter::FILTER_BOX){}
-	void getFinalClr(WVector3&final);
+	void getFinalClr(Vector3&final);
 };

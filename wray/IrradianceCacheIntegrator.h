@@ -23,7 +23,7 @@ public:
 
 	virtual ~WIrradianceCacheIntegrator(void);
 
-	WVector3 integrate(WRay&ray);
+	Vector3 integrate(WRay&ray);
 	//设置插值器参数
 	void setInterpolatorParams(
 		float imaxNormalError=0.1,
@@ -72,21 +72,21 @@ private:
 	//返回布尔值表示插值是否成功
 	//point和normal分别表示要进行插值的点的位置和法线方向
 	bool interpolate(
-		WVector3&point,
-		WVector3&normal,
-		WVector3&E);
+		Vector3&point,
+		Vector3&normal,
+		Vector3&E);
 
 	//计算新的采样点，并把它加入八叉树
 	//返回E值
-	WVector3 computeNewSamples(WBSDF*bsdf);
+	Vector3 computeNewSamples(WBSDF*bsdf);
 
 	//计算间接光照，返回L值
-	WVector3 computeIndirectLight(WBSDF*bsdf);
+	Vector3 computeIndirectLight(WBSDF*bsdf);
 
 	//采用路径跟踪办法计算，直到达最大路径深度
 	//或者路径遇到漫反射表面的时候停止,返回L值
 	void pathTracing(WRay&ray,
-		WVector3&indirectLight,WVector3&pathThroughPut);
+		Vector3&indirectLight,Vector3&pathThroughPut);
 
 
 };

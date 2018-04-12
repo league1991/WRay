@@ -8,7 +8,7 @@ WFilter::WFilter(unsigned int size,
 {
 	type=filterType;
 	seed=iseed;
-	sampleColors=new WVector3[size*size];//样本颜色
+	sampleColors=new Vector3[size*size];//样本颜色
 	samples.allocateSpace();
 	if(sampType==WSampler::SAMPLER_RANDOM)
 		sampler=new WRandomSampler(iseed);
@@ -26,7 +26,7 @@ void WFilter::changeSampleSize(unsigned int isize)
 	samples.setSize(isize);
 	samples.allocateSpace();
 	delete []sampleColors;
-	sampleColors=new WVector3[isize*isize];
+	sampleColors=new Vector3[isize*isize];
 }
 void WFilter::changeSampler(WSampler::WSamplerType type)
 {
@@ -34,7 +34,7 @@ void WFilter::changeSampler(WSampler::WSamplerType type)
 	if(type==WSampler::SAMPLER_RANDOM)
 		sampler=new WRandomSampler(seed);
 }
-void WFilter::setSampleClr(WVector3 sampClr)
+void WFilter::setSampleClr(Vector3 sampClr)
 {
 	sampleColors[samples.nthPoint]=sampClr;
 	samples.nthPoint++;
@@ -44,9 +44,9 @@ void WFilter::refresh()
 {
 	sampler->computeSamples(samples);
 }
-void WBoxFilter::getFinalClr(WVector3&final)
+void WBoxFilter::getFinalClr(Vector3&final)
 {
-	WVector3 totalClr=WVector3(0,0,0);
+	Vector3 totalClr=Vector3(0,0,0);
 	for(unsigned int i=0;i<samples.totalPoints;i++)
 	{
 //		cout<<i<<endl;

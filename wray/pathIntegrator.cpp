@@ -46,7 +46,7 @@ void WPathIntegrator::computeSamples()
 	sampler->computeSamples(lightSamples);
 }
 
-WVector3 WPathIntegrator::integrate(WRay&camRay)//颜色计算
+Vector3 WPathIntegrator::integrate(WRay&camRay)//颜色计算
 {
 // 	clearSamples();
 // 	allocateSamples();
@@ -54,9 +54,9 @@ WVector3 WPathIntegrator::integrate(WRay&camRay)//颜色计算
 //	BSDFSamples.display();
 //	cout<<"begin"<<endl;
 	WDifferentialGeometry DG;
-	WVector3 pathThroughPut(1.0f);
-	WVector3 totalLight(0),directLight;
-	WVector3 ri,ro;
+	Vector3 pathThroughPut(1.0f);
+	Vector3 totalLight(0),directLight;
+	Vector3 ri,ro;
 	float rayPDF;
 	WBSDF*bsdf;
 	WRay ray=camRay;

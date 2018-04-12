@@ -28,7 +28,7 @@ bool isShowScene = true;
 bool isShowGrid = true;
 /*************键盘控制变量End***************/
 
-WVector3 cameraTarget(0);
+Vector3 cameraTarget(0);
 WRay myRay;
 
 //WRay myRay2;
@@ -74,7 +74,7 @@ DWORD WINAPI compute(LPVOID lpParam)  //使用工程中的某些功能来进行光线跟踪计算并
 
 //		float progress=0,newprogress;
 //		renderTime[threadID] = clock();
-		WVector3 color;
+		Vector3 color;
 		//光线跟踪
 		WRay r;
 		//把统计量全部清零
@@ -130,11 +130,11 @@ DWORD WINAPI compute(LPVOID lpParam)  //使用工程中的某些功能来进行光线跟踪计算并
 //			{
 //				int x = nthRay % resX;
 //				int y = nthRay / resX;
-//				WVector3 color;
+//				Vector3 color;
 //				if (rayGroup.isectTriangle[nRays])
 //					color = rayGroup.DG[nRays].normal;
 //				else
-//					color = WVector3(0);
+//					color = Vector3(0);
 //				myCamera->setColor(fabs(color.x),fabs(color.y),fabs(color.z),x,y);
 //			}
 //			glutPostRedisplay();
@@ -155,7 +155,7 @@ DWORD WINAPI compute(LPVOID lpParam)  //使用工程中的某些功能来进行光线跟踪计算并
 				for (int x = 0; x < resX; ++x) //resX是x轴方向分辨率,换句话说也就是这里的x的最大可以取到的值 
 				{
 //#ifdef PRODUCTION_RENDER
-					color = WVector3(0,0,0);
+					color = Vector3(0,0,0);
 					const int dimSubSample = 1;  //方形像素点，每条边分成dimSubSample份，也就是把一个像素点分成dimSubSample^2份，有抗锯齿的效果
 					const float subSampleSize = 1.0f / float(dimSubSample);//此处可设置采样点的大小,采样点大小对图像效果的影响暂不明确
 					for (int subY = 0; subY < dimSubSample; ++subY)
@@ -246,8 +246,8 @@ void init()
 
 	reader.readFile("areaLight.obj");
 	//设置光线，具体用法还不确定，似乎没起到作用
-	//myRay.point=WVector3(0,0,0);
-	//myRay.direction=WVector3(1.01,0.01,0.01);
+	//myRay.point=Vector3(0,0,0);
+	//myRay.direction=Vector3(1.01,0.01,0.01);
 	//myRay.tMin=1e-7f;
 	//rayalpha=raybeta=0.0f;
 
@@ -294,7 +294,7 @@ void init()
 	//估计是计算颜色值的时候要用这些初始值
 	myCamera = new WCamera;
 	//parameter的参数分别是 相机位置, 观察目标点, 上方, .......
-	myCamera->setParameter(WVector3(Lx,Ly,Lz),/*cameraTarget*/WVector3(-1.0, -1.0, -1.0),WVector3(0,1,0),fov,winWidth*0.5/winHeight);
+	myCamera->setParameter(Vector3(Lx,Ly,Lz),/*cameraTarget*/Vector3(-1.0, -1.0, -1.0),Vector3(0,1,0),fov,winWidth*0.5/winHeight);
 	myCamera->setFilmResolutionX(winWidth);
 	myCamera->changeSampleSize(1);
 
@@ -302,27 +302,27 @@ void init()
 
 	//...没用的东西..
 	/*WMaterial*perfectRefl=new WPerfectReflectionMaterial("PRL",3);
-	((WPerfectReflectionMaterial*)perfectRefl)->setColor(WVector3(1));
-	WMaterial*perfectRefr=new WPerfectRefractionMaterial("PRR",3,WVector3(1,1,0.8),1.5);
-	WMaterial*metal=new WMetalMaterial("Metal",4,WVector3(0.8,0.8,0.8),3);
-	WMaterial*phong=new WPhongMaterial("phong",3,WVector3(1,0.5,0),1,100);
-	WMaterial*dielectric=new WDielectricMaterial("ddd",3,WVector3(1,0.5,0),100000,2.0);*/
+	((WPerfectReflectionMaterial*)perfectRefl)->setColor(Vector3(1));
+	WMaterial*perfectRefr=new WPerfectRefractionMaterial("PRR",3,Vector3(1,1,0.8),1.5);
+	WMaterial*metal=new WMetalMaterial("Metal",4,Vector3(0.8,0.8,0.8),3);
+	WMaterial*phong=new WPhongMaterial("phong",3,Vector3(1,0.5,0),1,100);
+	WMaterial*dielectric=new WDielectricMaterial("ddd",3,Vector3(1,0.5,0),100000,2.0);*/
 //	myScene.setNthMaterial(metal,0);
 //	myScene.setNthMaterial(dielectric,0);
 //	myScene.setNthMaterial(perfectRefr,0);
 
 	//添加灯光
 	//只是一个点光源
-	myLight=new WPointLight(WVector3(40), WVector3(1,-5,1));
+	myLight=new WPointLight(Vector3(40), Vector3(1,-5,1));
 	//myScene.addLight(myLight);
-	myLight=new WPointLight(WVector3(50), WVector3(0,-2,3));
+	myLight=new WPointLight(Vector3(50), Vector3(0,-2,3));
 //	myScene.addLight(myLight);
 
 	//对于宿舍的话，就是宿舍里面的灯，是某种矩形光源
-	myLight=new WRectangleLight(WVector3(0,-5,8),WVector3(0,0,-1),WVector3(1,0,0),10,5,WVector3(25),true);
+	myLight=new WRectangleLight(Vector3(0,-5,8),Vector3(0,0,-1),Vector3(1,0,0),10,5,Vector3(25),true);
 //	myScene.addLight(myLight);
 	//对于宿舍的话，就是阳台的灯，也算是某种矩形光源
-//	myLight=new WRectangleLight(WVector3(2,24,1),WVector3(0,-1,0),WVector3(0,0,1),4.5,6.5,WVector3(50),true);
+//	myLight=new WRectangleLight(Vector3(2,24,1),Vector3(0,-1,0),Vector3(0,0,1),4.5,6.5,Vector3(50),true);
 //	myScene.addLight(myLight);
 
 	//myIntegrator=new WPathIntegrator(&myScene,myAccelerator,3,WSampler::SAMPLER_RANDOM,1.0f);
@@ -396,7 +396,7 @@ void displayFcn()
 	//	myTree.drawScene();
 		myRay.tMin=1e-7f;
 		myRay.tMax=M_INF_BIG;
-		myRay.direction = WVector3(cos(raybeta)*cos(rayalpha),
+		myRay.direction = Vector3(cos(raybeta)*cos(rayalpha),
 								  cos(raybeta)*sin(rayalpha),sin(raybeta));
 		myRay.drawSegment();
 		glColor3f(0.7f,0.7f,0.7f);
@@ -576,7 +576,7 @@ void mouseMoveFcn(GLint xMouse,GLint yMouse)
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
 			gluLookAt(Lx,Ly,Lz,cameraTarget.x,cameraTarget.y,cameraTarget.z,0,0,1);
-			myCamera->setParameter(WVector3(Lx,Ly,Lz),cameraTarget,WVector3(0,0,1),fov,(float)winWidth/(float)winHeight);
+			myCamera->setParameter(Vector3(Lx,Ly,Lz),cameraTarget,Vector3(0,0,1),fov,(float)winWidth/(float)winHeight);
 			glutPostRedisplay();
 		}
 		isEyeChanged = true;
@@ -595,13 +595,13 @@ void mouseMoveFcn(GLint xMouse,GLint yMouse)
 			deltaY=yMouse-lastMouseY;
 			lastMouseX=xMouse;
 			lastMouseY=yMouse;
-			WVector3 x,y;
+			Vector3 x,y;
 			myCamera->getXY(x, y);
 			cameraTarget += -0.01f * x * deltaX + 0.01f * y * deltaY;
 			Lx=r*cos(beta)*cos(alpha) + cameraTarget.x;
 			Ly=r*cos(beta)*sin(alpha) + cameraTarget.y;
 			Lz=r*sin(beta) + cameraTarget.z;
-			myCamera->setParameter(WVector3(Lx,Ly,Lz),cameraTarget,WVector3(0,0,1),fov,(float)winWidth/(float)winHeight);
+			myCamera->setParameter(Vector3(Lx,Ly,Lz),cameraTarget,Vector3(0,0,1),fov,(float)winWidth/(float)winHeight);
 			glutPostRedisplay();
 		}
 		isEyeChanged = true;
@@ -625,7 +625,7 @@ void mouseMoveFcn(GLint xMouse,GLint yMouse)
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
 			gluLookAt(Lx,Ly,Lz,cameraTarget.x,cameraTarget.y,cameraTarget.z,0,0,1);
-			myCamera->setParameter(WVector3(Lx,Ly,Lz),cameraTarget,WVector3(0,0,1),fov,(float)winWidth/(float)winHeight);
+			myCamera->setParameter(Vector3(Lx,Ly,Lz),cameraTarget,Vector3(0,0,1),fov,(float)winWidth/(float)winHeight);
 			glutPostRedisplay();
 		}
 		isEyeChanged = true;
@@ -712,7 +712,7 @@ void reshapeFcn(GLint Width,GLint Height)
 	if(!isComputing)
 	{
 		//渲染时禁止窗口缩放-->这里只是限定了窗口中画布的大小,窗口可以缩放但画布大小不变
-		myCamera->setParameter(WVector3(Lx,Ly,Lz),cameraTarget,WVector3(0,0,1),fov,(float)winWidth/(float)winHeight);
+		myCamera->setParameter(Vector3(Lx,Ly,Lz),cameraTarget,Vector3(0,0,1),fov,(float)winWidth/(float)winHeight);
 		myCamera->setFilmResolutionX(winWidth);
 	}
 }

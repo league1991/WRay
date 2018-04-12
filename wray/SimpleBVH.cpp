@@ -85,8 +85,8 @@ void WSimpleBVH::buildTreeKernel(
 	//构建质心包围盒
 	WBoundingBox centroidBox=
 		WBoundingBox(getTriangle(triangleIDs[0]).getCentroid()-
-					WVector3(1e-4f),
-		getTriangle(triangleIDs[0]).getCentroid()+WVector3(1e-4f));
+					Vector3(1e-4f),
+		getTriangle(triangleIDs[0]).getCentroid()+Vector3(1e-4f));
 	for(vector<unsigned int>::iterator triPtr=
 		triangleIDs.begin();triPtr!=triangleIDs.end();
 		triPtr++)
@@ -95,7 +95,7 @@ void WSimpleBVH::buildTreeKernel(
 	}
 
 	//包围盒跨度,选择跨度最大的一个轴线来分隔
-	WVector3 boxExtent=centroidBox.pMax-centroidBox.pMin;
+	Vector3 boxExtent=centroidBox.pMax-centroidBox.pMin;
 	char splitAxis=
 		boxExtent.x>boxExtent.y?
 		(boxExtent.x>boxExtent.z?'x':'z'):
@@ -110,7 +110,7 @@ void WSimpleBVH::buildTreeKernel(
 	// 	vector<WBin> bins;
 	// 	bins.resize(nBins);
 	//每个Bin的坐标间隔
-	WVector3 binInterval = boxExtent/float(nBins);
+	Vector3 binInterval = boxExtent/float(nBins);
 	//	cout<<"binInterval:"<<endl;
 //	binInterval.showCoords();
 
@@ -149,7 +149,7 @@ void WSimpleBVH::buildTreeKernel(
 			trianglePtr++,nthTriangle++)
 		{
 			//计算质心
-			WVector3 centroid=
+			Vector3 centroid=
 				getTriangle(*trianglePtr).getCentroid();
 
 			//放入对应的bin中
@@ -185,7 +185,7 @@ void WSimpleBVH::buildTreeKernel(
 			trianglePtr++,nthTriangle++)
 		{
 			//计算质心
-			WVector3 centroid=
+			Vector3 centroid=
 				getTriangle(*trianglePtr).getCentroid();
 
 			//放入对应的bin中
@@ -221,7 +221,7 @@ void WSimpleBVH::buildTreeKernel(
 			trianglePtr++,nthTriangle++)
 		{
 			//计算质心
-			WVector3 centroid=
+			Vector3 centroid=
 				getTriangle(*trianglePtr).getCentroid();
 
 			//放入对应的bin中
@@ -252,7 +252,7 @@ void WSimpleBVH::buildTreeKernel(
 
 	//对于所有可能的分隔，计算左右节点包围盒的面积
 	//一共有nBins-1个分隔方案
-	leftBox = rightBox = WBoundingBox(WVector3(0),WVector3(0));
+	leftBox = rightBox = WBoundingBox(Vector3(0),Vector3(0));
 	isLeftFirst = isRightFirst = true;
 	for(unsigned int nthBin=0;nthBin<nBins-1;nthBin++)
 	{
@@ -396,10 +396,10 @@ void WSimpleBVH::drawTreeIteractively()
 		if((*pNode).type == WBVHNode::BVHN_LEAF)
 			continue;
 		WBoundingBox box;
-		box.pMin = WVector3((*pNode).box[0],
+		box.pMin = Vector3((*pNode).box[0],
 			(*pNode).box[1],
 			(*pNode).box[2]);
-		box.pMax = WVector3((*pNode).box[3],
+		box.pMax = Vector3((*pNode).box[3],
 			(*pNode).box[4],
 			(*pNode).box[5]);
 		box.draw();
@@ -419,11 +419,11 @@ void WSimpleBVH::drawTreeRecursivelyKernel( vector<WBVHNode>&nodes, unsigned int
 	if(nodes[ithNode].type==WBVHNode::BVHN_LEAF)
 		return;
 	WBoundingBox box;
-	box.pMin = WVector3(
+	box.pMin = Vector3(
 		nodes[ithNode].box[0],
 		nodes[ithNode].box[1],
 		nodes[ithNode].box[2]);
-	box.pMax = WVector3(
+	box.pMax = Vector3(
 		nodes[ithNode].box[3],
 		nodes[ithNode].box[4],
 		nodes[ithNode].box[5]);

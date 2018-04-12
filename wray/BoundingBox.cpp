@@ -12,15 +12,15 @@ WBoundingBox::WBoundingBox(const WTriangle& it, bool isBigger)
 		e = delta;
 	else
 		e = 0.0f;
-	pMin = it.point1 - WVector3(e);
-	pMax = it.point1 + WVector3(e);
+	pMin = it.point1 - Vector3(e);
+	pMax = it.point1 + Vector3(e);
 	merge(it.point2, isBigger);
 	merge(it.point3, isBigger);
 }
 WBoundingBox::~WBoundingBox(void)
 {
 }
-WBoundingBox::WBoundingBox(WVector3 ipMin,WVector3 ipMax)
+WBoundingBox::WBoundingBox(Vector3 ipMin,Vector3 ipMax)
 {
 	pMin=ipMin;pMax=ipMax;
 }
@@ -34,7 +34,7 @@ WBoundingBox::WBoundingBox( float box[2][3] )
 	pMax.y = box[1][1];
 	pMax.z = box[1][2];
 }
-void WBoundingBox::merge(const WVector3&point,bool isBigger)
+void WBoundingBox::merge(const Vector3&point,bool isBigger)
 {
 	float e = 0.0f;
 	if(isBigger)
@@ -125,7 +125,7 @@ WBoundingBox WBoundingBox::operator =(const WBoundingBox&box)
 }
 float WBoundingBox::halfArea()
 {
-	WVector3 boxExtent=pMax-pMin;
+	Vector3 boxExtent=pMax-pMin;
 	return boxExtent.x*boxExtent.y+
 			boxExtent.y*boxExtent.z+
 			boxExtent.z*boxExtent.x;
@@ -143,10 +143,10 @@ bool WBoundingBox::operator==( const WBoundingBox& box ) const
 	return false;
 }
 
-void WBoundingBox::getTightBound( WVector3& tightMin, WVector3& tightMax )
+void WBoundingBox::getTightBound( Vector3& tightMin, Vector3& tightMax )
 {
-	tightMin = pMin + WVector3(delta);
-	tightMax = pMax - WVector3(delta);
+	tightMin = pMin + Vector3(delta);
+	tightMax = pMax - Vector3(delta);
 }
 
 bool WBoundingBox::intersect( const WBoundingBox& iBox, WBoundingBox& resultBox )
@@ -166,19 +166,19 @@ bool WBoundingBox::intersect( const WBoundingBox& iBox, WBoundingBox& resultBox 
 	return true;
 }
 
-bool WBoundingBox::isInBoxInclusive( const WVector3& point )
+bool WBoundingBox::isInBoxInclusive( const Vector3& point )
 {
 	return point.x >= pMin.x && point.y >= pMin.y && point.z >= pMin.z &&
 		   point.x <= pMax.x && point.y <= pMax.y && point.z <= pMax.z ;
 }
 
-bool WBoundingBox::isInBoxExclusive( const WVector3& point )
+bool WBoundingBox::isInBoxExclusive( const Vector3& point )
 {
 	return point.x > pMin.x && point.y > pMin.y && point.z > pMin.z &&
 		   point.x < pMax.x && point.y < pMax.y && point.z < pMax.z ;
 }
 
-bool WBoundingBox::onFace( WVector3& point, int& face )
+bool WBoundingBox::onFace( Vector3& point, int& face )
 {
 	if (point.x == pMin.x)
 	{

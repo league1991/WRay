@@ -57,19 +57,19 @@ void WPerfectRefractionMaterial::getProperties( vector<float>& properties )
 	properties.push_back(IOR);
 }
 
-WMetalMaterial::WMetalMaterial(string iName,unsigned int iID,WVector3 Fr,float iexp, WVector3 ilight):WMaterial(MATERIAL_METAL,iName,iID,Fr,ilight),exp(iexp)
+WMetalMaterial::WMetalMaterial(string iName,unsigned int iID,Vector3 Fr,float iexp, Vector3 ilight):WMaterial(MATERIAL_METAL,iName,iID,Fr,ilight),exp(iexp)
 {
-	k=2.0f*(color/(WVector3(1)-color)).sqrtElement();
-	WVector3 colorSqrt=color.sqrtElement();
-	eta=(WVector3(1)+colorSqrt)/(WVector3(1)-colorSqrt);
+	k=2.0f*(color/(Vector3(1)-color)).sqrtElement();
+	Vector3 colorSqrt=color.sqrtElement();
+	eta=(Vector3(1)+colorSqrt)/(Vector3(1)-colorSqrt);
 // 	k.showCoords();
 // 	eta.showCoords();
 }
 void WMetalMaterial::refreshColor()
 {
-	k=2.0f*(color/(WVector3(1)-color)).sqrtElement();
-	WVector3 colorSqrt=color.sqrtElement();
-	eta=(WVector3(1)+colorSqrt)/(WVector3(1)-colorSqrt);
+	k=2.0f*(color/(Vector3(1)-color)).sqrtElement();
+	Vector3 colorSqrt=color.sqrtElement();
+	eta=(Vector3(1)+colorSqrt)/(Vector3(1)-colorSqrt);
 }
 void WMetalMaterial::buildBSDF(WDifferentialGeometry DG,WBSDF*&bsdf)
 {

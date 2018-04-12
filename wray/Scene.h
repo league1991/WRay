@@ -22,7 +22,7 @@ public:
 	void drawScene(bool showNormal=false,bool fillMode=false);
 	//此函数画出整个场景，利用TriangleArray作为数据
 	//可以此检查TriangleArray是否有错
-	void drawByTriangleArray(bool showNormal=false,bool fillMode=false,WVector3 color=WVector3(0,0,0));
+	void drawByTriangleArray(bool showNormal=false,bool fillMode=false,Vector3 color=Vector3(0,0,0));
 	//此函数重建所有物体的subPrimitive,参数表示每个SubPrimitive包含的最大面数,调用此函数后必须重建KD树
 	void rebuildAllSubPs(unsigned int inFacesPerSubP);
 	//获得基本体的指针，以及基本体的个数
@@ -78,7 +78,7 @@ public:
 
 	void showMaterials(){
 		for(int i = 0; i < this->nMaterials; i ++){
-			WVector3 tmp = this->materials[i]->getColor();
+			Vector3 tmp = this->materials[i]->getColor();
 			printf("mtl%d: %f, %f, %f;\n", i, tmp.x, tmp.y, tmp.z);
 		}
 	}

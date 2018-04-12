@@ -55,16 +55,16 @@ void WScene::buildScene(WObjReader &reader)
 		//		cout<<mtlName<<diffuse.x<<diffuse.y<<diffuse.z<<endl;
 		if (mtl.isShiny())
 		{
-			materials[i] = new WPhongMaterial(mtlName, i, WVector3(diffuse.x,diffuse.y,diffuse.z), mtl.specular, 1, WVector3(emission.x,emission.y,emission.z));			
+			materials[i] = new WPhongMaterial(mtlName, i, Vector3(diffuse.x,diffuse.y,diffuse.z), mtl.specular, 1, Vector3(emission.x,emission.y,emission.z));			
 		}
 		else if (mtl.isTransparent())
 		{
-			materials[i] = new WPerfectRefractionMaterial(mtlName, i, WVector3(diffuse.x,diffuse.y,diffuse.z), 1.33, WVector3(emission.x,emission.y,emission.z));
+			materials[i] = new WPerfectRefractionMaterial(mtlName, i, Vector3(diffuse.x,diffuse.y,diffuse.z), 1.33, Vector3(emission.x,emission.y,emission.z));
 		}
 		else
-			materials[i]=new WLambertMaterial(mtlName,i,WVector3(diffuse.x,diffuse.y,diffuse.z),WVector3(emission.x,emission.y,emission.z));
+			materials[i]=new WLambertMaterial(mtlName,i,Vector3(diffuse.x,diffuse.y,diffuse.z),Vector3(emission.x,emission.y,emission.z));
 // 		((WLambertMaterial*)materials[i])->
-// 			setColor(WVector3(diffuse.x,diffuse.y,diffuse.z));
+// 			setColor(Vector3(diffuse.x,diffuse.y,diffuse.z));
 	}
 	buildTriangleArray();
 	buildLightData();
@@ -191,13 +191,13 @@ void WScene::buildScene( Render* re )
 	materials=new WMaterial*[1];
 	string mtlName;
 	mtlName= "default material";
-	materials[0]=new WLambertMaterial(mtlName,0,WVector3(1,1,1));
+	materials[0]=new WLambertMaterial(mtlName,0,Vector3(1,1,1));
 }
 #endif
 void WScene::drawScene(bool showNormal,bool fillMode)
 {
 	WTriangle tri;
-	WVector3 color;
+	Vector3 color;
 //  	if(nMaterials!=0)
 //  		MessageBox(0,L"0 Mtl",L"aa",0);
 	for(unsigned int i=0;i<m_objects.size();i++)
@@ -281,7 +281,7 @@ void WScene::buildLightData()
 			{
 				if (lightMap.find(material) == lightMap.end())
 				{
-					lightMap[material] = new ObjectLight(WVector3(1000.0), tri.mtlId, this, true);
+					lightMap[material] = new ObjectLight(Vector3(1000.0), tri.mtlId, this, true);
 				}
 				lightMap[material]->addTriangle(ithObj, ithTri);
 			}
@@ -355,7 +355,7 @@ void WScene::buildTriangleArray()
 	nTriangles = totalTris;
 }
 
-void WScene::drawByTriangleArray( bool showNormal/*=false*/,bool fillMode/*=false*/,WVector3 color/*=WVector3(0,0,0)*/ )
+void WScene::drawByTriangleArray( bool showNormal/*=false*/,bool fillMode/*=false*/,Vector3 color/*=Vector3(0,0,0)*/ )
 {
 	glColor3f(color.x,color.y,color.z);
 	for(unsigned int nthTriangle=0;
