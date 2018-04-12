@@ -66,7 +66,8 @@ bool WSample2D::get2D(float&x,float&y)
 	{
 		x=pattern[2*nthPoint];
 		y=pattern[2*nthPoint+1];
-		nthPoint++;return true;
+		nthPoint++;
+		return true;
 	}
 	return false;
 }

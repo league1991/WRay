@@ -141,7 +141,7 @@ DWORD WINAPI compute(LPVOID lpParam)  //使用工程中的某些功能来进行光线跟踪计算并
 //		}
 //#else
 		//这里传入的参数，第一个的myScene可能有点麻烦，可能需要换成目标平台的相应Scene对象，并且需要做一些修改
-		WPathIntegrator * threadIntegrator=new WPathIntegrator(&myScene,myAccelerator,20,WSampler::SAMPLER_RANDOM,1.0f);
+		WPathIntegrator * threadIntegrator=new WPathIntegrator(&myScene,myAccelerator,20,WSampler::SAMPLER_STRATIFIED,1.0f);
 		//yInterval变量存储的是图像按y轴分割成块,每块的厚度,本程序中numCores的值为4
 		int yInterval = resY / numCores;
 		//根据线ID(本程序内自定)决定y的起始值

@@ -5,7 +5,7 @@
 WPathIntegrator::WPathIntegrator(WScene *scene, WAccelerator *tree, unsigned int ipathDepth, WSampler::WSamplerType samplerType,float imultiplier):
 WSurfaceIntegrator(scene,tree),Dlighting(scene,tree),
 multiplier(imultiplier),
-lightSamples(1),BSDFSamples(1)
+lightSamples(4),BSDFSamples(4)
 {
 	pathMaxDepth=max(1,ipathDepth);
 	if(samplerType==WSampler::SAMPLER_RANDOM)
@@ -79,7 +79,7 @@ Vector3 WPathIntegrator::integrate(WRay&camRay)//颜色计算
 			totalLight+=pathThroughPut*directLight;
 			float bsdfU,bsdfV;
 			BSDFSamples.get2D(bsdfU,bsdfV);
-			bsdf->sampleRay(rand()/32767.f,rand()/32767.f,ri,ro,rayPDF);
+			bsdf->sampleRay(bsdfU, bsdfV,ri,ro,rayPDF);
 			ray.point=DG.position;
 			ray.direction=ri;
 			ray.tMin = 0.01f;
@@ -99,9 +99,9 @@ Vector3 WPathIntegrator::integrate(WRay&camRay)//颜色计算
 		}
 	}
 	//	totalLight.showCoords();
-	totalLight.x = min(totalLight.x,5.f);
-	totalLight.y = min(totalLight.y,5.f);
-	totalLight.z = min(totalLight.z,5.f);
+	//totalLight.x = min(totalLight.x,5.f);
+	//totalLight.y = min(totalLight.y,5.f);
+	//totalLight.z = min(totalLight.z,5.f);
 	return totalLight;
 }
 void WPathIntegrator::displayTime()
