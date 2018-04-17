@@ -58,12 +58,11 @@ Vector3 WPathIntegrator::integrate(WRay&camRay)//颜色计算
 	Vector3 totalLight(0),directLight;
 	Vector3 ri,ro;
 	float rayPDF;
-	WBSDF*bsdf;
 	WRay ray=camRay;
 //				cout<<ray.tMin<<endl;
 //	ray.tMin=1e-5f;
 	int beginNode = -1, endNode = -1;
-	for(unsigned int depth=0;depth<pathMaxDepth;depth++)
+	for(unsigned int depth=0; depth<pathMaxDepth;depth++)
 	{
 		if(tree->intersect(ray,DG,&endNode,beginNode))
 		{
@@ -72,10 +71,12 @@ Vector3 WPathIntegrator::integrate(WRay&camRay)//颜色计算
 			WMaterial*mtl;
 			scene->getNthMaterial(mtl,DG.mtlId);
 
+			WBSDF*bsdf;
 			mtl->buildBSDF(DG,bsdf);
+			std::unique_ptr<WBSDF> bsdfPtr(bsdf);
+
 			ro=-1*ray.direction;
-			directLight=Dlighting.sampleAllLights(
-				bsdf,lightSamples,BSDFSamples,ro, &endNode);
+			directLight=Dlighting.sampleAllLights(bsdf,lightSamples,BSDFSamples,ro, &endNode);
 			totalLight+=pathThroughPut*directLight;
 			float bsdfU,bsdfV;
 			BSDFSamples.get2D(bsdfU,bsdfV);
@@ -85,7 +86,6 @@ Vector3 WPathIntegrator::integrate(WRay&camRay)//颜色计算
 			ray.tMin = 0.01f;
 			ray.tMax=M_INF_BIG;
 			pathThroughPut*=bsdf->evaluateFCos(ri,ro)/rayPDF;
-			delete bsdf;
 			beginNode = endNode;
 		}
 		else 

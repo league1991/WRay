@@ -5,8 +5,8 @@
 std::unique_ptr<TileRenderer> TileRenderer::s_instance;
 
 TileRenderer::TileRenderer() :
-	m_width(0), m_height(0), m_tileWidth(32), m_tileHeight(32),
-	m_tileCountWidth(0), m_tileCountHeight(0), m_isRendering(0), m_renderPass(0),
+	m_width(0), m_height(0), m_tileWidth(64), m_tileHeight(64),
+	m_tileCountWidth(0), m_tileCountHeight(0), m_renderStatus(NOT_RENDERED), m_renderPass(0),
 	m_camera(new Camera) {
 	for (int i = 0; i < getSystemCores(); i++)
 	{
@@ -16,7 +16,7 @@ TileRenderer::TileRenderer() :
 	m_scheduleThread = std::unique_ptr<std::thread>(new std::thread([this]() {
 		while (true) {
 			scheduleTasks();
-			std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(1000));
+			std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(100));
 		}
 	}));
 }
@@ -39,6 +39,11 @@ void TileRenderer::readScene(const std::string & objPath)
 
 	m_tree = std::unique_ptr<WMultiBVH>(new WMultiBVH());
 	m_tree->buildTree(*m_scene);
+
+	for (int i = 0; i < getSystemCores(); i++)
+	{
+		m_threads[i]->init();
+	}
 }
 
 TileRenderer * TileRenderer::getInstance()
@@ -52,27 +57,50 @@ TileRenderer * TileRenderer::getInstance()
 
 void TileRenderer::scheduleTasks()
 {
-	if (m_isRendering == false)
+	if (m_renderStatus == NOT_RENDERED)
 	{
 		return;
 	}
+	if (m_renderStatus == WAITING_TO_RENDER)
+	{
+		m_camera->clearFilm();
+		for (auto task : m_tileTask)
+		{
+			task->resetTask();
+		}
+		m_renderStatus = RENDERING;
+	}
+
 	// Collect free threads
+	int nWorkingThreads = 0;
 	std::vector<RenderThread*> freeThreads;
 	for (auto& threadPtr : m_threads) {
 		if (!threadPtr->isWorking()) {
 			freeThreads.push_back(threadPtr.get());
 		}
+		else
+		{
+			nWorkingThreads++;
+		}
+	}
+	if (m_renderStatus == WAITING_TO_STOP)
+	{
+		if (nWorkingThreads == 0)
+		{
+			m_renderStatus = NOT_RENDERED;
+		}
+		return;
 	}
 
 	// Handle tasks.
 	int nUnfinishedTasks = 0;
 	for (auto task : m_tileTask)
 	{
-		if (!task->isFinished())
+		if (task->m_status != TileTask::FINISHED)
 		{
 			nUnfinishedTasks++;
 		}
-		else if (freeThreads.size() != 0)
+		if (task->m_status == TileTask::WAITING && freeThreads.size() != 0)
 		{
 			auto lastThread = freeThreads.back();
 			lastThread->runTask(task);
@@ -85,7 +113,7 @@ void TileRenderer::scheduleTasks()
 	{
 		for (auto task : m_tileTask)
 		{
-			task->initTask();
+			task->resetTask();
 		}
 		m_renderPass++;
 	}
@@ -93,7 +121,7 @@ void TileRenderer::scheduleTasks()
 
 bool TileRenderer::resize(int width, int height)
 {
-	if (m_isRendering)
+	if (m_renderStatus != NOT_RENDERED)
 	{
 		return false;
 	}
@@ -128,10 +156,31 @@ bool TileRenderer::resize(int width, int height)
 
 void TileRenderer::setCamera(const Vector3 & origin, const Vector3 & target, const Vector3 & up, float fov, int width, int height) {
 	float ratioWH = (float)width / (float)height;
-	m_camera->setParameter(origin, target, up, fov, ratioWH * 0.5);
+	m_camera->setParameter(origin, target, up, fov, ratioWH);
+	m_camera->setFilmResolutionX(width);
 	m_camera->changeSampleSize(1);
 	resize(width, height);
 }
+
+// Render
+
+void TileRenderer::beginRender()
+{
+	if (m_renderStatus == NOT_RENDERED)
+	{
+		m_renderStatus = WAITING_TO_RENDER;
+	}
+}
+
+void TileRenderer::stopRender()
+{
+	if (m_renderStatus == RENDERING)
+	{
+		m_renderStatus = WAITING_TO_STOP;
+	}
+}
+
+bool TileRenderer::isRendering() { return m_renderStatus == RENDERING; }
 
 void RenderThread::run() {
 	m_thread = std::unique_ptr<std::thread>(new std::thread([this]() {
@@ -147,7 +196,11 @@ void RenderThread::run() {
 						Vector3 color(0, 0, 0);
 						WRay r;
 						camera->getNextRay(r, x, y);
-						color += m_integrator->integrate(r);
+						for (int samples = 0; samples < 4; samples++)
+						{
+							color += m_integrator->integrate(r);
+						}
+						color /= 10;
 						camera->accumulateColor(color.x, color.y, color.z, x, y);
 					}
 				}
@@ -177,4 +230,5 @@ bool RenderThread::init()
 	}
 	auto renderer = TileRenderer::getInstance();
 	m_integrator.reset(new WPathIntegrator(renderer->getScene(), renderer->getTree(), 20, WSampler::SAMPLER_STRATIFIED, 1.0f));
+	return true;
 }

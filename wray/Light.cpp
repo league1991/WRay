@@ -212,6 +212,7 @@ void ObjectLight::sampleLight(float u1, float u2, float u3, WBSDF & bsdf, Vector
 	m_scene->getNthMaterial(material, triangle.mtlId);
 	WBSDF* lightBSDF;
 	material->buildBSDF(DG, lightBSDF);
+	std::unique_ptr<WBSDF> lightBSDFPtr(lightBSDF);
 	intensity = m_intensity * lightBSDF->getEmission() / distanceSquared;
 
 	float cosTheta = dir.dot(DG.normal);

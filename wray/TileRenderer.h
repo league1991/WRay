@@ -3,21 +3,25 @@
 class TileTask
 {
 public:
+	enum TaskStatus
+	{
+		WAITING,
+		EXECUTING,
+		FINISHED,
+	};
 	TileTask(int beginWidth, int beginHeight, int w, int h) :
 		m_beginWidth(beginWidth), m_beginHeight(beginHeight),
-		m_width(w), m_height(h), m_finished(false)
+		m_width(w), m_height(h), m_status(WAITING)
 	{
 		m_result.resize(m_width*m_height);
 	}
 
-	void initTask() { m_finished = false; }
-	void finishTask() { m_finished = true; }
-	bool isFinished() { return m_finished; }
-
+	void resetTask() { m_status = WAITING; }
+	void finishTask() { m_status = FINISHED; }
 	int m_beginWidth, m_beginHeight;
 	int m_width, m_height;
+	TaskStatus m_status;
 private:
-	bool m_finished;
 	std::vector<Vector4> m_result;
 };
 
@@ -45,6 +49,13 @@ private:
 class TileRenderer
 {
 public:
+	enum RenderStatus
+	{
+		NOT_RENDERED,
+		WAITING_TO_RENDER,
+		RENDERING,
+		WAITING_TO_STOP,
+	};
 	TileRenderer();
 	~TileRenderer();
 
@@ -59,17 +70,12 @@ public:
 	// Camera
 	bool resize(int width, int height);
 	void setCamera(const Vector3& origin, const Vector3& target, const Vector3& up, float fov, int width, int height);
-	Camera* getCamera() { m_camera; }
+	Camera* getCamera() { return m_camera.get(); }
 
 	// Render
-	void beginRender()
-	{
-		m_isRendering = true;
-	}
-	void stopRender()
-	{
-		m_isRendering = false;
-	}
+	void beginRender();
+	void stopRender();
+	bool isRendering();
 
 	static TileRenderer* getInstance();
 protected:
@@ -94,7 +100,7 @@ protected:
 	std::vector<std::unique_ptr<RenderThread>> m_threads;
 	std::unique_ptr<std::thread> m_scheduleThread;
 	std::vector<std::shared_ptr<TileTask>> m_tileTask;
-	bool m_isRendering;
+	RenderStatus m_renderStatus;
 
 	// Scene Data
 	std::unique_ptr<Scene> m_scene;
