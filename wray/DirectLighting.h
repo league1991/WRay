@@ -5,7 +5,7 @@ class WDirectLighting :
 	public WSurfaceIntegrator
 {
 public:
-	WDirectLighting(WScene *iscene,WAccelerator*itree):
+	WDirectLighting(Scene *iscene,WAccelerator*itree):
 	  WSurfaceIntegrator(iscene,itree){}
 	virtual ~WDirectLighting(void);
 

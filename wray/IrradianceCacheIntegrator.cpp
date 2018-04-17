@@ -2,7 +2,7 @@
 #include "IrradianceCacheIntegrator.h"
 
 WIrradianceCacheIntegrator::WIrradianceCacheIntegrator(
-	WScene*iscene,WAccelerator*itree,
+	Scene*iscene,WAccelerator*itree,
 	unsigned int ioctTreeMaxDepth,
 	unsigned int inRaysForLambert,
 	unsigned int inRaysForSpecular,

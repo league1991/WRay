@@ -75,7 +75,7 @@ WOctNode::WOctNode()
 	for(int i=0;i<8;i++)
 		children[i]=NULL;
 }
-WOctTree::WOctTree(WScene*iscene,unsigned int imaxDepth):
+WOctTree::WOctTree(Scene*iscene,unsigned int imaxDepth):
 scene(iscene)
 {
 	sceneBox=scene->getBBox();
@@ -87,7 +87,7 @@ WOctTree::~WOctTree(void)
 {
 	clear();
 }
-void WOctTree::initialize(WScene*iscene)
+void WOctTree::initialize(Scene*iscene)
 {
 	scene=iscene;
 	root=new WOctNode;

@@ -2,7 +2,7 @@
 #include "pathIntegrator.h"
 #include "Scene.h"
 
-WPathIntegrator::WPathIntegrator(WScene *scene, WAccelerator *tree, unsigned int ipathDepth, WSampler::WSamplerType samplerType,float imultiplier):
+WPathIntegrator::WPathIntegrator(Scene *scene, WAccelerator *tree, unsigned int ipathDepth, WSampler::WSamplerType samplerType,float imultiplier):
 WSurfaceIntegrator(scene,tree),Dlighting(scene,tree),
 multiplier(imultiplier),
 lightSamples(4),BSDFSamples(4)

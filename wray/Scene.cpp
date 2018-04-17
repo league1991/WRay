@@ -1,17 +1,17 @@
 #include "StdAfx.h"
 #include "Scene.h"
-WScene::WScene(void)
+Scene::Scene(void)
 {
 	materials=NULL;
 	nMaterials = nSubPrimitives = nTriangles = 0;
 	nTriangles = NULL;
 }
 
-WScene::~WScene(void)
+Scene::~Scene(void)
 {
 	clearScene();
 }
-void WScene::clearScene()
+void Scene::clearScene()
 {
 	m_objects.clear();
 	for(unsigned int i=0;i<nMaterials;i++)
@@ -28,7 +28,7 @@ void WScene::clearScene()
 	nMaterials=0;
 	clearTriangleArray();
 }
-void WScene::buildScene(WObjReader &reader)
+void Scene::buildScene(WObjReader &reader)
 {
 	m_objects.resize(reader.primitives.size());
 	unsigned int n=0;//每个Primitive的SubPrimitive数量
@@ -70,7 +70,7 @@ void WScene::buildScene(WObjReader &reader)
 	buildLightData();
 }
 #ifdef BLENDER_INCLUDE
-void WScene::buildScene( Render* re )
+void Scene::buildScene( Render* re )
 {
 	// 统计场景的面总数以及几何体总数，便于分配空间
 	// 注意： 三角形数组的元素个数可能多于三角形总数
@@ -194,7 +194,7 @@ void WScene::buildScene( Render* re )
 	materials[0]=new WLambertMaterial(mtlName,0,Vector3(1,1,1));
 }
 #endif
-void WScene::drawScene(bool showNormal,bool fillMode)
+void Scene::drawScene(bool showNormal,bool fillMode)
 {
 	WTriangle tri;
 	Vector3 color;
@@ -211,25 +211,25 @@ void WScene::drawScene(bool showNormal,bool fillMode)
 		m_lights[i]->draw();
 
 }
-void WScene::getObjects(MeshObject *&iprimitives, unsigned int &nPrims)
+void Scene::getObjects(MeshObject *&iprimitives, unsigned int &nPrims)
 {
 		nPrims= m_objects.size();
 		iprimitives=&this->m_objects[0];
 }
-void WScene::getObject(MeshObject*&iprimitives,unsigned int nthPrim)
+void Scene::getObject(MeshObject*&iprimitives,unsigned int nthPrim)
 {
 	iprimitives=&(m_objects[nthPrim]);
 }
-void WScene::getMaterials(WMaterial**&imaterials,unsigned int&nMtl)
+void Scene::getMaterials(WMaterial**&imaterials,unsigned int&nMtl)
 {
 	nMtl=nMaterials;
 	imaterials=this->materials;
 }
-void WScene::getNthMaterial(WMaterial*&imaterial,unsigned int nthMtl)
+void Scene::getNthMaterial(WMaterial*&imaterial,unsigned int nthMtl)
 {
 	imaterial=materials[nthMtl];
 }
-void WScene::setNthMaterial(WMaterial*imaterial,unsigned int nthMtl)
+void Scene::setNthMaterial(WMaterial*imaterial,unsigned int nthMtl)
 {
 	if(nthMtl>=0&&nthMtl<nMaterials)
 	{
@@ -237,7 +237,7 @@ void WScene::setNthMaterial(WMaterial*imaterial,unsigned int nthMtl)
 		materials[nthMtl]=imaterial;
 	}
 }
-void WScene::rebuildAllSubPs(unsigned int inFacesPerSubP)
+void Scene::rebuildAllSubPs(unsigned int inFacesPerSubP)
 {
 	if(!inFacesPerSubP)
 		return;
@@ -251,7 +251,7 @@ void WScene::rebuildAllSubPs(unsigned int inFacesPerSubP)
 	}
 	return;
 }
-void WScene::buildSceneBBox()
+void Scene::buildSceneBBox()
 {
 	if(m_objects.size() ==0)
 		return;
@@ -263,7 +263,7 @@ void WScene::buildSceneBBox()
 	}
 	return;
 }
-void WScene::buildLightData()
+void Scene::buildLightData()
 {
 	std::unordered_map<WMaterial*, ObjectLight*> lightMap;
 
@@ -293,30 +293,30 @@ void WScene::buildLightData()
 		m_lights.push_back(lightPair.second);
 	}
 }
-void WScene::drawSceneBBox()
+void Scene::drawSceneBBox()
 {
 	glColor3f(0.1f,0.1f,0.5f);
 	sceneBox.draw();
 }
-void WScene::addLight(WLight *light)
+void Scene::addLight(WLight *light)
 {
 	m_lights.push_back(light);
 }
-WLight* WScene::getLightPointer(unsigned int nthLight)
+WLight* Scene::getLightPointer(unsigned int nthLight)
 {
 	return m_lights[nthLight];
 }
-unsigned int WScene::getLightNum()
+unsigned int Scene::getLightNum()
 {
 	return m_lights.size();
 }
-void WScene::clearSelect()
+void Scene::clearSelect()
 {
 	for(unsigned int i=0;i<m_objects.size();i++)
 		m_objects[i].isSelected=false;
 }
 
-void WScene::buildTriangleArray()
+void Scene::buildTriangleArray()
 {
 	unsigned int totalTris=0;
 	for(unsigned int nthPrimitive=0;
@@ -355,7 +355,7 @@ void WScene::buildTriangleArray()
 	nTriangles = totalTris;
 }
 
-void WScene::drawByTriangleArray( bool showNormal/*=false*/,bool fillMode/*=false*/,Vector3 color/*=Vector3(0,0,0)*/ )
+void Scene::drawByTriangleArray( bool showNormal/*=false*/,bool fillMode/*=false*/,Vector3 color/*=Vector3(0,0,0)*/ )
 {
 	glColor3f(color.x,color.y,color.z);
 	for(unsigned int nthTriangle=0;
@@ -365,7 +365,7 @@ void WScene::drawByTriangleArray( bool showNormal/*=false*/,bool fillMode/*=fals
 	}
 }
 
-void WScene::clearTriangleArray()
+void Scene::clearTriangleArray()
 {
 	if (!nTriangles)
 	{
@@ -376,13 +376,13 @@ void WScene::clearTriangleArray()
 	nTriangles = 0;
 }
 
-void WScene::getTriangleArray( WTriangle*&itriangles,unsigned int&nTris )
+void Scene::getTriangleArray( WTriangle*&itriangles,unsigned int&nTris )
 {
 	itriangles=triangles;
 	nTris=nTriangles;
 }
 
-void WScene::getTriAccelArray(float*& array, int& nFloat4s)
+void Scene::getTriAccelArray(float*& array, int& nFloat4s)
 {
 	nFloat4s = nTriangles * 3;
 	array = new float[nFloat4s * 4];
@@ -409,7 +409,7 @@ void WScene::getTriAccelArray(float*& array, int& nFloat4s)
 	}
 }
 
-void WScene::getMaterialArrayFloat4Uint2( 
+void Scene::getMaterialArrayFloat4Uint2( 
 										unsigned int*& mtlIDs, unsigned int& nIDPixels, 
 										float*& mtlData, unsigned int& nDataPixels )
 {
@@ -442,7 +442,7 @@ void WScene::getMaterialArrayFloat4Uint2(
 	}
 }
 
-void WScene::getLightArrayFloat4Uint2( 
+void Scene::getLightArrayFloat4Uint2( 
 									 unsigned int*& lightIDs, unsigned int& nIDPixels, 
 									 float*& lightData, unsigned int& nDataPixels )
 {

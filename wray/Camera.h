@@ -1,11 +1,11 @@
 #pragma once
 #include "Vector3.h"
 #include "Film.h"
-class WCamera
+class Camera
 {
 public:
-	WCamera(void);
-	virtual ~WCamera(void);
+	Camera(void);
+	virtual ~Camera(void);
 	void setParameter(
 		Vector3 iori=Vector3(0,0,1),
 		Vector3 itar=Vector3(0,0,0),

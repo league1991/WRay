@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "Camera.h"
 
-WCamera::WCamera(void)
+Camera::Camera(void)
 {
 	origin=Vector3(0,0,1);
 	target=Vector3(0,0,0);
@@ -12,10 +12,10 @@ WCamera::WCamera(void)
 	computeXY();
 }
 
-WCamera::~WCamera(void)
+Camera::~Camera(void)
 {
 }
-void WCamera::setParameter(Vector3 iori, Vector3 itar, Vector3 iup, float ifov,float iratio)
+void Camera::setParameter(Vector3 iori, Vector3 itar, Vector3 iup, float ifov,float iratio)
 {
 	origin=iori;
 	target=itar;
@@ -24,14 +24,14 @@ void WCamera::setParameter(Vector3 iori, Vector3 itar, Vector3 iup, float ifov,f
 	ratio=iratio;
 	computeXY();
 }
-void WCamera::setDirectionParams(Vector3 iori, Vector3 itar, Vector3 iup)
+void Camera::setDirectionParams(Vector3 iori, Vector3 itar, Vector3 iup)
 {
 	origin=iori;
 	target=itar;
 	up=iup;
 	computeXY();
 }
-void WCamera::computeXY()
+void Camera::computeXY()
 {
 	dir=target-origin;
 	dir.normalize();
@@ -43,7 +43,7 @@ void WCamera::computeXY()
 	y*=Ly;
 	x*=(Ly*ratio);
 }
-void WCamera::drawCamera(float R,float G,float B)
+void Camera::drawCamera(float R,float G,float B)
 {
 	//屏幕的四个角的空间位置
 	Vector3 xpyp,xnyp,xpyn,xnyn;
@@ -81,47 +81,47 @@ void WCamera::drawCamera(float R,float G,float B)
 	
 	glEnd();
 }
-void WCamera::generateRay(float xRatio, float yRatio,WRay&ray)
+void Camera::generateRay(float xRatio, float yRatio,WRay&ray)
 {
 	ray.point=origin;
 	ray.direction=dir+x*xRatio+y*yRatio;
 	ray.tMin=1e-5f;
 	ray.tMax=M_INF_BIG;
 }
-void WCamera::drawFilmInScreen(float offsetX,float offsetY)
+void Camera::drawFilmInScreen(float offsetX,float offsetY)
 {
 	Vector3 FilmPos=origin+dir-x*(1.0f+offsetX)-y*(1.0f+offsetY);
 	film.draw(FilmPos.x,FilmPos.y,FilmPos.z);
 }
-void WCamera::drawFilmInWorld(float offsetX,float offsetY,float offsetZ)
+void Camera::drawFilmInWorld(float offsetX,float offsetY,float offsetZ)
 {
 	film.draw(offsetX,offsetY,offsetZ);
 }
-void WCamera::setFilmResolutionX(unsigned int resX,unsigned int resY)
+void Camera::setFilmResolutionX(unsigned int resX,unsigned int resY)
 {
 	film.setResolution(resX,resY);
 }
-void WCamera::setFilmResolutionXY(unsigned int resX,unsigned int resY)
+void Camera::setFilmResolutionXY(unsigned int resX,unsigned int resY)
 {
 	film.setResolution(resX,resY);
 	film.cleanColors(0,0,0);
 	ratio=(float)resX/(float)resY;
 }
-void WCamera::cleanFilmColors(float R,float G,float B)
+void Camera::cleanFilmColors(float R,float G,float B)
 {
 	film.cleanColors(R,G,B);
 }
-void WCamera::setFilmResolutionX(unsigned int resX)
+void Camera::setFilmResolutionX(unsigned int resX)
 {
 	setFilmResolutionX(resX,(unsigned int)ceil(resX/ratio));
 }
-void WCamera::getFilmResolution(int&resX, int&resY)
+void Camera::getFilmResolution(int&resX, int&resY)
 {
 	Vector2 res=film.getResolution();
 	resX=(int)res.x;
 	resY=(int)res.y;
 }
-void WCamera::getNextRay(WRay&ray)
+void Camera::getNextRay(WRay&ray)
 {
 	float screenX,screenY;
 	film.getSamplePosition(screenX,screenY);
@@ -135,7 +135,7 @@ void WCamera::getNextRay(WRay&ray)
 	ray.tMax=M_INF_BIG;
 }
 
-void WCamera::getNextRay( WRay&ray, float xi, float yi )
+void Camera::getNextRay( WRay&ray, float xi, float yi )
 {
 	Vector2 res=film.getResolution();
 	float screenX= float(xi) /res.x*2.0f-1.0f;
@@ -147,38 +147,38 @@ void WCamera::getNextRay( WRay&ray, float xi, float yi )
 	ray.tMax=M_INF_BIG;
 }
 
-bool WCamera::isFilmFull()
+bool Camera::isFilmFull()
 {
 	return film.isFull();
 }
-void WCamera::setColor(float R,float G,float B)
+void Camera::setColor(float R,float G,float B)
 {
 	film.setSampleColor(R,G,B);
 }
 
-void WCamera::setColor( float R, float G, float B, int x, int y )
+void Camera::setColor( float R, float G, float B, int x, int y )
 {
 	film.setColor(x, y, R, G, B);
 }
-void WCamera::accumulateColor( float R, float G, float B, int x, int y )
+void Camera::accumulateColor( float R, float G, float B, int x, int y )
 {
 	film.accumulateColor(x, y, R, G, B);
 }
-void WCamera::clearFilm(float R,float G,float B)
+void Camera::clearFilm(float R,float G,float B)
 {
 	film.setCurrPos(0,0);
 	film.cleanColors(R,G,B);
 }
-void WCamera::changeSampleSize(unsigned int size)
+void Camera::changeSampleSize(unsigned int size)
 {
 	film.changeSampleSize(size);
 	filmSampleSize=size;
 }
-void WCamera::changeSampler(WSampler::WSamplerType type)
+void Camera::changeSampler(WSampler::WSamplerType type)
 {
 	film.changeSampler(type);
 }
-float WCamera::currProgress()
+float Camera::currProgress()
 {
 	unsigned int currX,currY;
 	film.getCurrPos(currX,currY);
@@ -187,17 +187,17 @@ float WCamera::currProgress()
 	float totalPoints=res.x*res.y;
 	return nPoints/totalPoints;
 }
-int*WCamera::getFilmBitPointer()
+int*Camera::getFilmBitPointer()
 {
 	return film.getBitPointer();
 }
 
-Vector3 WCamera::getColor( unsigned int x,unsigned int y )
+Vector3 Camera::getColor( unsigned int x,unsigned int y )
 {
 	return film.getColor(x,y);
 }
 
-void WCamera::nextExposurePass()
+void Camera::nextExposurePass()
 {
 	film.nextExposurePass();
 }

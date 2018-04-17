@@ -5,7 +5,7 @@ class WPathIntegrator :
 	public WSurfaceIntegrator
 {
 public:
-	WPathIntegrator(WScene*scene,WAccelerator*tree,
+	WPathIntegrator(Scene*scene,WAccelerator*tree,
 		unsigned int ipathDepth=1,
 		WSampler::WSamplerType samplerType=WSampler::SAMPLER_RANDOM,float imultiplier=1);
 	virtual ~WPathIntegrator(void);

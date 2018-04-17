@@ -4,11 +4,11 @@
 #include "Primitive.h"
 #include "Material.h"
 #include "Light.h"
-class WScene
+class Scene
 {
 public:
-	WScene(void);
-	~WScene(void);
+	Scene(void);
+	~Scene(void);
 
 #ifdef BLENDER_INCLUDE
 	//把Render结构的数据导入，用于blender渲染初始化

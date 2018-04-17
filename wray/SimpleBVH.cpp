@@ -13,7 +13,7 @@ WSimpleBVH::~WSimpleBVH(void)
 	this->clearTree();
 }
 
-void WSimpleBVH::buildTree( WScene&scene )
+void WSimpleBVH::buildTree( Scene&scene )
 {
 	cout<<"begin to build BVH"<<endl;
 	scene.getTriangleArray(triangles,nTriangles);

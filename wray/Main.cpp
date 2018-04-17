@@ -34,10 +34,10 @@ WRay myRay;
 //WRay myRay2;
 float rayalpha = 0.1f,raybeta = 0.1f;
 //WDifferentialGeometry DG;
-WScene myScene;
+Scene myScene;
 WAccelerator* myAccelerator;
 //WOctTree*myOctTree;
-WCamera*myCamera;
+Camera*myCamera;
 WLight *myLight;
 WLight *myLight2;
 //WSurfaceIntegrator*myIntegrator;
@@ -56,7 +56,6 @@ int isThreadComputing[8];
 bool isInitiate = true;
 
 //重要的地方在init()函数与compute函数与上面的那堆变量声明
-
 
 #define INFINITE_RENDER
 DWORD WINAPI compute(LPVOID lpParam)  //使用工程中的某些功能来进行光线跟踪计算并绘制计算结果
@@ -244,12 +243,8 @@ void init()
 	glLoadIdentity();
 	gluPerspective(fovDeg,float(winWidth)/float(winHeight), 0.1f,1000.0f);
 
-	reader.readFile("areaLight.obj");
-	//设置光线，具体用法还不确定，似乎没起到作用
-	//myRay.point=Vector3(0,0,0);
-	//myRay.direction=Vector3(1.01,0.01,0.01);
-	//myRay.tMin=1e-7f;
-	//rayalpha=raybeta=0.0f;
+	auto renderer = TileRenderer::getInstance();
+	renderer->readScene("areaLight.obj");
 
 
 	//myScene根据reader的数据构建需要渲染的场景
@@ -292,7 +287,7 @@ void init()
 
 	//不要不行但要有何用？
 	//估计是计算颜色值的时候要用这些初始值
-	myCamera = new WCamera;
+	myCamera = new Camera;
 	//parameter的参数分别是 相机位置, 观察目标点, 上方, .......
 	myCamera->setParameter(Vector3(Lx,Ly,Lz),/*cameraTarget*/Vector3(-1.0, -1.0, -1.0),Vector3(0,1,0),fov,winWidth*0.5/winHeight);
 	myCamera->setFilmResolutionX(winWidth);

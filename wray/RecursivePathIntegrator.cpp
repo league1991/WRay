@@ -2,7 +2,7 @@
 #include "RecursivePathIntegrator.h"
 
 WRecursivePathIntegrator::WRecursivePathIntegrator
-(WScene *scene, WAccelerator *tree,
+(Scene *scene, WAccelerator *tree,
  unsigned int ipathDepth,unsigned int inBranch,
  WSampler::WSamplerType samplerType,float imultiplier):
 

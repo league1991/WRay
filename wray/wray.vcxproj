@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{AB76EBCF-F02A-46D4-A1BF-B7A0019CCC3B}</ProjectGuid>
+    <RootNamespace>wray</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.25431.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>glut32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Accelerator.cpp" />
+    <ClCompile Include="BoundingBox.cpp" />
+    <ClCompile Include="BSDF.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Clipper.cpp" />
+    <ClCompile Include="Clock.cpp" />
+    <ClCompile Include="DifferentialGeometry.cpp" />
+    <ClCompile Include="DirectLighting.cpp" />
+    <ClCompile Include="DisplaySystem.cpp" />
+    <ClCompile Include="Film.cpp" />
+    <ClCompile Include="Filter.cpp" />
+    <ClCompile Include="IrradianceCacheIntegrator.cpp" />
+    <ClCompile Include="KDTree.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightMaterial.cpp" />
+    <ClCompile Include="MailBox.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MC.cpp" />
+    <ClCompile Include="MetropolisIntegrator.cpp" />
+    <ClCompile Include="MultiBVH.cpp" />
+    <ClCompile Include="ObjReader.cpp" />
+    <ClCompile Include="OctTree.cpp" />
+    <ClCompile Include="pathIntegrator.cpp" />
+    <ClCompile Include="Primitive.cpp" />
+    <ClCompile Include="RandomCamera.cpp" />
+    <ClCompile Include="Ray.cpp" />
+    <ClCompile Include="RecursivePathIntegrator.cpp" />
+    <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="Sampler.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Shapes.cpp" />
+    <ClCompile Include="SimpleBVH.cpp" />
+    <ClCompile Include="SimpleKD.cpp" />
+    <ClCompile Include="SimpleKD2.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SurfaceIntegrator.cpp" />
+    <ClCompile Include="TileRenderer.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="Utilities.cpp" />
+    <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="Vector4.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Accelerator.h" />
+    <ClInclude Include="BoundingBox.h" />
+    <ClInclude Include="BSDF.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Clipper.h" />
+    <ClInclude Include="Clock.h" />
+    <ClInclude Include="DifferentialGeometry.h" />
+    <ClInclude Include="DirectLighting.h" />
+    <ClInclude Include="DisplaySystem.h" />
+    <ClInclude Include="Film.h" />
+    <ClInclude Include="Filter.h" />
+    <ClInclude Include="glut.h" />
+    <ClInclude Include="IrradianceCacheIntegrator.h" />
+    <ClInclude Include="KDTree.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="LightMaterial.h" />
+    <ClInclude Include="MailBox.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="MathValues.h" />
+    <ClInclude Include="MC.h" />
+    <ClInclude Include="MetropolisIntegrator.h" />
+    <ClInclude Include="MultiBVH.h" />
+    <ClInclude Include="ObjReader.h" />
+    <ClInclude Include="OctTree.h" />
+    <ClInclude Include="pathIntegrator.h" />
+    <ClInclude Include="Primitive.h" />
+    <ClInclude Include="RandomCamera.h" />
+    <ClInclude Include="Ray.h" />
+    <ClInclude Include="RecursivePathIntegrator.h" />
+    <ClInclude Include="renderKernel.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Sample.h" />
+    <ClInclude Include="Sampler.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SimpleBVH.h" />
+    <ClInclude Include="SimpleKD.h" />
+    <ClInclude Include="SimpleKD2.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SurfaceIntegrator.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="TileRenderer.h" />
+    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Vector3.h" />
+    <ClInclude Include="Vector4.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

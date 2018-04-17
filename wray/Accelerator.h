@@ -13,7 +13,7 @@ public:
 	virtual bool intersect(WRay& r,WDifferentialGeometry& DG, 
 						int* endNode = NULL, int beginNode = -1)=0;	
 	virtual bool isIntersect(WRay& r, int beginNode = 0) = 0;
-	virtual void buildTree(WScene& scene) = 0;
+	virtual void buildTree(Scene& scene) = 0;
 	virtual void clearTree() = 0;
 	virtual void drawTree(unsigned int nthBox=0,
 							float R = 0.7, 

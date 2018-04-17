@@ -6,7 +6,7 @@ class WIrradianceCacheIntegrator :
 {
 public:
 	WIrradianceCacheIntegrator(
-		WScene*iscene,WAccelerator*itree,
+		Scene*iscene,WAccelerator*itree,
 		unsigned int ioctTreeMaxDepth=10,
 		unsigned int inRaysForLambert=50,
 		unsigned int inRaysForSpecular=10,

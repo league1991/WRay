@@ -46,7 +46,7 @@ public:
 		float R=0.4,
 		float G=0.4,
 		float B=0.4);			
-	void buildTree(WScene&scene);	//由场景数据创建KD树
+	void buildTree(Scene&scene);	//由场景数据创建KD树
 	//显示节点包围盒
 	//此函数为递归调用，
 	//可以依此检查节点信息是否正确
@@ -105,7 +105,7 @@ protected:
 	WBoundingBox*nodeBoxes;
 	WClock clock;
 	
-	void buildMailBoxes(WScene&scene);//通过场景创建mailBox数组
+	void buildMailBoxes(Scene&scene);//通过场景创建mailBox数组
 
 	//用已建立好的mailbox创建KD树,整个场景定义为KD树的深度
 	//为0的节点

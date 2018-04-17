@@ -87,7 +87,7 @@ private:
 class ObjectLight:public WLight
 {
 public:
-	ObjectLight(Vector3 iintensity, int materialID, WScene*iscene,bool iisDoubleSide):
+	ObjectLight(Vector3 iintensity, int materialID, Scene*iscene,bool iisDoubleSide):
 		WLight(LIGHT_OBJECT,false), m_materialID(materialID), m_intensity(iintensity),m_scene(iscene),m_isDoubleSide(iisDoubleSide)
 	{}
 
@@ -100,7 +100,7 @@ public:
 	void clear() { m_faceIDList.clear(); }
 	virtual bool isDeltaLight() { return false; }
 private:
-	WScene*m_scene;
+	Scene*m_scene;
 	struct FaceID
 	{
 		int m_objectID;

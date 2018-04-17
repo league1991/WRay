@@ -4,8 +4,8 @@ class WMetropolisIntegrator:WSurfaceIntegrator
 {
 public:
 	WMetropolisIntegrator(
-		WScene*iscene,WAccelerator*itree,WCamera* icamera);
+		Scene*iscene,WAccelerator*itree,Camera* icamera);
 	~WMetropolisIntegrator(void);
 private:
-	WCamera* camera;
+	Camera* camera;
 };

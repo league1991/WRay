@@ -66,7 +66,7 @@ public:
 	WSimpleBVH(void);
 	~WSimpleBVH(void);
 	// WAccelerator 提供的接口
-	void buildTree(WScene&scene);
+	void buildTree(Scene&scene);
 	void clearTree();
 	void drawTreeIteractively();
 	void drawTree(unsigned int nthBox=0,

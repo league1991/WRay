@@ -15,7 +15,7 @@ void WRandomCamera::setFilmResolutionX( unsigned int resX )
 {
 //	cout<<"set resolution in randomCamera."<<endl;
 	//除了改变胶片的分辨率，还要另外新建一个数组
-	WCamera::setFilmResolutionX(resX);
+	Camera::setFilmResolutionX(resX);
 	unsigned int resY = (unsigned int)ceil(resX/ratio);
 	
 	delete []nSamples;
@@ -30,7 +30,7 @@ void WRandomCamera::setFilmResolutionX( unsigned int resX )
 void WRandomCamera::setFilmResolutionXY( unsigned int resX,unsigned int resY )
 {
 	//除了改变胶片的分辨率，还要另外新建一个数组
-	WCamera::setFilmResolutionXY(resX, resY);
+	Camera::setFilmResolutionXY(resX, resY);
 	
 	delete []nSamples;
 	nSamples = new unsigned int[resX*resY];
@@ -69,7 +69,7 @@ void WRandomCamera::setColor( float R,float G,float B, Vector3 idir )
 
 void WRandomCamera::clearFilm( float R /*=0.0f*/,float G /*=0.0f*/,float B /*=0.0f*/ )
 {
-	WCamera::clearFilm(R, G, B);
+	Camera::clearFilm(R, G, B);
 	for(unsigned int ithPixel=0; ithPixel<resolutionX*resolutionY; ithPixel++)
 		nSamples[ithPixel]=0;
 	

@@ -62,7 +62,7 @@ void WKDTree::cleanMailBoxes()
 		p++;
 	}
 }
-void WKDTree::buildMailBoxes(WScene&scene)
+void WKDTree::buildMailBoxes(Scene&scene)
 {
 	nMailBoxes=scene.getSubPrimNum();
 	mailBoxes=new WMailBox[nMailBoxes];
@@ -523,7 +523,7 @@ void WKDTree::buildTreeCore(
 // 	belowMBoxIndices=aboveMBoxIndices=NULL;
 // 	cout<<"delete memory end"<<endl;
 }
-void WKDTree::buildTree(WScene&scene)
+void WKDTree::buildTree(Scene&scene)
 {
 	delete[]mailBoxes;
 	delete[]nodeBoxes;

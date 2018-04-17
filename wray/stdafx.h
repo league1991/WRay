@@ -28,6 +28,8 @@
 #include <string>
 #include <algorithm>
 #include <unordered_map>
+#include <thread>
+#include <mutex>
 #include <omp.h>
 #include <xmmintrin.h>
 #include <emmintrin.h>
@@ -107,6 +109,7 @@ using namespace std;
 
 #include "Vector2.h"
 #include "Vector3.h"
+#include "Vector4.h"
 #include "DisplaySystem.h"
 #include "ObjReader.h"
 #include "Ray.h"
@@ -141,7 +144,7 @@ using namespace std;
 #include "IrradianceCacheIntegrator.h"
 #include "RandomCamera.h"
 #include "MetropolisIntegrator.h"
-#include "renderKernel.h"
+#include "TileRenderer.h"
 
 
 #define  M_PI   3.1415926535    

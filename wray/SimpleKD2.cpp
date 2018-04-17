@@ -19,7 +19,7 @@ WSimpleKD2::~WSimpleKD2(void)
 	clearTree();
 }
 
-void WSimpleKD2::buildTree( WScene&scene )
+void WSimpleKD2::buildTree( Scene&scene )
 {
 	//获得场景三角形数组和包围盒
 	cout<<"begin to build KD"<<endl;

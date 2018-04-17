@@ -102,13 +102,13 @@ public:
 class WOctTree
 {
 public:
-	WOctTree(WScene*iscene,unsigned int imaxDepth=10);
+	WOctTree(Scene*iscene,unsigned int imaxDepth=10);
 	virtual ~WOctTree(void);
 	void addSample(const WIrradianceSample&sample);
 	//显示节点的包围盒，调试时用
 	void displayNodes();
 	void displaySamples(bool isDisplayBox=false);
-	void initialize(WScene*iscene);
+	void initialize(Scene*iscene);
 
 	//清除所有节点
 	void clear();
@@ -145,6 +145,6 @@ private:
 	vector<WBoundingBox>boxes;			//节点包围盒，调试时用
 	WOctNode*root;						//根节点
 	unsigned int maxDepth;
-	WScene*scene;
+	Scene*scene;
 	WBoundingBox sceneBox;
 };

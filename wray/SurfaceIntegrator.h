@@ -3,7 +3,7 @@
 class WSurfaceIntegrator
 {
 public:
-	WSurfaceIntegrator(WScene*iscene,WAccelerator*itree):
+	WSurfaceIntegrator(Scene*iscene,WAccelerator*itree):
 	  scene(iscene),tree(itree){};
 	virtual ~WSurfaceIntegrator(void);
 	virtual Vector3 integrate(WRay&ray){return Vector3(0);}
@@ -12,6 +12,6 @@ public:
 	// prepare samples for the following render pass
 	virtual void initSamples(int nSampleGroup = 10){}
 protected:
-	WScene*scene;
+	Scene*scene;
 	WAccelerator*tree;
 };

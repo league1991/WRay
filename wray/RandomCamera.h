@@ -1,6 +1,6 @@
 #pragma once
 //此摄像机可以设定任意像素点的颜色
-class WRandomCamera:public WCamera
+class WRandomCamera:public Camera
 {
 public:
 	WRandomCamera(void);

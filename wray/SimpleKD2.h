@@ -60,7 +60,7 @@ protected:
 public:
 	WSimpleKD2(void);
 	~WSimpleKD2(void);
-	void buildTree(WScene&scene);
+	void buildTree(Scene&scene);
 	void clearTree();
 
 	bool intersect(WRay& r,WDifferentialGeometry& DG, 

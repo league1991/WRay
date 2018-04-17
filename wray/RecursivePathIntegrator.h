@@ -3,7 +3,7 @@
 class WRecursivePathIntegrator:public WSurfaceIntegrator
 {
 public:
-	WRecursivePathIntegrator(WScene*scene,WAccelerator*tree,
+	WRecursivePathIntegrator(Scene*scene,WAccelerator*tree,
 		unsigned int ipathDepth=1,unsigned int inBranch=2,
 		WSampler::WSamplerType samplerType=WSampler::SAMPLER_RANDOM,float imultiplier=1);
 	virtual ~WRecursivePathIntegrator(void);

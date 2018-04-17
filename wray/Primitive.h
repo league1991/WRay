@@ -16,7 +16,7 @@ class MeshObject
 {
 	//ObjReader是Primitive的友元类，可以直接访问它的私有成员
 	friend class WObjReader;
-	friend class WScene;
+	friend class Scene;
 public:
 	MeshObject(void);
 	virtual ~MeshObject(void);
