@@ -194,7 +194,7 @@ void RenderThread::run() {
 					for (int x = m_task->m_beginWidth; x < m_task->m_beginWidth+m_task->m_width; ++x)
 					{
 						Vector3 color(0, 0, 0);
-						WRay r;
+						Ray r;
 						camera->getNextRay(r, x, y);
 						for (int samples = 0; samples < 4; samples++)
 						{

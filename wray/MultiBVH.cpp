@@ -175,7 +175,7 @@ void WMultiBVH::buildCacheFriendlyKernel()
 
 
 
-bool WMultiBVH::intersect( WRay& r,WDifferentialGeometry& DG, int* endNode /*= NULL*/, int beginNode /*= 0*/ )
+bool WMultiBVH::intersect( Ray& r,WDifferentialGeometry& DG, int* endNode /*= NULL*/, int beginNode /*= 0*/ )
 {
 	if (numInteriors == 0 )
 		return false;
@@ -420,7 +420,7 @@ bool WMultiBVH::intersect( WRay& r,WDifferentialGeometry& DG, int* endNode /*= N
 	return res;
 }
 
-bool WMultiBVH::isIntersect( WRay& r, int beginNode /*= 0*/ )
+bool WMultiBVH::isIntersect( Ray& r, int beginNode /*= 0*/ )
 {
 	if (numInteriors == 0 )
 		return false;

@@ -9,7 +9,7 @@ public:
 	virtual ~WRecursivePathIntegrator(void);
 
 	//光线追踪函数
-	Vector3 integrate(WRay&ray);
+	Vector3 integrate(Ray&ray);
 	void setPathMaxDepth(unsigned int idepth);
 	void displayTime();
 private:
@@ -28,5 +28,5 @@ private:
 	void allocateSamples();
 	void computeSamples();
 	//光线追踪递归函数
-	Vector3 integrateCore(WRay ray,unsigned int depth,int beginNode = 0);
+	Vector3 integrateCore(Ray ray,unsigned int depth,int beginNode = 0);
 };

@@ -93,7 +93,7 @@ void WIrradianceCacheIntegrator::clearTree()
 	octTree.clear();
 }
 
-Vector3 WIrradianceCacheIntegrator::integrate(WRay&ray)
+Vector3 WIrradianceCacheIntegrator::integrate(Ray&ray)
 {
 	WDifferentialGeometry DG;
 	WBSDF*bsdf=NULL;
@@ -125,7 +125,7 @@ Vector3 WIrradianceCacheIntegrator::integrate(WRay&ray)
 //				return Vector3(0);
 			float bsdfU,bsdfV;
 			unsigned int nIntersectedRays=0;
-			WRay ray;				//需要再次发射的光线
+			Ray ray;				//需要再次发射的光线
 			Vector3 ri,ro,L;
 			float PDF;
 			sampler->computeSamples(SpecularBSDFSamples);
@@ -234,7 +234,7 @@ Vector3 WIrradianceCacheIntegrator::integrate(WRay&ray)
 
 
 void WIrradianceCacheIntegrator::pathTracing(
-	WRay&ray, 
+	Ray&ray, 
 	Vector3&indirectLight,Vector3&pathThroughPut)
 {
 	Vector3 pathDirectLight;
@@ -325,7 +325,7 @@ Vector3 WIrradianceCacheIntegrator::computeNewSamples(WBSDF*bsdf)
 	Vector3 L(0);
 	Vector3 Li;
 	WDifferentialGeometry DG;
-	WRay ray;
+	Ray ray;
 	Vector3 ri,ro;
 	ro=bsdf->DG.rayDir;
 	Vector3 directLight;

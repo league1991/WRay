@@ -73,8 +73,8 @@ public:
 				  float R = 0.7, 
 				  float G = 0.7, 
 				  float B = 0.7);//递归方法，用于检查节点
-	bool intersect(WRay&r,WDifferentialGeometry&DG, int* endNode, int beginNode = 0);//求交函数
-	bool isIntersect(WRay&r, int beginNode = 0);
+	bool intersect(Ray&r,WDifferentialGeometry&DG, int* endNode, int beginNode = 0);//求交函数
+	bool isIntersect(Ray&r, int beginNode = 0);
 	void displayNodeInfo();
 
 	// WSimpleBVH 特有的接口

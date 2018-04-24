@@ -64,11 +64,11 @@ public:
 	
 	//求交函数，输入光线，输出DifferentialGeometry
 	//返回布尔值表示求交成功与否
-	bool intersect(WRay&r,WDifferentialGeometry&DG, 
+	bool intersect(Ray&r,WDifferentialGeometry&DG, 
 		int& endNode, int beginNode = 0);
 	void clearTree();//清除内存空间
 	//检查光线是否在参数范围内跟场景的某个三角形相交
-	bool isIntersect(WRay&r, int beginNode = 0);
+	bool isIntersect(Ray&r, int beginNode = 0);
 
 	//设置节点的相关属性，应该在建立KD树之前设置这些属性
 	void setNodeAttr(

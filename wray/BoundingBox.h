@@ -29,7 +29,7 @@ public:
 	//显示坐标值
 	void displayCoords()const;
 	//光线与包围盒求交，返回参数范围（可能为负数）
-	bool isIntersect(const WRay&r,
+	bool isIntersect(const Ray&r,
 		float&tMin,float&tMax);
 	//检测一个点是不是在包围盒里面，包括刚好在包围盒表面上的点
 	bool isInBoxInclusive(const Vector3& point);

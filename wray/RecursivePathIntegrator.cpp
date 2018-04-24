@@ -50,7 +50,7 @@ void WRecursivePathIntegrator::computeSamples()
 	sampler->computeSamples(lightSamples);
 }
 
-Vector3 WRecursivePathIntegrator::integrateCore( WRay ray,unsigned int depth,int beginNode /*= 0*/ )
+Vector3 WRecursivePathIntegrator::integrateCore( Ray ray,unsigned int depth,int beginNode /*= 0*/ )
 {
 //	computeSamples();
 // 	if(depth==maxDepth)
@@ -102,7 +102,7 @@ Vector3 WRecursivePathIntegrator::integrateCore( WRay ray,unsigned int depth,int
 //	totalLight.showCoords();
 	return totalLight;
 }
-Vector3 WRecursivePathIntegrator::integrate(WRay&ray)
+Vector3 WRecursivePathIntegrator::integrate(Ray&ray)
 {
 //	allocateSamples();
 	computeSamples();

@@ -6,7 +6,7 @@ public:
 	WSurfaceIntegrator(Scene*iscene,WAccelerator*itree):
 	  scene(iscene),tree(itree){};
 	virtual ~WSurfaceIntegrator(void);
-	virtual Vector3 integrate(WRay&ray){return Vector3(0);}
+	virtual Vector3 integrate(Ray&ray){return Vector3(0);}
 	virtual void displayTime(){}
 
 	// prepare samples for the following render pass

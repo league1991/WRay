@@ -4,7 +4,7 @@
 #include "Triangle.h"
 #include <gl/glut.h>
 
-float TriAccel::intersectTest( const WRay&r )
+float TriAccel::intersectTest( const Ray&r )
 {
 	char cii = ci >> 25;
 	char w = cii & 0x3;	cii >>= 2;
@@ -72,7 +72,7 @@ float WTriangle::area()
 	return abs(0.5f*p21.cross(p31).length());
 }
 //求交函数,注意光线的方向向量必须事先单位化
-float WTriangle::intersectTest(const WRay&r)
+float WTriangle::intersectTest(const Ray&r)
 {
 #if INTERSECTION_TEST_METHOD == ISECTMETHOD_A
 	Vector3 E1=point2-point1;
@@ -140,7 +140,7 @@ float WTriangle::intersectTest(const WRay&r)
 	return t;
 #endif
 }
-void WTriangle::intersect(WRay&r,WDifferentialGeometry&DG)
+void WTriangle::intersect(Ray&r,WDifferentialGeometry&DG)
 {
 
 #if INTERSECTION_METHOD == ISECTMETHOD_A

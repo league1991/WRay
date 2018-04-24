@@ -23,7 +23,7 @@ public:
 
 	virtual ~WIrradianceCacheIntegrator(void);
 
-	Vector3 integrate(WRay&ray);
+	Vector3 integrate(Ray&ray);
 	//设置插值器参数
 	void setInterpolatorParams(
 		float imaxNormalError=0.1,
@@ -85,7 +85,7 @@ private:
 
 	//采用路径跟踪办法计算，直到达最大路径深度
 	//或者路径遇到漫反射表面的时候停止,返回L值
-	void pathTracing(WRay&ray,
+	void pathTracing(Ray&ray,
 		Vector3&indirectLight,Vector3&pathThroughPut);
 
 

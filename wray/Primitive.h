@@ -27,7 +27,7 @@ public:
 	bool getTriangle(unsigned int nthFace,WTriangle&tri);
 
 	void drawBBox();			//画出整个Primitive的包围盒
-	bool isIntersectWBBox(WRay&ray)//测试与包围盒是否相交
+	bool isIntersectWBBox(Ray&ray)//测试与包围盒是否相交
 	{float tmin,tmax;return box.isIntersect(ray,tmin,tmax);}
 
 	//画出整个Primitive,调试时用

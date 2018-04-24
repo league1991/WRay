@@ -10,10 +10,6 @@ public:
 	Scene(void);
 	~Scene(void);
 
-#ifdef BLENDER_INCLUDE
-	//把Render结构的数据导入，用于blender渲染初始化
-	void buildScene(Render* re);
-#endif // BLENDER_INCLUDE
 	//此函数把ObjReader得到的数据导入Scene类之中
 	void buildScene(WObjReader&reader);
 	//清除场景

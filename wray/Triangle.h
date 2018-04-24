@@ -23,7 +23,7 @@ struct TriAccel
 	 * 24- 0			三角形序号
 	 */
 	unsigned int ci;
-	float intersectTest(const WRay&r);
+	float intersectTest(const Ray&r);
 };
 
 struct WRayPacket
@@ -73,9 +73,9 @@ public:
 	//求出交点的DifferentialGeometry,并更新光线的tMax值
 	//DifferentialGeometry在创建的时候不作初始化
 	//然后输入intersect函数初始化各个变量
-	float intersectTest(const WRay&r);
+	float intersectTest(const Ray&r);
 	__m128 intersectTest(const WRayPacket& rp);
-	void intersect(WRay&r,WDifferentialGeometry&DG);
+	void intersect(Ray&r,WDifferentialGeometry&DG);
 	//由uv参数获得表面一点及其法向量
 	//用于灯光的采样
 	void getPoint(float u,float v,

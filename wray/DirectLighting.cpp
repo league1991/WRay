@@ -16,7 +16,7 @@ bool WDirectLighting::isVisible(Vector3 pos1, Vector3 pos2, int* beginNode)
 	//值太小的时候，由于计算误差，
 	//在模型表面会出现一些斑点，
 	//太大的时候会使得阴影不准确
-	WRay r(pos1,delta,1e-2f,length - 1e-2f);
+	Ray r(pos1,delta,1e-2f,length - 1e-2f);
 	int begNode = beginNode ? *beginNode : -1;
 	return !tree->isIntersect(r, begNode);
 }
@@ -46,7 +46,7 @@ Vector3 WDirectLighting::computeDirectLight(WLight *light, WBSDF *bsdf, WSample3
 	bsdf->sampleRay(BSu, BSv, sampleWi, ro, bsdfPDF);
 
 	Vector3 bsdfRadiance(0.0);
-	WRay ray(bsdf->DG.position, sampleWi);
+	Ray ray(bsdf->DG.position, sampleWi);
 	WDifferentialGeometry DG;
 	int beginNode = 0, endNode;
 	if (tree->intersect(ray, DG, &endNode, beginNode))

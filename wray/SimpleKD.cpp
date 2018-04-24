@@ -510,7 +510,7 @@ bool WSimpleKD::WBoundingEdge::operator<( const WBoundingEdge&e ) const
 	return (axis < e.axis) || (axis == e.axis) && ((t < e.t) || ((t == e.t) && (type < e.type)));
 }
 
-bool WSimpleKD::isIntersect( WRay& r, int beginNode)	
+bool WSimpleKD::isIntersect( Ray& r, int beginNode)	
 {
 	++numIntersectTest;
 	// 表示与光线较近的三个面, 0 表示坐标值小面， 1表示坐标值大面
@@ -599,7 +599,7 @@ bool WSimpleKD::isIntersect( WRay& r, int beginNode)
 	}
 	return false;
 }
-bool WSimpleKD::intersect( WRay& r,WDifferentialGeometry& DG, 
+bool WSimpleKD::intersect( Ray& r,WDifferentialGeometry& DG, 
 						 int* endNode, int beginNode)
 {
 	++numIntersect;
@@ -703,7 +703,7 @@ bool WSimpleKD::intersect( WRay& r,WDifferentialGeometry& DG,
 }
 
 
-bool WSimpleKD::intersect4(WRay r[4], WDifferentialGeometry DG[4], int endNode[4], int beginNode[4])
+bool WSimpleKD::intersect4(Ray r[4], WDifferentialGeometry DG[4], int endNode[4], int beginNode[4])
 {
 	return false;/*
 	++numIntersect;

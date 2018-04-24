@@ -86,11 +86,11 @@ public:
 	void buildTree(Scene&scene);
 	void clearTree();
 
-	bool intersect(WRay& r,WDifferentialGeometry& DG, 
+	bool intersect(Ray& r,WDifferentialGeometry& DG, 
 		int* endNode = NULL, int beginNode = -1);
-	bool intersect4(WRay r[4], WDifferentialGeometry DG[4], int endNode[4] = NULL, int beginNode[4] = NULL);
+	bool intersect4(Ray r[4], WDifferentialGeometry DG[4], int endNode[4] = NULL, int beginNode[4] = NULL);
 
-	bool isIntersect(WRay& r, int beginNode = -1);
+	bool isIntersect(Ray& r, int beginNode = -1);
 
 	void drawTree(unsigned int nthBox=0,
 					float R = 0.7, 
@@ -159,7 +159,7 @@ protected:
 	void drawTreeRecursive( WSKDNode* node, const WBoundingBox& box );
 
 	//对于一条与包围盒相交的光线，计算出光线从包围盒哪个面上离开
-	int computeExitFace( WSKDLeaf& node, const WRay& r, Vector3& exitPoint, float& farT);
+	int computeExitFace( WSKDLeaf& node, const Ray& r, Vector3& exitPoint, float& farT);
 
 	void buildCacheFriendlyNode();
 

@@ -10,9 +10,9 @@ public:
 	//endNode为求交成功时的节点，
 	//这两个变量是SimpleKD树专用的，用于加快求交速度
 	//KDTree SimpleBVH 均不需要使用这两个变量
-	virtual bool intersect(WRay& r,WDifferentialGeometry& DG, 
+	virtual bool intersect(Ray& r,WDifferentialGeometry& DG, 
 						int* endNode = NULL, int beginNode = -1)=0;	
-	virtual bool isIntersect(WRay& r, int beginNode = 0) = 0;
+	virtual bool isIntersect(Ray& r, int beginNode = 0) = 0;
 	virtual void buildTree(Scene& scene) = 0;
 	virtual void clearTree() = 0;
 	virtual void drawTree(unsigned int nthBox=0,

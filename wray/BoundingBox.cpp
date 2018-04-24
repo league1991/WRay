@@ -83,7 +83,7 @@ inline void WBoundingBox::swap(float&t1,float&t2)
 	float temp=t1;t1=t2;t2=temp;
 }
 bool WBoundingBox::isIntersect(
-							  const WRay&r,
+							  const Ray&r,
 							  float&tMin,
 							  float&tMax)
 {

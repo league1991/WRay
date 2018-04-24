@@ -42,9 +42,9 @@ public:
 	WMultiBVH();
 	~WMultiBVH();
 	// WAccelerator 提供的接口
-	bool intersect(WRay& r,WDifferentialGeometry& DG, 
+	bool intersect(Ray& r,WDifferentialGeometry& DG, 
 		int* endNode = NULL, int beginNode = -1);	
-	bool isIntersect(WRay& r, int beginNode = -1);
+	bool isIntersect(Ray& r, int beginNode = -1);
 	void clearTree();
 	void drawTree(unsigned int nthBox=0,
 		float R = 0.7, 

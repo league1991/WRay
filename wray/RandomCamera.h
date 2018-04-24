@@ -33,7 +33,7 @@ public:
 		float R =0.0f,float G =0.0f,float B =0.0f);
 	
 	//不用这些方法
-	void getNextRay(WRay&ray){}
+	void getNextRay(Ray&ray){}
 	void setColor(float R,float G,float B){}
 	void changeSampleSize(unsigned int size);	//每像素样本数始终为1
 	void changeSampler(WSampler::WSamplerType type){}

@@ -81,7 +81,7 @@ void Camera::drawCamera(float R,float G,float B)
 	
 	glEnd();
 }
-void Camera::generateRay(float xRatio, float yRatio,WRay&ray)
+void Camera::generateRay(float xRatio, float yRatio,Ray&ray)
 {
 	ray.point=origin;
 	ray.direction=dir+x*xRatio+y*yRatio;
@@ -121,7 +121,7 @@ void Camera::getFilmResolution(int&resX, int&resY)
 	resX=(int)res.x;
 	resY=(int)res.y;
 }
-void Camera::getNextRay(WRay&ray)
+void Camera::getNextRay(Ray&ray)
 {
 	float screenX,screenY;
 	film.getSamplePosition(screenX,screenY);
@@ -135,7 +135,7 @@ void Camera::getNextRay(WRay&ray)
 	ray.tMax=M_INF_BIG;
 }
 
-void Camera::getNextRay( WRay&ray, float xi, float yi )
+void Camera::getNextRay( Ray&ray, float xi, float yi )
 {
 	Vector2 res=film.getResolution();
 	float screenX= float(xi) /res.x*2.0f-1.0f;

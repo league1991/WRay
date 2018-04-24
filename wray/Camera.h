@@ -32,8 +32,8 @@ public:
 	virtual void drawFilmInWorld(float offsetX=0.0f,
 		float offsetY=0.0f,float offsetZ=0.0f);
 	//产生下条光线
-	void getNextRay(WRay&ray);
-	void getNextRay( WRay&ray, float xi, float yi );
+	void getNextRay(Ray&ray);
+	void getNextRay( Ray&ray, float xi, float yi );
 	//设置光线追踪之后返回的颜色
 	void setColor(float R,float G,float B);
 	void setColor(float R, float G, float B, int x, int y);
@@ -78,5 +78,5 @@ protected:
 	void setFilmResolutionX(unsigned int resX,unsigned int resY);
 
 private:
-	void generateRay(float xRatio,float yRatio,WRay&ray);
+	void generateRay(float xRatio,float yRatio,Ray&ray);
 };

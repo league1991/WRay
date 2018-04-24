@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Ray.h"
 #include <gl/glut.h>
-WRay::WRay(void)
+Ray::Ray(void)
 {
 // 	point.x=point.y=point.z=0.0f;
 // 	direction.x=1.0f;
@@ -9,14 +9,14 @@ WRay::WRay(void)
 	tMin=RAY_EPSILON;
 	tMax=M_INF_BIG;
 }
-WRay::WRay(const Vector3&iPoint,const Vector3&iDirection)
+Ray::Ray(const Vector3&iPoint,const Vector3&iDirection)
 {
 	point=iPoint;
 	direction=iDirection;
 	tMin=RAY_EPSILON;
 	tMax=M_INF_BIG;
 }
-WRay::WRay(const Vector3&iPoint,const Vector3&iDirection,
+Ray::Ray(const Vector3&iPoint,const Vector3&iDirection,
 		 float iTMin,float iTMax)
 {
 	point=iPoint;
@@ -24,32 +24,32 @@ WRay::WRay(const Vector3&iPoint,const Vector3&iDirection,
 	tMin=iTMin;
 	tMax=iTMax;
 }
-WRay::WRay(const Vector3&iDirection)
+Ray::Ray(const Vector3&iDirection)
 {
 	point.x=point.y=point.z=0.0f;
 	direction=iDirection;
 	tMin=RAY_EPSILON;
 	tMax=M_INF_BIG;
 }
-WRay::~WRay(void)
+Ray::~Ray(void)
 {
 }
-void WRay::normalizeDir()
+void Ray::normalizeDir()
 {
 	direction.normalize();
 }
-void WRay::inverseDir()
+void Ray::inverseDir()
 {
 	direction*=-1.0f;
 }
-void WRay::reflect(Vector3 normal)
+void Ray::reflect(Vector3 normal)
 {
 	normal.normalize();
 	float dCos=direction.dot(normal);
 	Vector3 delta=normal*dCos-direction;
 	direction+=2.0f*delta;
 }
-void WRay::draw()
+void Ray::draw()
 {
 	Vector3 lineEnd=point+direction*100.0f;
 	glBegin(GL_LINES);
@@ -61,7 +61,7 @@ void WRay::draw()
 	glVertex3f(point.x,point.y,point.z);
 	glEnd();
 }
-void WRay::drawSegment()
+void Ray::drawSegment()
 {
 	float t=tMax>100.0f?100.0f:tMax;
 	Vector3 lineEnd=point+direction*t;

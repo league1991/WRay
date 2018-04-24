@@ -63,143 +63,15 @@ void Scene::buildScene(WObjReader &reader)
 		}
 		else
 			materials[i]=new WLambertMaterial(mtlName,i,Vector3(diffuse.x,diffuse.y,diffuse.z),Vector3(emission.x,emission.y,emission.z));
-// 		((WLambertMaterial*)materials[i])->
-// 			setColor(Vector3(diffuse.x,diffuse.y,diffuse.z));
 	}
 	buildTriangleArray();
 	buildLightData();
 }
-#ifdef BLENDER_INCLUDE
-void Scene::buildScene( Render* re )
-{
-	// 统计场景的面总数以及几何体总数，便于分配空间
-	// 注意： 三角形数组的元素个数可能多于三角形总数
-	m_nObjects = 0;
-	int approNumFace = 0;							// 面总数的估计值，用于分配数组
-	for ( ObjectInstanceRen* objInsRen = (ObjectInstanceRen*)re->instancetable.first; objInsRen; objInsRen = objInsRen->next)
-	{
-		m_nObjects++;
-		approNumFace += objInsRen->obr->totvlak * 2; // 假设全部都是四边面
-	}
 
-	// 把数据导入到三角形数组中
-	if (approNumFace == 0)
-		return;
-	triangles = new WTriangle[approNumFace];
-	int actualNumFace = 0;							// 三角形实际数量
-	for (ObjectInstanceRen* objInsRen = (ObjectInstanceRen*)re->instancetable.first; objInsRen; objInsRen = objInsRen->next)
-	{
-		ObjectRen* objRen = objInsRen->obr;
-		VlakTableNode* vlakNode;
-		VlakRen* face;
-		MTFace*  texFace;
-		printf("\n object: %s\n", objInsRen->ob->id.name);
-		for (int nthFace = 0; nthFace < objRen->totvlak ; nthFace++)
-		{
-			// 获得一个面的指针
-			if ((nthFace & 0xff) == 0)
-			{
-				vlakNode = &objRen->vlaknodes[nthFace >> 8];
-				face = vlakNode->vlak;
-				texFace = vlakNode->mtface;
-			}
-			else
-			{
-				face++;
-				if (vlakNode->mtface)
-					texFace++;
-			}
-			// vertex
-			
-			memcpy(&triangles[actualNumFace].point1, face->v1->co, sizeof(float) * 3);
-			memcpy(&triangles[actualNumFace].point2, face->v2->co, sizeof(float) * 3);
-			memcpy(&triangles[actualNumFace].point3, face->v3->co, sizeof(float) * 3);
-			
-			if (face->v4)					// 四边形
-			{
-				memcpy(&triangles[actualNumFace + 1].point1, face->v1->co, sizeof(float) * 3);
-				memcpy(&triangles[actualNumFace + 1].point2, face->v3->co, sizeof(float) * 3);
-				memcpy(&triangles[actualNumFace + 1].point3, face->v4->co, sizeof(float) * 3);
-			}
-			// normal
-			if (face->flag & R_SMOOTH)		// 光滑模式，使用渲染法线
-			{
-				for (int i = 0; i < 3; i++)
-				{
-					triangles[actualNumFace].normal1.v[i] = -1.0f * face->v1->n[i];
-					triangles[actualNumFace].normal2.v[i] = -1.0f * face->v2->n[i];
-					triangles[actualNumFace].normal3.v[i] = -1.0f * face->v3->n[i];
-				}
-				if (face->v4)				// 四边形
-				{
-					for (int i = 0; i < 3; i++)
-					{
-						triangles[actualNumFace + 1].normal1.v[i] = -1.0f * face->v1->n[i];
-						triangles[actualNumFace + 1].normal2.v[i] = -1.0f * face->v3->n[i];
-						triangles[actualNumFace + 1].normal3.v[i] = -1.0f * face->v4->n[i];
-					}
-				}
-			}
-			else							// 否则使用几何法线
-			{
-				memcpy(&triangles[actualNumFace].normal1, face->n, sizeof(float) * 3);
-				triangles[actualNumFace].normal1 *= -1.0f;
-				triangles[actualNumFace].normal2 = triangles[actualNumFace].normal1;
-				triangles[actualNumFace].normal3 = triangles[actualNumFace].normal2;
-				if (face->v4)				// 四边形
-				{
-					triangles[actualNumFace + 1].normal1 = 
-						triangles[actualNumFace + 1].normal2 = 
-						triangles[actualNumFace + 1].normal3 = 
-						triangles[actualNumFace].normal1;
-				}
-			}
-			// texcoord
-			if (texFace)
-			{
-			
-				memcpy(&triangles[actualNumFace].texCoord1, texFace->uv, sizeof(float) * 6);
-				if (face->v4)				// 四边形
-				{
-					memcpy(&triangles[actualNumFace + 1].texCoord1, texFace->uv[0], sizeof(float) * 2);
-					memcpy(&triangles[actualNumFace + 1].texCoord2, texFace->uv[2], sizeof(float) * 2);
-					memcpy(&triangles[actualNumFace + 1].texCoord3, texFace->uv[3], sizeof(float) * 2);
-				}
-			}
-			//triangles[actualNumFace].showCoords();
-			triangles[actualNumFace].mtlId = 0;
-			triangles[actualNumFace].buildAccelerateData(actualNumFace);
-			if (face->v4)
-			{
-				triangles[actualNumFace + 1].mtlId = 0;
-				triangles[actualNumFace + 1].buildAccelerateData(actualNumFace + 1);
-				//triangles[actualNumFace + 1].showCoords();
-				actualNumFace += 2;
-			}
-			else
-				actualNumFace ++;
-		}		
-	}
-	nTriangles = actualNumFace;
-	// 设定包围盒
-	sceneBox = WBoundingBox(triangles[0]);
-	for (unsigned int nthTri = 1; nthTri < nTriangles; nthTri++)
-	{
-		sceneBox.merge(triangles[nthTri]);
-	}
-	// 加载材质
-	materials=new WMaterial*[1];
-	string mtlName;
-	mtlName= "default material";
-	materials[0]=new WLambertMaterial(mtlName,0,Vector3(1,1,1));
-}
-#endif
 void Scene::drawScene(bool showNormal,bool fillMode)
 {
 	WTriangle tri;
 	Vector3 color;
-//  	if(nMaterials!=0)
-//  		MessageBox(0,L"0 Mtl",L"aa",0);
 	for(unsigned int i=0;i<m_objects.size();i++)
 	{
 		m_objects[i].getTriangle(0,tri);

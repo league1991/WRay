@@ -46,7 +46,7 @@ void WPathIntegrator::computeSamples()
 	sampler->computeSamples(lightSamples);
 }
 
-Vector3 WPathIntegrator::integrate(WRay&camRay)//颜色计算
+Vector3 WPathIntegrator::integrate(Ray&camRay)//颜色计算
 {
 // 	clearSamples();
 // 	allocateSamples();
@@ -58,7 +58,7 @@ Vector3 WPathIntegrator::integrate(WRay&camRay)//颜色计算
 	Vector3 totalLight(0),directLight;
 	Vector3 ri,ro;
 	float rayPDF;
-	WRay ray=camRay;
+	Ray ray=camRay;
 //				cout<<ray.tMin<<endl;
 //	ray.tMin=1e-5f;
 	int beginNode = -1, endNode = -1;

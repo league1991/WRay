@@ -634,7 +634,7 @@ void WKDTree::displayTime()
 {
 	clock.display();
 }
-bool WKDTree::intersect(WRay &r, WDifferentialGeometry &DG,
+bool WKDTree::intersect(Ray &r, WDifferentialGeometry &DG,
 					   int& endNode, int beginNode)
 {
 //	cout<<"\n\n#################intersection test begin#########"<<endl;
@@ -851,7 +851,7 @@ LEAF:
 		}
 	}
 }
-bool WKDTree::isIntersect(WRay &r, int beginNode)
+bool WKDTree::isIntersect(Ray &r, int beginNode)
 {
 	//	cout<<"\n\n#################intersection test begin#########"<<endl;
 
