@@ -331,7 +331,7 @@ void reshapeFcn(GLint Width,GLint Height)
 
 void timerFcn(int v)
 {
-	glutTimerFunc(500, timerFcn, -1);
+	glutTimerFunc(1000, timerFcn, -1);
 	glutPostRedisplay();
 }
 
