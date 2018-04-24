@@ -11,7 +11,7 @@ public:
 	~Scene(void);
 
 	//此函数把ObjReader得到的数据导入Scene类之中
-	void buildScene(WObjReader&reader);
+	void buildScene(ObjReader&reader);
 	//清除场景
 	void clearScene();
 	//此函数画出整个场景

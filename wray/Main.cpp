@@ -46,7 +46,7 @@ void init()
 
 	auto renderer = TileRenderer::getInstance();
 	renderer->init();
-	renderer->readScene("areaLight.obj");
+	renderer->readScene("CornellBox-me.obj");
 	renderer->setCamera(Vector3(Lx, Ly, Lz),Vector3(-1.0, -1.0, -1.0), Vector3(0, 1, 0), fov, winWidth, winHeight);
 }
 

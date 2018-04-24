@@ -28,7 +28,7 @@ void Scene::clearScene()
 	nMaterials=0;
 	clearTriangleArray();
 }
-void Scene::buildScene(WObjReader &reader)
+void Scene::buildScene(ObjReader &reader)
 {
 	m_objects.resize(reader.primitives.size());
 	unsigned int n=0;//每个Primitive的SubPrimitive数量
@@ -44,11 +44,11 @@ void Scene::buildScene(WObjReader &reader)
 	nMaterials=reader.Materials.size();
 	materials=new WMaterial*[nMaterials];
 	string mtlName;
-	Wfloat3 diffuse;
-	Wfloat3 emission;
+	float3 diffuse;
+	float3 emission;
 	for(unsigned int i=0;i<nMaterials;i++)
 	{
-		WObjMaterial& mtl = reader.Materials[i];
+		ObjMaterial& mtl = reader.Materials[i];
 		mtlName=reader.Materials[i].name;
 		diffuse=reader.Materials[i].diffuse;
 		emission=reader.Materials[i].emission;

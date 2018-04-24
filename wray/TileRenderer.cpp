@@ -5,7 +5,7 @@
 std::unique_ptr<TileRenderer> TileRenderer::s_instance;
 
 TileRenderer::TileRenderer() :
-	m_width(0), m_height(0), m_tileWidth(64), m_tileHeight(64),
+	m_width(0), m_height(0), m_tileWidth(128), m_tileHeight(128),
 	m_tileCountWidth(0), m_tileCountHeight(0), m_renderStatus(NOT_RENDERED), m_renderPass(0),
 	m_camera(new Camera) {
 	for (int i = 0; i < getSystemCores(); i++)
@@ -32,8 +32,8 @@ void TileRenderer::init()
 
 void TileRenderer::readScene(const std::string & objPath)
 {
-	WObjReader reader;
-	reader.readFile("areaLight.obj");
+	ObjReader reader;
+	reader.readFile(objPath);
 	m_scene.reset(new Scene());
 	m_scene->buildScene(reader);
 
@@ -104,6 +104,7 @@ void TileRenderer::scheduleTasks()
 		{
 			auto lastThread = freeThreads.back();
 			lastThread->runTask(task);
+			task->m_status = TileTask::EXECUTING;
 			freeThreads.erase(freeThreads.end() - 1);
 		}
 	}

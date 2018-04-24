@@ -1,21 +1,21 @@
 #include "stdafx.h"
 #include "ObjReader.h"
-WObjReader::WObjReader()
+ObjReader::ObjReader()
 {
 //	readingThread=NULL;
 }
-WObjReader::~WObjReader()
+ObjReader::~ObjReader()
 {
 	this->clear();
 }
-void WObjReader::readObjFile(const char*fileName)
+void ObjReader::readObjFile(const char*fileName)
 {
 	char*flag=new char[50];		//array to receive input		
 	bool isPrimitiveBegin=true;	//the first vertex of each primitive
-	WObjPrimitive*currPrimitive=NULL;//pointer to current primitive
-	WObjTriangle*currTriangle=NULL;//pointer to current triangle
-	Wfloat3 threeDCoor;			//3D coordinate
-	Wfloat2 twoDCoor;			//2D coordinate
+	ObjPrimitive*currPrimitive=NULL;//pointer to current primitive
+	ObjTriangle*currTriangle=NULL;//pointer to current triangle
+	float3 threeDCoor;			//3D coordinate
+	float2 twoDCoor;			//2D coordinate
 	int currentMtlIndex=-1;		//the index of current Material
 	char* pointIndex=new char[20];
 	int pointIndexInt;
@@ -67,7 +67,7 @@ void WObjReader::readObjFile(const char*fileName)
 					totalNormals+=currPrimitive->normals.size();
 					delete currPrimitive;
 				}
-				currPrimitive=new WObjPrimitive;
+				currPrimitive=new ObjPrimitive;
 				isPrimitiveBegin=false;
 			}
 			file>>threeDCoor.x
@@ -108,8 +108,8 @@ void WObjReader::readObjFile(const char*fileName)
 			else if(!strcmp(flag,"usemtl"))//material flag
 			{				
 				string mtlName;
-				vector<WObjMaterial>::iterator mtlIterator;
-				WObjMaterial*newMaterial;
+				vector<ObjMaterial>::iterator mtlIterator;
+				ObjMaterial*newMaterial;
 				currentMtlIndex=-1;
 				//update current material
 				file>>mtlName;
@@ -126,7 +126,7 @@ void WObjReader::readObjFile(const char*fileName)
 				if(mtlIterator==Materials.end())
 					//can't find,so create a new material
 				{
-					newMaterial=new WObjMaterial;
+					newMaterial=new ObjMaterial;
 					newMaterial->name=mtlName;
 					Materials.push_back(*newMaterial);
 					delete newMaterial;
@@ -136,7 +136,7 @@ void WObjReader::readObjFile(const char*fileName)
 			}
 			else if (!strcmp(flag,"f"))//face flag
 			{
-				currTriangle=new WObjTriangle;
+				currTriangle=new ObjTriangle;
 				char line[100];
 				file.getline(line,100);
 				int idxV[4],idxVt[4],idxVn[4];
@@ -168,7 +168,7 @@ void WObjReader::readObjFile(const char*fileName)
 				}
 				
 				// 一个三角形
-				WObjTriangle tri = {
+				ObjTriangle tri = {
 					{idxV[0],idxV[1],idxV[2]},
 					{idxVt[0],idxVt[1],idxVt[2]},
 					{idxVn[0],idxVn[1],idxVn[2]},
@@ -177,7 +177,7 @@ void WObjReader::readObjFile(const char*fileName)
 				currPrimitive->faces.push_back(tri);
 				if (nTri == 2)
 				{
-					WObjTriangle tri = {
+					ObjTriangle tri = {
 						{idxV[2],idxV[3],idxV[0]},
 						{idxVt[2],idxVt[3],idxVt[0]},
 						{idxVn[2],idxVn[3],idxVn[0]},
@@ -197,7 +197,7 @@ void WObjReader::readObjFile(const char*fileName)
 	cout<<"complete to read obj file            \n"<<endl;
 	cout<<endl;
 }
-bool WObjReader::getWireArray(int nthPrimitive,WGLWireArray*vB)
+bool ObjReader::getWireArray(int nthPrimitive,WGLWireArray*vB)
 {
 	if(nthPrimitive<0||nthPrimitive>=(int)this->primitives.size())
 		return false;
@@ -224,12 +224,12 @@ bool WObjReader::getWireArray(int nthPrimitive,WGLWireArray*vB)
 	}
 	return true;
 }
-void WObjReader::showObj()
+void ObjReader::showObj()
 {
-	vector<WObjPrimitive>::iterator itPrimitive;
-	vector<Wfloat3>::iterator itFloat3;
-	vector<Wfloat2>::iterator itFloat2;
-	vector<WObjTriangle>::iterator itTriangle;
+	vector<ObjPrimitive>::iterator itPrimitive;
+	vector<float3>::iterator itFloat3;
+	vector<float2>::iterator itFloat2;
+	vector<ObjTriangle>::iterator itTriangle;
 
 	for(itPrimitive=primitives.begin();
 		itPrimitive!=primitives.end();
@@ -281,9 +281,9 @@ void WObjReader::showObj()
 
 	}
 }
-void WObjReader::clear()
+void ObjReader::clear()
 {
-	vector<WObjPrimitive>::iterator pP;
+	vector<ObjPrimitive>::iterator pP;
 	for(pP=primitives.begin();pP<primitives.end();pP++)
 	{
 		pP->faces.clear();
@@ -295,7 +295,7 @@ void WObjReader::clear()
 	Materials.clear();
 }
 
-void WObjReader::getCoordArray(float*&pArray,unsigned int&nFloats,unsigned nthPrimitive,coordType type)
+void ObjReader::getCoordArray(float*&pArray,unsigned int&nFloats,unsigned nthPrimitive,coordType type)
 {
 	unsigned int num;
 	switch(type)
@@ -338,7 +338,7 @@ void WObjReader::getCoordArray(float*&pArray,unsigned int&nFloats,unsigned nthPr
 	}
 	return;
 }
-void WObjReader::getIndexArray(unsigned int*&pArray,unsigned int &nInts,
+void ObjReader::getIndexArray(unsigned int*&pArray,unsigned int &nInts,
 				   unsigned nthPrimitive,indexType type)
 {
 	unsigned int num;
@@ -380,18 +380,18 @@ void WObjReader::getIndexArray(unsigned int*&pArray,unsigned int &nInts,
 	}
 	return;
 }
-void WObjReader::fillPrimitive(unsigned int nthPrimitive,MeshObject&pri)
+void ObjReader::fillPrimitive(unsigned int nthPrimitive,MeshObject&pri)
 {
 	float*vertices,*texcoords,*normals;
 	unsigned int*vertIndices,*texcoordIndices,*normalIndices;
 	unsigned int vSize,tSize,nSize;//对应数组的大小
 	unsigned int nIndices;
-	getCoordArray(vertices,vSize,nthPrimitive,WObjReader::VERTCOORDS);
-	getCoordArray(texcoords,tSize,nthPrimitive,WObjReader::TEXCOORDS);
-	getCoordArray(normals,nSize,nthPrimitive,WObjReader::NORCOORDS);
-	getIndexArray(vertIndices,nIndices,nthPrimitive,WObjReader::VERTINDICES);
-	getIndexArray(texcoordIndices,nIndices,nthPrimitive,WObjReader::TEXINDICES);
-	getIndexArray(normalIndices,nIndices,nthPrimitive,WObjReader::NORINDICES);
+	getCoordArray(vertices,vSize,nthPrimitive,ObjReader::VERTCOORDS);
+	getCoordArray(texcoords,tSize,nthPrimitive,ObjReader::TEXCOORDS);
+	getCoordArray(normals,nSize,nthPrimitive,ObjReader::NORCOORDS);
+	getIndexArray(vertIndices,nIndices,nthPrimitive,ObjReader::VERTINDICES);
+	getIndexArray(texcoordIndices,nIndices,nthPrimitive,ObjReader::TEXINDICES);
+	getIndexArray(normalIndices,nIndices,nthPrimitive,ObjReader::NORINDICES);
 	pri.vertices=vertices;
 	pri.texcoords=texcoords;
 	pri.normals=normals;
@@ -413,7 +413,7 @@ void WObjReader::fillPrimitive(unsigned int nthPrimitive,MeshObject&pri)
 
 }
 
-void WObjReader::readMtlFile(const char*fileName)
+void ObjReader::readMtlFile(const char*fileName)
 {
 	char flag[50];
 
@@ -426,48 +426,49 @@ void WObjReader::readMtlFile(const char*fileName)
 	while(!file.eof())
 	{
 		char subFlag[20];
-		file>>flag;
+		std::string flagStr;
+		file>> flagStr;
 
-		if(!strcmp(flag,"newmtl"))
+		if(flagStr == "newmtl")
 		{
 			string mtlName;	
 			file>>mtlName;
-			WObjMaterial newMtl;
+			ObjMaterial newMtl;
 			newMtl.name=mtlName;
 			newMtl.emission.x = newMtl.emission.y = newMtl.emission.z = 0;
 			newMtl.specular = 0;
 			Materials.push_back(newMtl);
 		}
 		//漫反射颜色对应的flag
-		if(!strcmp(flag,"Kd"))
+		if(flagStr == "Kd")
 		{
-			WObjMaterial& newMtl = Materials.back();
+			ObjMaterial& newMtl = Materials.back();
 			file>>newMtl.diffuse.x
 				>>newMtl.diffuse.y
 				>>newMtl.diffuse.z;
 		}
 		//自发光颜色对应的flag(借用了环境光通道)
-		if(!strcmp(flag,"Ke"))
+		if(flagStr == "Ke")
 		{
-			WObjMaterial& newMtl = Materials.back();
+			ObjMaterial& newMtl = Materials.back();
 			float x,y,z;
 			file >> x >> y >> z;
 			newMtl.emission.x = x * 5;
 			newMtl.emission.y = y * 5;
 			newMtl.emission.z = z * 5;
 		}
-		else if(!strcmp(flag,"Tf"))
+		else if(flagStr == "Tf")
 		{
-			WObjMaterial& newMtl = Materials.back();
+			ObjMaterial& newMtl = Materials.back();
 			float x,y,z;
 			file >> x >> y >> z;
 			newMtl.transparency.x = x;
 			newMtl.transparency.y = y;
 			newMtl.transparency.z = z;
 		}
-		else if(!strcmp(flag,"Ks"))
+		else if(flagStr == "Ks")
 		{
-			WObjMaterial& newMtl = Materials.back();
+			ObjMaterial& newMtl = Materials.back();
 			float x,y,z;
 			file >> x >> y >> z;
 			newMtl.specular = (x+y+z)/3;
@@ -478,9 +479,9 @@ void WObjReader::readMtlFile(const char*fileName)
 	//读完后文件状态字会设置成endofbit，clear函数恢复状态字为goodbit
 }
 
-void WObjReader::showMtl()
+void ObjReader::showMtl()
 {
-	vector<WObjMaterial>::iterator p;
+	vector<ObjMaterial>::iterator p;
 	for(p=Materials.begin();p!=Materials.end();p++)
 	{
 		cout<<"\n##################"<<endl;
@@ -493,28 +494,11 @@ void WObjReader::showMtl()
 	}
 }
 
-void WObjReader::readFile(CString fileName)
+void ObjReader::readFile(const std::string& fileName)
 {
-// 	string name;
-// 	name=fileName.substr(0,fileName.length()-4);
-// 	string objName,mtlName;
-// 	objName=name+".obj";
-// 	mtlName=name+".mtl";
-
-// 	strncpy(objName2,fileName,30);
-	fileName=fileName.Mid(0,fileName.GetLength()-3);
-	CString objName=fileName+CString("obj");
-	CString mtlName=fileName+CString("mtl");
-
-
-	char*file=
-		(char*)mtlName.GetBuffer(mtlName.GetLength());
- 	readMtlFile(file);
-//	MessageBox(0,LPCWSTR(file),0,0);
-
-	file=
-		(char*)objName.GetBuffer(objName.GetLength());
-//	MessageBox(0,LPCWSTR(file),0,0);
- 	readObjFile(file);
-//	clear();
+	auto dotPos = fileName.find_last_of(".");
+	std::string mtlName = fileName;
+	mtlName = mtlName.replace(dotPos, 4, ".mtl");
+ 	readMtlFile(mtlName.c_str());
+ 	readObjFile(fileName.c_str());
 }
