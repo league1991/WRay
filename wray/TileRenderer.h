@@ -11,15 +11,16 @@ public:
 	};
 	TileTask(int beginWidth, int beginHeight, int w, int h) :
 		m_beginWidth(beginWidth), m_beginHeight(beginHeight),
-		m_width(w), m_height(h), m_status(WAITING)
+		m_width(w), m_height(h), m_status(WAITING), m_currentPass(0)
 	{
 		m_result.resize(m_width*m_height);
 	}
 
 	void resetTask() { m_status = WAITING; }
-	void finishTask() { m_status = FINISHED; }
+	void finishTask() { m_status = FINISHED; m_currentPass++; }
 	int m_beginWidth, m_beginHeight;
 	int m_width, m_height;
+	int m_currentPass;
 	TaskStatus m_status;
 private:
 	std::vector<Vector4> m_result;

@@ -197,11 +197,7 @@ void RenderThread::run() {
 						Vector3 color(0, 0, 0);
 						Ray r;
 						camera->getNextRay(r, x, y);
-						for (int samples = 0; samples < 4; samples++)
-						{
-							color += m_integrator->integrate(r);
-						}
-						color /= 10;
+						color += m_integrator->integrate(r);
 						camera->accumulateColor(color.x, color.y, color.z, x, y);
 					}
 				}
