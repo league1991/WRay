@@ -195,7 +195,7 @@ void WMultiRSBVH::intersect( WRayGroup& rayGroup )
 			for (int i = 0; i < remain; ++ithRay, ++i)
 			{
 				unsigned short rayID = activeRayStack[currTask->SIMDlane][rayPtr + ithRay];
-				WRay r;
+				Ray r;
 				int beginID = rayID * 4;
 				r.point.v[0] = rayGroup.ori_min[beginID];
 				r.point.v[1] = rayGroup.ori_min[beginID + 1];
@@ -226,7 +226,7 @@ void WMultiRSBVH::intersect( WRayGroup& rayGroup )
 	for (unsigned short ithRay = 0; ithRay < rayGroup.numRays; ++ithRay)
 	{
 		WTriangle* isectTri = rayGroup.isectTriangle[ithRay];
-		WRay r;
+		Ray r;
 		int beginID = ithRay * 4;
 		r.point.v[0] = rayGroup.ori_min[beginID];
 		r.point.v[1] = rayGroup.ori_min[beginID + 1];
@@ -243,7 +243,7 @@ void WMultiRSBVH::intersect( WRayGroup& rayGroup )
 	delete[] activeRayStack[0];
 }
 
-bool WMultiRSBVH::isIntersect( WRay& r, int beginNode /*= 0*/ )
+bool WMultiRSBVH::isIntersect( Ray& r, int beginNode /*= 0*/ )
 {
 	return false;
 }
