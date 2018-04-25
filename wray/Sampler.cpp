@@ -171,11 +171,9 @@ void SequenceStratifiedSampler::computeSamples(Sample & s)
 			for (unsigned int j = 0; j<s.size; j++)
 			{
 				//x坐标
-				s.pattern[2 * (s.size*j + i)] =
-					(float(i) + float(rand()) / 32767.0f) / s.size;
+				s.pattern[2 * (s.size*j + i)] = RandomNumber::randomFloat();
 				//y坐标
-				s.pattern[2 * (s.size*j + i) + 1] =
-					(float(j) + float(rand()) / 32767.0f) / s.size;
+				s.pattern[2 * (s.size*j + i) + 1] = RandomNumber::randomFloat();
 			}
 		}
 		for (unsigned int i = 0; i<s.totalPoints; i++)
@@ -193,15 +191,9 @@ void SequenceStratifiedSampler::computeSamples(Sample & s)
 			{
 				for (unsigned int k = 0; k < s.size; k++)
 				{
-					//x坐标
-					s.pattern[3 * (s.size*s.size*k + s.size*j + i)] =
-						(float(i) + float(rand()) / 32767.0f) / s.size;
-					//y坐标
-					s.pattern[3 * (s.size*s.size*k + s.size*j + i) + 1] =
-						(float(j) + float(rand()) / 32767.0f) / s.size;
-					//z坐标
-					s.pattern[3 * (s.size*s.size*k + s.size*j + i) + 2] =
-						(float(k) + float(rand()) / 32767.0f) / s.size;
+					s.pattern[3 * (s.size*s.size*k + s.size*j + i)] = RandomNumber::randomFloat();
+					s.pattern[3 * (s.size*s.size*k + s.size*j + i) + 1] = RandomNumber::randomFloat();
+					s.pattern[3 * (s.size*s.size*k + s.size*j + i) + 2] = RandomNumber::randomFloat();
 				}
 			}
 		}
