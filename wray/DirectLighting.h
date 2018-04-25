@@ -11,15 +11,15 @@ public:
 
 	//计算场景所有灯光的光照
 	Vector3 sampleAllLights(
-		WBSDF*bsdf,WSample3D&lightSample,
-		WSample2D&bsdfSample,const Vector3&ro, int* nodeInfo = NULL);
+		WBSDF*bsdf,Sample3D&lightSample,
+		Sample2D&bsdfSample,const Vector3&ro, int* nodeInfo = NULL);
 	
 private:
 	//计算选定的灯光所产生的直接光照
 	//ro为光线出射方向
 	Vector3 computeDirectLight(
-		WLight *light,WBSDF*bsdf,WSample3D&lightSample,
-		WSample2D&bsdfSample,const Vector3&ro, int* nodeInfo = NULL);
+		WLight *light,WBSDF*bsdf,Sample3D&lightSample,
+		Sample2D&bsdfSample,const Vector3&ro, int* nodeInfo = NULL);
 
 	bool isVisible(Vector3 pos1,Vector3 pos2, int* beginNode = NULL);
 

@@ -1,54 +1,71 @@
 #pragma once
 #include "Sampler.h"
-class WSample
+class Sample
 {
-	friend class WSampler;
-	friend class WRandomSampler;
-	friend class WStratifiedSampler;
+	friend class Sampler;
+	friend class RandomSampler;
+	friend class StratifiedSampler;
+	friend class SequenceStratifiedSampler;
 
 	friend class WFilter;
 	friend class WBoxFilter;
 public:
-	enum WSampleType{SAMPLE_1D=0,SAMPLE_2D=1,SAMPLE_3D=2};
-	WSampleType type;
+	enum SampleType
+	{
+		SAMPLE_1D=0,
+		SAMPLE_2D=1,
+		SAMPLE_3D=2,
+		SAMPLE_SEQUENCE_2D = 3,
+	};
+	SampleType type;
 	//构造的时候并不分配空间
-	WSample(WSampleType dimension,unsigned int size);
-	virtual ~WSample(void);
+	Sample(SampleType dimension,unsigned int size);
+	virtual ~Sample(void);
 	virtual void allocateSpace()=0;//分配内存空间,同时nthPoint设为0
 	void clear();//清理内存空间
 //	void reset();//把当前下标复位
 	void setSize(unsigned int size);
-	void setType(WSampleType itype){type=itype;}
+	void setType(SampleType itype){type=itype;}
 	unsigned int getCurrPointIndex(){return nthPoint;}
 	unsigned int getTotalPointNum(){return totalPoints;}
-	virtual void display()=0;
+	virtual void display() {};
 protected:
 	unsigned int size;
-	float*pattern;
+	std::vector<float> pattern;
 	unsigned int nthPoint;//当前的采样点
 	unsigned int totalPoints;//采样点的总数
 };
-class WSample1D:public WSample
+class Sample1D:public Sample
 {
 public:
-	WSample1D(unsigned int size);
+	Sample1D(unsigned int size);
 	void allocateSpace();
 	bool get1D(float&x);
 	void display();
 };
-class WSample2D:public WSample
+class Sample2D:public Sample
 {
 public:
-	WSample2D(unsigned int size);
+	Sample2D(unsigned int size);
 	void allocateSpace();
-	bool get2D(float&x,float&y);
+	virtual bool get2D(float&x,float&y);
 	void display();
 };
-class WSample3D:public WSample
+class Sample3D:public Sample
 {
 public:
-	WSample3D(unsigned int size);
+	Sample3D(unsigned int size);
 	void allocateSpace();
 	bool get3D(float&x,float&y,float&z);
 	void display();
+};
+class SequenceSample2D :public Sample2D
+{
+public:
+	SequenceSample2D(unsigned int size) :Sample2D(size) {
+		type = SAMPLE_SEQUENCE_2D;
+		totalPoints	= size;
+	}
+	void allocateSpace();
+	bool get2D(float&x, float&y);
 };

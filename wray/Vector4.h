@@ -10,7 +10,7 @@ public:
 	Vector4(float i);
 	Vector4(const Vector4&v);
 	Vector4(const Vector3&v);//h被初始化为1.0f
-	Vector4(const Vector2&v);//h被初始化为1.0f
+	Vector4(const Vector2f&v);//h被初始化为1.0f
 	Vector4(float ix,float iy,float iz,float ih);
 
 	//析构函数

@@ -453,9 +453,9 @@ void ObjReader::readMtlFile(const char*fileName)
 			ObjMaterial& newMtl = Materials.back();
 			float x,y,z;
 			file >> x >> y >> z;
-			newMtl.emission.x = x * 5;
-			newMtl.emission.y = y * 5;
-			newMtl.emission.z = z * 5;
+			newMtl.emission.x = x;
+			newMtl.emission.y = y;
+			newMtl.emission.z = z;
 		}
 		else if(flagStr == "Tf")
 		{

@@ -5,7 +5,7 @@ class WRecursivePathIntegrator:public WSurfaceIntegrator
 public:
 	WRecursivePathIntegrator(Scene*scene,WAccelerator*tree,
 		unsigned int ipathDepth=1,unsigned int inBranch=2,
-		WSampler::WSamplerType samplerType=WSampler::SAMPLER_RANDOM,float imultiplier=1);
+		Sampler::SamplerType samplerType=Sampler::SAMPLER_RANDOM,float imultiplier=1);
 	virtual ~WRecursivePathIntegrator(void);
 
 	//光线追踪函数
@@ -14,9 +14,9 @@ public:
 	void displayTime();
 private:
 	WClock timer;
-	WSampler*sampler;
-	WSample2D BSDFSamples;
-	WSample3D lightSamples;
+	Sampler*sampler;
+	Sample2D BSDFSamples;
+	Sample3D lightSamples;
 	//计算直接光照的对象
 	WDirectLighting Dlighting;
 	//树的深度

@@ -11,7 +11,7 @@ WDifferentialGeometry::WDifferentialGeometry(void)
 // 	tangent=Vector3(1.0f,0.0f,0.0f);
 // 	bitangent=Vector3(0.0f,1.0f,0.0f);
 // 	rayDir=Vector3(1.0f,0.0f,1.0f);
-// 	texCoord=Vector2(0.0f,0.0f);
+// 	texCoord=Vector2f(0.0f,0.0f);
 // 	dpdu=dpdv=dndu=dndv=Vector3(0.0f,0.0f,0.0f);
 // 	mtlId=0;
 }
@@ -21,9 +21,9 @@ WDifferentialGeometry::WDifferentialGeometry(const WDifferentialGeometry&DG)
 }
 WDifferentialGeometry::WDifferentialGeometry(
 				 const Vector3&iposition,const Vector3&inormal,
-				 const Vector3&irayDir,const Vector2&itexCoord,
+				 const Vector3&irayDir,const Vector2f&itexCoord,
 				 const Vector3&idpdu,const Vector3&idpdv,
-				 const Vector3&idndu,const Vector2&idndv,
+				 const Vector3&idndu,const Vector2f&idndv,
 				 unsigned int imtlId):
 position(iposition),normal(inormal),
 rayDir(irayDir),
@@ -50,9 +50,9 @@ dndu(idndu),dndv(idndv),mtlId(imtlId)
 WDifferentialGeometry::WDifferentialGeometry(
 				 const Vector3&iposition,const Vector3&inormal,
 				 const Vector3&itangent,const Vector3&ibitangent,
-				 const Vector3&irayDir,const Vector2&itexCoord,
+				 const Vector3&irayDir,const Vector2f&itexCoord,
 				 const Vector3&idpdu,const Vector3&idpdv,
-				 const Vector3&idndu,const Vector2&idndv,
+				 const Vector3&idndu,const Vector2f&idndv,
 				 unsigned int imtlId
 				 ):position(iposition),normal(inormal),
 				 tangent(itangent),bitangent(ibitangent),

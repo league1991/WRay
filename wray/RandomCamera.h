@@ -36,7 +36,7 @@ public:
 	void getNextRay(Ray&ray){}
 	void setColor(float R,float G,float B){}
 	void changeSampleSize(unsigned int size);	//每像素样本数始终为1
-	void changeSampler(WSampler::WSamplerType type){}
+	void changeSampler(Sampler::SamplerType type){}
 	float currProgress(){return 0.0f;}
 	bool isFilmFull(){return false;}
 	int* getFilmBitPointer(){return NULL;}

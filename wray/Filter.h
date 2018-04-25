@@ -8,13 +8,13 @@ public:
 	enum WFilterType{FILTER_BOX=0};
 	WFilterType type;
 	WFilter(unsigned int size=1,
-		WSampler::WSamplerType sampType=WSampler::SAMPLER_RANDOM,
+		Sampler::SamplerType sampType=Sampler::SAMPLER_RANDOM,
 		unsigned int iseed=65535,
 		WFilterType filterType=WFilter::FILTER_BOX);
 	virtual ~WFilter(void);
 	//改变样本点的个数
 	void changeSampleSize(unsigned int isize);
-	void changeSampler(WSampler::WSamplerType type=WSampler::SAMPLER_RANDOM);
+	void changeSampler(Sampler::SamplerType type=Sampler::SAMPLER_RANDOM);
 	//此函数检查所有样本颜色是否获取完毕，
 	//返回true表示获取完毕
 	bool isFull();
@@ -33,8 +33,8 @@ public:
 	//获得当前采样点的位置
 	void getCurrSample(float &sampX,float&sampY);
 protected:
-	WSample2D samples;
-	WSampler*sampler;
+	Sample2D samples;
+	Sampler*sampler;
 	Vector3*sampleColors;
 	unsigned int seed;
 };
@@ -43,7 +43,7 @@ class WBoxFilter:public WFilter
 {
 public:
 	WBoxFilter(unsigned int size=1,
-		WSampler::WSamplerType sampType=WSampler::SAMPLER_RANDOM,
+		Sampler::SamplerType sampType=Sampler::SAMPLER_RANDOM,
 		unsigned int iseed=65535):
 	WFilter(size,sampType,iseed,WFilter::FILTER_BOX){}
 	void getFinalClr(Vector3&final);

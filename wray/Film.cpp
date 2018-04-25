@@ -5,7 +5,7 @@
 WFilm::WFilm(unsigned int resX,unsigned int resY,
 		   unsigned int sampleSize,
 		   WFilter::WFilterType filterType,
-		   WSampler::WSamplerType samplerType,
+		   Sampler::SamplerType samplerType,
 		   unsigned int seed)
 {
 	resolutionX=resX;
@@ -122,7 +122,7 @@ void WFilm::changeSampleSize(unsigned int size)
 {
 	filter->changeSampleSize(size);
 }
-void WFilm::changeSampler(WSampler::WSamplerType type)
+void WFilm::changeSampler(Sampler::SamplerType type)
 {
 	filter->changeSampler(type);
 }

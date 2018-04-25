@@ -117,7 +117,7 @@ void Camera::setFilmResolutionX(unsigned int resX)
 }
 void Camera::getFilmResolution(int&resX, int&resY)
 {
-	Vector2 res=film.getResolution();
+	Vector2f res=film.getResolution();
 	resX=(int)res.x;
 	resY=(int)res.y;
 }
@@ -125,7 +125,7 @@ void Camera::getNextRay(Ray&ray)
 {
 	float screenX,screenY;
 	film.getSamplePosition(screenX,screenY);
-	Vector2 res=film.getResolution();
+	Vector2f res=film.getResolution();
 	screenX=screenX/res.x*2.0f-1.0f;
 	screenY=screenY/res.y*2.0f-1.0f;
 	ray.point=origin;
@@ -137,7 +137,7 @@ void Camera::getNextRay(Ray&ray)
 
 void Camera::getNextRay( Ray&ray, float xi, float yi )
 {
-	Vector2 res=film.getResolution();
+	Vector2f res=film.getResolution();
 	float screenX= float(xi) /res.x*2.0f-1.0f;
 	float screenY= float(yi) /res.y*2.0f-1.0f;
 	ray.point=origin;
@@ -174,7 +174,7 @@ void Camera::changeSampleSize(unsigned int size)
 	film.changeSampleSize(size);
 	filmSampleSize=size;
 }
-void Camera::changeSampler(WSampler::WSamplerType type)
+void Camera::changeSampler(Sampler::SamplerType type)
 {
 	film.changeSampler(type);
 }
@@ -182,7 +182,7 @@ float Camera::currProgress()
 {
 	unsigned int currX,currY;
 	film.getCurrPos(currX,currY);
-	Vector2 res=film.getResolution();
+	Vector2f res=film.getResolution();
 	float nPoints=currY*res.x+currX;
 	float totalPoints=res.x*res.y;
 	return nPoints/totalPoints;

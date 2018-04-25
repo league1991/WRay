@@ -21,7 +21,7 @@ Vector3 WLambertBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 void WLambertBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &wo, float &pdf)
 {
 	Vector3 localVector;
-	WMonteCarlo::cosineSampleHemisphere(u, v, localVector, pdf);
+	RandomNumber::cosineSampleHemisphere(u, v, localVector, pdf);
 	sampleWi =//localVector;//DG.normal;
 		DG.tangent*localVector.x +
 		DG.bitangent*localVector.y +

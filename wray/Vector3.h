@@ -18,7 +18,7 @@ public:
 	Vector3();
 	Vector3(float i);
 	Vector3(const Vector3&v);
-	Vector3(const Vector2&v);
+	Vector3(const Vector2f&v);
 	Vector3(float ix,float iy,float iz);
 
 	//Îö¹¹º¯Êý

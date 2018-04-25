@@ -37,7 +37,7 @@ private:
 public:
 	TriAccel tA;
 	Vector3 point1,point2,point3;
-	Vector2 texCoord1,texCoord2,texCoord3;
+	Vector2f texCoord1,texCoord2,texCoord3;
 	Vector3 normal1,normal2,normal3;
 	unsigned int mtlId;
 
@@ -45,9 +45,9 @@ public:
 		const Vector3&ipoint1,
 		const Vector3&ipoint2,
 		const Vector3&ipoint3,
-		const Vector2&itexCoord1,
-		const Vector2&itexCoord2,
-		const Vector2&itexCoord3,
+		const Vector2f&itexCoord1,
+		const Vector2f&itexCoord2,
+		const Vector2f&itexCoord3,
 		const Vector3&inormal1,
 		const Vector3&inormal2,
 		const Vector3&inormal3,
@@ -79,7 +79,7 @@ public:
 	//由uv参数获得表面一点及其法向量
 	//用于灯光的采样
 	void getPoint(float u,float v,
-		Vector3&position,Vector3&normal,Vector2&texCoord);
+		Vector3&position,Vector3&normal,Vector2f&texCoord);
 
 	//在openGL中画出三角形，调试时用
 	void draw(bool showNormal=false,bool fillMode=false);

@@ -4,7 +4,7 @@
 WRecursivePathIntegrator::WRecursivePathIntegrator
 (Scene *scene, WAccelerator *tree,
  unsigned int ipathDepth,unsigned int inBranch,
- WSampler::WSamplerType samplerType,float imultiplier):
+ Sampler::SamplerType samplerType,float imultiplier):
 
 WSurfaceIntegrator(scene,tree),Dlighting(scene,tree),
 multiplier(imultiplier),nBranchs(inBranch),
@@ -12,8 +12,8 @@ lightSamples(1),BSDFSamples(1)
 
 {
 	maxDepth=max(1,ipathDepth);
-	if(samplerType==WSampler::SAMPLER_RANDOM)
-		sampler=new WRandomSampler;
+	if(samplerType==Sampler::SAMPLER_RANDOM)
+		sampler=new RandomSampler;
 	allocateSamples();
 }
 WRecursivePathIntegrator::~WRecursivePathIntegrator()

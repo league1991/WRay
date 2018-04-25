@@ -1,45 +1,42 @@
 #include "stdafx.h"
 #include "Sample.h"
 
-WSample::WSample(WSampleType dimension,unsigned int isize)
+Sample::Sample(SampleType dimension,unsigned int isize)
 {
 	type=dimension;
-	if(type==SAMPLE_1D)
-		totalPoints=isize;
-	else if(type==SAMPLE_2D)
-		totalPoints=isize*isize;
+	if (type == SAMPLE_1D || type == SAMPLE_SEQUENCE_2D)
+		totalPoints = isize;
+	else if (type == SAMPLE_2D)
+		totalPoints = isize*isize;
 	else
-		totalPoints=isize*isize*isize;
+		totalPoints = isize*isize*isize;
 	nthPoint=0;
 	size=isize;
-	pattern=NULL;
+	pattern.clear();
 }
-WSample::~WSample(void)
+Sample::~Sample(void)
 {
-	delete []pattern;
 }
-void WSample::clear()
+void Sample::clear()
 {
-	delete[]pattern;
-	pattern=NULL;
 	nthPoint=totalPoints=0;
 }
-void WSample::setSize(unsigned int size)
+void Sample::setSize(unsigned int size)
 {
-	if(type==SAMPLE_1D)
-		totalPoints=size;
-	else if(type==SAMPLE_2D)
-		totalPoints=size*size;
+	if (type == SAMPLE_1D || type == SAMPLE_SEQUENCE_2D)
+		totalPoints = size;
+	else if (type == SAMPLE_2D)
+		totalPoints = size*size;
 	else
-		totalPoints=size*size*size;
+		totalPoints = size*size*size;
 }
-WSample1D::WSample1D(unsigned int size):WSample(SAMPLE_1D,size){}
-void WSample1D::allocateSpace()
+Sample1D::Sample1D(unsigned int size):Sample(SAMPLE_1D,size){}
+void Sample1D::allocateSpace()
 {
-	pattern=new float[totalPoints];
+	pattern.resize(totalPoints);
 	nthPoint=0;
 }
-bool WSample1D::get1D(float &x)
+bool Sample1D::get1D(float &x)
 {
 	if(nthPoint<totalPoints)
 	{
@@ -47,20 +44,24 @@ bool WSample1D::get1D(float &x)
 		nthPoint++;
 		return true;
 	}
-	return false;
+	else
+	{
+		x = RandomNumber::randomFloat();
+		return false;
+	}
 }
-void WSample1D::display()
+void Sample1D::display()
 {
 	for(unsigned int i=0;i<totalPoints;i++)
 		cout<<pattern[i]<<endl;
 }
-WSample2D::WSample2D(unsigned int size):WSample(SAMPLE_2D,size){}
-void WSample2D::allocateSpace()
+Sample2D::Sample2D(unsigned int size):Sample(SAMPLE_2D,size){}
+void Sample2D::allocateSpace()
 {
-	pattern=new float[totalPoints*2];
+	pattern.resize(totalPoints*2);
 	nthPoint=0;
 }
-bool WSample2D::get2D(float&x,float&y)
+bool Sample2D::get2D(float&x,float&y)
 {
 	if(nthPoint<totalPoints)
 	{
@@ -69,20 +70,25 @@ bool WSample2D::get2D(float&x,float&y)
 		nthPoint++;
 		return true;
 	}
-	return false;
+	else
+	{
+		x = RandomNumber::randomFloat();
+		y = RandomNumber::randomFloat();
+		return false;
+	}
 }
-void WSample2D::display()
+void Sample2D::display()
 {
 	for(unsigned int i=0;i<totalPoints;i++)
 		cout<<pattern[2*i]<<" "<<pattern[2*i+1]<<endl;
 }
-WSample3D::WSample3D(unsigned int size):WSample(SAMPLE_3D,size){}
-void WSample3D::allocateSpace()
+Sample3D::Sample3D(unsigned int size):Sample(SAMPLE_3D,size){}
+void Sample3D::allocateSpace()
 {
-	pattern=new float[totalPoints*3];
+	pattern.resize(totalPoints * 3);
 	nthPoint=0;
 }
-bool WSample3D::get3D(float&x,float&y,float&z)
+bool Sample3D::get3D(float&x,float&y,float&z)
 {
 	if(nthPoint<totalPoints)
 	{
@@ -91,10 +97,39 @@ bool WSample3D::get3D(float&x,float&y,float&z)
 		z=pattern[3*nthPoint+2];
 		nthPoint++;return true;
 	}
-	return false;
+	else
+	{
+		x = RandomNumber::randomFloat();
+		y = RandomNumber::randomFloat();
+		z = RandomNumber::randomFloat();
+		return false;
+	}
 }
-void WSample3D::display()
+void Sample3D::display()
 {
 	for(unsigned int i=0;i<totalPoints;i++)
 		cout<<pattern[3*i]<<' '<<pattern[3*i+1]<<' '<<pattern[3*i+2]<<endl;
+}
+
+void SequenceSample2D::allocateSpace()
+{
+	pattern.resize(totalPoints * 2);
+	nthPoint = 0;
+}
+
+bool SequenceSample2D::get2D(float & x, float & y)
+{
+	if (nthPoint<totalPoints)
+	{
+		x = pattern[2 * nthPoint];
+		y = pattern[2 * nthPoint + 1];
+		nthPoint++;
+		return true;
+	}
+	else
+	{
+		x = RandomNumber::randomFloat();
+		y = RandomNumber::randomFloat();
+		return false;
+	}
 }

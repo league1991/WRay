@@ -168,7 +168,7 @@ void ObjectLight::sampleLight(
 	float b1,b2;
 	MC::uniformSampleTriangle(u2,u3,b1,b2);
 	Vector3 normal;
-	Vector2 texCoord;
+	Vector2f texCoord;
 	t.getPoint(b1,b2,iposition,normal,texCoord);
 	Vector3 delta=bsdf.DG.position-iposition;
 	float distanceSquared=delta.lengthSquared();
@@ -198,7 +198,7 @@ void ObjectLight::sampleLight(float u1, float u2, float u3, WBSDF & bsdf, Vector
 	object->getTriangle(faceData.m_triangleID, triangle);
 
 	float u, v;
-	WMonteCarlo::uniformSampleTriangle(u2, u3, u, v);
+	RandomNumber::uniformSampleTriangle(u2, u3, u, v);
 	Vector3 edge21 = triangle.point2 - triangle.point1;
 	Vector3 edge31 = triangle.point3 - triangle.point1;
 	position = triangle.point1 + edge21 * u + edge31 * v;

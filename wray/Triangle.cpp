@@ -49,9 +49,9 @@ WTriangle::WTriangle(
 		 const Vector3&ipoint1,
 		 const Vector3&ipoint2,
 		 const Vector3&ipoint3,
-		 const Vector2&itexCoord1,
-		 const Vector2&itexCoord2,
-		 const Vector2&itexCoord3,
+		 const Vector2f&itexCoord1,
+		 const Vector2f&itexCoord2,
+		 const Vector2f&itexCoord3,
 		 const Vector3&inormal1,
 		 const Vector3&inormal2,
 		 const Vector3&inormal3,
@@ -192,7 +192,7 @@ void WTriangle::intersect(Ray&r,WDifferentialGeometry&DG)
 void WTriangle::getPoint(float b1,float b2,
 						Vector3&position,
 						Vector3&normal,
-						Vector2&texCoord)
+						Vector2f&texCoord)
 {
 	position=(1.0f-b1-b2)*point1+b1*point2+b2*point3;
 	normal=(1.0f-b1-b2)*normal1+b1*normal2+b2*normal3;

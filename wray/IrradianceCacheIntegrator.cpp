@@ -9,7 +9,7 @@ WIrradianceCacheIntegrator::WIrradianceCacheIntegrator(
 	unsigned int iminSamples,
 	unsigned int inDirectLightSamples,
 	unsigned int imaxTracingDepth,
-	WSampler::WSamplerType samplerType,
+	Sampler::SamplerType samplerType,
 	float imaxNormalError,
 	float imaxPlanarError,
 	float idistanceErrorFactor,
@@ -28,10 +28,10 @@ WIrradianceCacheIntegrator::WIrradianceCacheIntegrator(
 	LambertBSDFSamples(1),SpecularBSDFSamples(1),lightSamples(1),
 	distanceErrorFactor(idistanceErrorFactor)
 {
-	if(samplerType==WSampler::SAMPLER_RANDOM)
-		sampler=new WRandomSampler;
-	else if(samplerType==WSampler::SAMPLER_STRATIFIED)
-		sampler=new WStratifiedSampler;
+	if(samplerType==Sampler::SAMPLER_RANDOM)
+		sampler=new RandomSampler;
+	else if(samplerType==Sampler::SAMPLER_STRATIFIED)
+		sampler=new StratifiedSampler;
 
 	LambertBSDFSamples.setSize(sqrt(float(nRaysForLambert))+1);
 	LambertBSDFSamples.allocateSpace();
@@ -274,8 +274,8 @@ void WIrradianceCacheIntegrator::pathTracing(
 				pathBSDF,lightSamples,LambertBSDFSamples,ro);
 			indirectLight+=pathThroughPut*pathDirectLight;
 
-			pathBSDFU=WMonteCarlo::randomFloat();
-			pathBSDFV=WMonteCarlo::randomFloat();
+			pathBSDFU=RandomNumber::randomFloat();
+			pathBSDFV=RandomNumber::randomFloat();
 			pathBSDF->sampleRay(pathBSDFU,pathBSDFV,ri,ro,PDF);
 			ray.point=pathDG.position;
 			ray.direction=ri;

@@ -44,11 +44,11 @@ bool MeshObject::getTriangle(unsigned int nthFace,WTriangle&tri)
 
 	//ÕÒµ½ÌùÍ¼×ø±ê
 	p=&texcoords[texCoordIndices[nthFace*3]*2];
-	tri.texCoord1=Vector2(*p,*(p+1));
+	tri.texCoord1=Vector2f(*p,*(p+1));
 	p=&texcoords[texCoordIndices[nthFace*3+1]*2];
-	tri.texCoord2=Vector2(*p,*(p+1));
+	tri.texCoord2=Vector2f(*p,*(p+1));
 	p=&texcoords[texCoordIndices[nthFace*3+2]*2];
-	tri.texCoord3=Vector2(*p,*(p+1));
+	tri.texCoord3=Vector2f(*p,*(p+1));
 
 	tri.mtlId=mtlIndices[nthFace];
 	return true;

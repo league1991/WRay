@@ -1,14 +1,14 @@
 #pragma once
 #include "surfaceintegrator.h"
 
-class WPathIntegrator :
+class PathIntegrator :
 	public WSurfaceIntegrator
 {
 public:
-	WPathIntegrator(Scene*scene,WAccelerator*tree,
+	PathIntegrator(Scene*scene,WAccelerator*tree,
 		unsigned int ipathDepth=1,
-		WSampler::WSamplerType samplerType=WSampler::SAMPLER_RANDOM,float imultiplier=1);
-	virtual ~WPathIntegrator(void);
+		Sampler::SamplerType samplerType=Sampler::SAMPLER_RANDOM,float imultiplier=1);
+	virtual ~PathIntegrator(void);
 
 	//¹âÏß×·×Ùº¯Êý
 	Vector3 integrate(Ray&ray);
@@ -19,11 +19,11 @@ public:
 	void displayTime();
 private:
 	WClock timer;
-	WSampler*sampler;
-	WSample2D BSDFSamples;
-	WSample3D lightSamples;
+	Sampler*sampler;
+	SequenceSample2D BSDFSamples;
+	Sample3D lightSamples;
 
-	vector<WSample2D> BSDFSampleGroup;
+	vector<Sample2D> BSDFSampleGroup;
 	WDirectLighting Dlighting;
 	unsigned int pathMaxDepth;
 	float multiplier;

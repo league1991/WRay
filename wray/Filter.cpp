@@ -2,7 +2,7 @@
 #include "Filter.h"
 
 WFilter::WFilter(unsigned int size,
-			   WSampler::WSamplerType sampType,
+			   Sampler::SamplerType sampType,
 			   unsigned int iseed,
 			   WFilterType filterType):samples(size)
 {
@@ -10,8 +10,8 @@ WFilter::WFilter(unsigned int size,
 	seed=iseed;
 	sampleColors=new Vector3[size*size];//样本颜色
 	samples.allocateSpace();
-	if(sampType==WSampler::SAMPLER_RANDOM)
-		sampler=new WRandomSampler(iseed);
+	if(sampType==Sampler::SAMPLER_RANDOM)
+		sampler=new RandomSampler(iseed);
 	sampler->computeSamples(samples);//计算采样点
 }
 
@@ -28,11 +28,11 @@ void WFilter::changeSampleSize(unsigned int isize)
 	delete []sampleColors;
 	sampleColors=new Vector3[isize*isize];
 }
-void WFilter::changeSampler(WSampler::WSamplerType type)
+void WFilter::changeSampler(Sampler::SamplerType type)
 {
 	delete sampler;
-	if(type==WSampler::SAMPLER_RANDOM)
-		sampler=new WRandomSampler(seed);
+	if(type==Sampler::SAMPLER_RANDOM)
+		sampler=new RandomSampler(seed);
 }
 void WFilter::setSampleClr(Vector3 sampClr)
 {

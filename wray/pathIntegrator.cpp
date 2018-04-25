@@ -2,51 +2,62 @@
 #include "pathIntegrator.h"
 #include "Scene.h"
 
-WPathIntegrator::WPathIntegrator(Scene *scene, WAccelerator *tree, unsigned int ipathDepth, WSampler::WSamplerType samplerType,float imultiplier):
+PathIntegrator::PathIntegrator(Scene *scene, WAccelerator *tree, unsigned int ipathDepth, Sampler::SamplerType samplerType,float imultiplier):
 WSurfaceIntegrator(scene,tree),Dlighting(scene,tree),
 multiplier(imultiplier),
 lightSamples(4),BSDFSamples(4)
 {
 	pathMaxDepth=max(1,ipathDepth);
-	if(samplerType==WSampler::SAMPLER_RANDOM)
-		sampler=new WRandomSampler;
-	else if(samplerType==WSampler::SAMPLER_STRATIFIED)
-		sampler=new WStratifiedSampler;
+	if(samplerType==Sampler::SAMPLER_RANDOM)
+		sampler=new RandomSampler;
+	else if(samplerType==Sampler::SAMPLER_STRATIFIED)
+		sampler=new StratifiedSampler;
+	else if (samplerType == Sampler::SAMPLER_SEQUENCE_STRATIFIED)
+	{
+		sampler = new SequenceStratifiedSampler;
+	}
 	allocateSamples();
 }
-WPathIntegrator::~WPathIntegrator()
+PathIntegrator::~PathIntegrator()
 {
 	clearSamples();
 }
 
-void WPathIntegrator::setPathMaxDepth(unsigned int idepth)
+void PathIntegrator::setPathMaxDepth(unsigned int idepth)
 {
 	pathMaxDepth=max(1,idepth);
 	clearSamples();
 	allocateSamples();
 }
-void WPathIntegrator::clearSamples()
+void PathIntegrator::clearSamples()
 {
 	BSDFSamples.clear();
 	lightSamples.clear();
 }
-void WPathIntegrator::allocateSamples()
+void PathIntegrator::allocateSamples()
 {
 	unsigned int nLightSamples=scene->getLightNum()*pathMaxDepth;
 	unsigned int nBSDFSamples=pathMaxDepth*2;
-	BSDFSamples.setSize(unsigned int(sqrt(float(nBSDFSamples))+1));
+	BSDFSamples.setSize(nBSDFSamples);
 	lightSamples.setSize(unsigned int(sqrt(float(nLightSamples))+1));
 	BSDFSamples.allocateSpace();
 	lightSamples.allocateSpace();
 }
-void WPathIntegrator::computeSamples()
+void PathIntegrator::computeSamples()
 {
 //	sampler->setSeed(unsigned int(clock()));
+	if (sampler->type == Sampler::SAMPLER_SEQUENCE_STRATIFIED)
+	{
+		SequenceStratifiedSampler* seqSampler = static_cast<SequenceStratifiedSampler*>(sampler);
+		seqSampler->setPixel(m_pixelPos.m_x, m_pixelPos.m_y);
+		seqSampler->setSampleIdx(m_pixelSampleIdx);
+		seqSampler->setDimension((int)sqrt(float(m_numPixelSamples)));
+	}
 	sampler->computeSamples(BSDFSamples);
 	sampler->computeSamples(lightSamples);
 }
 
-Vector3 WPathIntegrator::integrate(Ray&camRay)//颜色计算
+Vector3 PathIntegrator::integrate(Ray&camRay)//颜色计算
 {
 // 	clearSamples();
 // 	allocateSamples();
@@ -93,7 +104,7 @@ Vector3 WPathIntegrator::integrate(Ray&camRay)//颜色计算
 		if (depth > 3)
 		{
 			float continueProb = 0.7;
-			if (WMonteCarlo::randomFloat() > continueProb)
+			if (RandomNumber::randomFloat() > continueProb)
 				break;
 			pathThroughPut/=continueProb;
 		}
@@ -104,11 +115,11 @@ Vector3 WPathIntegrator::integrate(Ray&camRay)//颜色计算
 	//totalLight.z = min(totalLight.z,5.f);
 	return totalLight;
 }
-void WPathIntegrator::displayTime()
+void PathIntegrator::displayTime()
 {
 	timer.display();
 }
 
-void WPathIntegrator::initSamples( int nSampleGroup )
+void PathIntegrator::initSamples( int nSampleGroup )
 {
 }

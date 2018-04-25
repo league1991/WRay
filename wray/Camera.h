@@ -46,7 +46,7 @@ public:
 	//继续从第一个像素开始曝光,之前的颜色会被叠加进去
 	virtual void nextExposurePass();
 	virtual void changeSampleSize(unsigned int size);
-	virtual void changeSampler(WSampler::WSamplerType type);
+	virtual void changeSampler(Sampler::SamplerType type);
 	//返回当前渲染进度
 	virtual float currProgress();
 	virtual Vector3 getDirection(){return dir;}

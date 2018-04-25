@@ -13,8 +13,8 @@ public:
 		unsigned int iminSamples=10,
 		unsigned int inDirectLightSamples=1,
 		unsigned int imaxTracingDepth=5,
-		WSampler::WSamplerType samplerType=
-		WSampler::SAMPLER_RANDOM,
+		Sampler::SamplerType samplerType=
+		Sampler::SAMPLER_RANDOM,
 		float imaxNormalError=0.1,
 		float imaxPlanarError=0.1,
 		float idistanceErrorFactor=0.5,
@@ -49,12 +49,12 @@ public:
 	void displayTreeNodes();
 
 private:
-	WSampler*sampler;
- 	WSample2D LambertBSDFSamples;
-	WSample2D SpecularBSDFSamples;
- 	WSample3D lightSamples;
+	Sampler*sampler;
+ 	Sample2D LambertBSDFSamples;
+	Sample2D SpecularBSDFSamples;
+ 	Sample3D lightSamples;
 	WDirectLighting Dlighting;
-	WPathIntegrator pathIntegrator;
+	PathIntegrator pathIntegrator;
 	//²åÖµÆ÷
 	WIrradianceInterpolator interpolator;
 	WOctTree octTree;

@@ -13,7 +13,7 @@ Vector4::Vector4(const Vector3&v)
 {
 	x=v.x;y=v.y;z=v.z;h=1.0f;
 }
-Vector4::Vector4(const Vector2&v)
+Vector4::Vector4(const Vector2f&v)
 {
 	x=v.x;y=v.y;z=0.0f;h=1.0f;
 }

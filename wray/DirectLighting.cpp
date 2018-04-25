@@ -20,7 +20,7 @@ bool WDirectLighting::isVisible(Vector3 pos1, Vector3 pos2, int* beginNode)
 	int begNode = beginNode ? *beginNode : -1;
 	return !tree->isIntersect(r, begNode);
 }
-Vector3 WDirectLighting::computeDirectLight(WLight *light, WBSDF *bsdf, WSample3D &lightSample, WSample2D &bsdfSample,const Vector3&ro, int* nodeInfo)
+Vector3 WDirectLighting::computeDirectLight(WLight *light, WBSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample,const Vector3&ro, int* nodeInfo)
 {
 	// Sample light
 	float LSu,LSv,LSw;
@@ -68,18 +68,18 @@ Vector3 WDirectLighting::computeDirectLight(WLight *light, WBSDF *bsdf, WSample3
 	{
 		return Vector3(0.0);
 	}
-	float lightWeight = WMonteCarlo::powerHeuristic(1, lightPDF, 1, bsdfPDF);
-	float bsdfWeight = WMonteCarlo::powerHeuristic(1, bsdfPDF, 1, lightPDF);
+	float lightWeight = RandomNumber::powerHeuristic(1, lightPDF, 1, bsdfPDF);
+	float bsdfWeight = RandomNumber::powerHeuristic(1, bsdfPDF, 1, lightPDF);
 	return lightRadiance * lightWeight + bsdfRadiance * bsdfWeight;
 }
 
-Vector3 WDirectLighting::sampleAllLights(WBSDF *bsdf, WSample3D &lightSample, WSample2D &bsdfSample, const Vector3 &ro, int* nodeInfo)
+Vector3 WDirectLighting::sampleAllLights(WBSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample, const Vector3 &ro, int* nodeInfo)
 {	
 	WLight*pLight;
 	Vector3 color(0);
 	unsigned int lightNum=scene->getLightNum();
 	
-	int ithLight = WMonteCarlo::randomInt(lightNum);
+	int ithLight = RandomNumber::randomInt(lightNum);
 	pLight = scene->getLightPointer(ithLight);
 	color += computeDirectLight(pLight, bsdf, lightSample, bsdfSample, ro, nodeInfo);
 	return color + bsdf->getEmission();

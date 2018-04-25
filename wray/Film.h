@@ -12,14 +12,14 @@ public:
 	WFilm(unsigned int resX=640,unsigned int resY=480,
 		unsigned int sampleSize=1,
 		WFilter::WFilterType filterType=WFilter::FILTER_BOX,
-		WSampler::WSamplerType samplerType=WSampler::SAMPLER_RANDOM,
+		Sampler::SamplerType samplerType=Sampler::SAMPLER_RANDOM,
 		unsigned int seed=65536);
 	virtual ~WFilm(void);
 
 	//设置分辨率
 	void setResolution(unsigned int resX,unsigned int resY);
-	Vector2 getResolution()
-	{return Vector2(resolutionX,resolutionY);}
+	Vector2f getResolution()
+	{return Vector2f(resolutionX,resolutionY);}
 
 
 	//设置指定坐标位置的颜色，坐标原点在屏幕左下角
@@ -59,7 +59,7 @@ public:
 
 
 	void changeSampleSize(unsigned int size);
-	void changeSampler(WSampler::WSamplerType type);
+	void changeSampler(Sampler::SamplerType type);
 
 	int*getBitPointer(){return bitColors;}
 	float* getFloatPointer(){return colors;}

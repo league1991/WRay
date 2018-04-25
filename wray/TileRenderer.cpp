@@ -117,6 +117,7 @@ void TileRenderer::scheduleTasks()
 			task->resetTask();
 		}
 		m_renderPass++;
+		std::cout << "Render Pass: " << m_renderPass;
 	}
 }
 
@@ -197,6 +198,8 @@ void RenderThread::run() {
 						Vector3 color(0, 0, 0);
 						Ray r;
 						camera->getNextRay(r, x, y);
+						int numPixelSamples = 16;
+						m_integrator->setPixelInfo(Vector2i(x, y), m_task->m_currentPass % numPixelSamples, numPixelSamples);
 						color += m_integrator->integrate(r);
 						camera->accumulateColor(color.x, color.y, color.z, x, y);
 					}
@@ -226,6 +229,6 @@ bool RenderThread::init()
 		return false;
 	}
 	auto renderer = TileRenderer::getInstance();
-	m_integrator.reset(new WPathIntegrator(renderer->getScene(), renderer->getTree(), 20, WSampler::SAMPLER_STRATIFIED, 1.0f));
+	m_integrator.reset(new PathIntegrator(renderer->getScene(), renderer->getTree(), 20, Sampler::SAMPLER_SEQUENCE_STRATIFIED, 1.0f));
 	return true;
 }

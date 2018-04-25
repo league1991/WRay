@@ -36,7 +36,7 @@ public:
 	Vector3 getNormal() { return DG.normal; }
 	Vector3 getBitangent() { return DG.bitangent; }
 	Vector3 getTangent() { return DG.tangent; }
-	Vector2 getTexCoord() { return DG.texCoord; }
+	Vector2f getTexCoord() { return DG.texCoord; }
 
 	//各种set函数
 	//设置DG
