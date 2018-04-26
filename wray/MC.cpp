@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "MC.h"
 #include <math.h>
+
+std::minstd_rand RandomNumber::s_randObj(12345);
+std::uniform_real_distribution<float> RandomNumber::s_uniformFloatObj;
+std::uniform_int_distribution<> RandomNumber::s_uniformIntObj;
+
 RandomNumber::RandomNumber(void)
 {
 }
@@ -10,7 +15,7 @@ RandomNumber::~RandomNumber(void)
 }
 float RandomNumber::randomFloat()
 {
-	return float(rand())/32767.0f;
+	return s_uniformFloatObj(s_randObj);
 }
 void RandomNumber::uniformSampleDisk(const float u1, const float u2, float &x, float &y)
 {

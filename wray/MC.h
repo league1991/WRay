@@ -6,8 +6,11 @@ public:
 	RandomNumber(void);
 	virtual ~RandomNumber(void);
 	static float randomFloat();
-	static int randomInt(int count) { return rand() % count; }
-	static void randomSeed(unsigned int seed) { srand(seed); }
+	static int randomInt(int count) 
+	{
+		return s_uniformIntObj(s_randObj) % count;
+	}
+	static void randomSeed(unsigned int seed) { s_randObj.seed(seed); }
 
 	//以下是随机采样函数，输入0-1的随机数，返回采样的坐标值
 	//对圆形采样，返回单位圆内部的坐标值
@@ -17,4 +20,9 @@ public:
 	static void uniformSampleTriangle(float u1,float u2,
 		float &u,float &v);
 	static float powerHeuristic(int nf, float fPdf, int ng, float gPdf);
+
+private:
+	static std::minstd_rand s_randObj;
+	static std::uniform_real_distribution<float> s_uniformFloatObj;
+	static std::uniform_int_distribution<> s_uniformIntObj;
 };

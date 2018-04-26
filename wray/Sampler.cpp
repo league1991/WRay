@@ -27,19 +27,19 @@ void RandomSampler::computeSamples(Sample&s)
 	unsigned int i = 0;
 	for(; i < (nValues & ~0x7);i+=8)
 	{
-		s.pattern[i]     = float(rand()) * inv32767;
-		s.pattern[i + 1] = float(rand()) * inv32767;
-		s.pattern[i + 2] = float(rand()) * inv32767;
-		s.pattern[i + 3] = float(rand()) * inv32767;
-		s.pattern[i + 4] = float(rand()) * inv32767;
-		s.pattern[i + 5] = float(rand()) * inv32767;
-		s.pattern[i + 6] = float(rand()) * inv32767;
-		s.pattern[i + 7] = float(rand()) * inv32767;
+		s.pattern[i]     = RandomNumber::randomFloat();
+		s.pattern[i + 1] = RandomNumber::randomFloat();
+		s.pattern[i + 2] = RandomNumber::randomFloat();
+		s.pattern[i + 3] = RandomNumber::randomFloat();
+		s.pattern[i + 4] = RandomNumber::randomFloat();
+		s.pattern[i + 5] = RandomNumber::randomFloat();
+		s.pattern[i + 6] = RandomNumber::randomFloat();
+		s.pattern[i + 7] = RandomNumber::randomFloat();
 //		cout<<s.pattern[i]<<endl;
 	}
 	for (;i < nValues; i++)
 	{
-		s.pattern[i]     = float(rand()) * inv32767;
+		s.pattern[i]     = RandomNumber::randomFloat();
 	}
 }
 void StratifiedSampler::swapPoint(unsigned int ithPoint,unsigned int jthPoint,Sample&s)
@@ -82,10 +82,10 @@ void StratifiedSampler::computeSamples(Sample&s)
 	if(s.type==Sample::SAMPLE_1D)
 	{
 		for(unsigned int i=0;i<s.totalPoints;i++)
-			s.pattern[i]=(float(i)+float(rand())/32767.0f)/s.size;
+			s.pattern[i]=(float(i)+RandomNumber::randomFloat())/s.size;
 		for(unsigned int i=0;i<s.totalPoints;i++)
 		{
-			unsigned int nthPoint=rand()%s.totalPoints;
+			unsigned int nthPoint=RandomNumber::randomInt(s.totalPoints);
 			swapPoint(i,nthPoint,s);
 		}
 	}
@@ -98,15 +98,15 @@ void StratifiedSampler::computeSamples(Sample&s)
 			{
 				//x坐标
 				s.pattern[2*(s.size*j+i)]=
-					(float(i)+float(rand())/32767.0f)/s.size;
+					(float(i)+RandomNumber::randomFloat())/s.size;
 				//y坐标
 				s.pattern[2*(s.size*j+i)+1]=
-					(float(j)+float(rand())/32767.0f)/s.size;
+					(float(j)+RandomNumber::randomFloat())/s.size;
 			}
 		}
 		for(unsigned int i=0;i<s.totalPoints;i++)
 		{
-			unsigned int nthPoint=rand()%s.totalPoints;
+			unsigned int nthPoint=RandomNumber::randomInt(s.totalPoints);
 			swapPoint(i,nthPoint,s);
 		}
 	}
@@ -121,19 +121,19 @@ void StratifiedSampler::computeSamples(Sample&s)
 				{
 					//x坐标
 					s.pattern[3*(s.size*s.size*k+s.size*j+i)]=
-						(float(i)+float(rand())/32767.0f)/s.size;
+						(float(i)+RandomNumber::randomFloat())/s.size;
 					//y坐标
 					s.pattern[3*(s.size*s.size*k+s.size*j+i)+1]=	
-						(float(j)+float(rand())/32767.0f)/s.size;
+						(float(j)+RandomNumber::randomFloat())/s.size;
 					//z坐标
 					s.pattern[3*(s.size*s.size*k+s.size*j+i)+2]=	
-						(float(k)+float(rand())/32767.0f)/s.size;
+						(float(k)+RandomNumber::randomFloat())/s.size;
 				}
 			}
 		}
 		for(unsigned int i=0;i<s.totalPoints;i++)
 		{
-			unsigned int nthPoint=rand()%s.totalPoints;
+			unsigned int nthPoint=RandomNumber::randomInt(s.totalPoints);
 			swapPoint(i,nthPoint,s);
 		}
 	}
@@ -159,7 +159,7 @@ void SequenceStratifiedSampler::computeSamples(Sample & s)
 			s.pattern[i] = (float(i) + float(rand()) / 32767.0f) / s.size;
 		for (unsigned int i = 0; i<s.totalPoints; i++)
 		{
-			unsigned int nthPoint = rand() % s.totalPoints;
+			unsigned int nthPoint = RandomNumber::randomInt(s.totalPoints);
 			swapPoint(i, nthPoint, s);
 		}
 	}
@@ -178,7 +178,7 @@ void SequenceStratifiedSampler::computeSamples(Sample & s)
 		}
 		for (unsigned int i = 0; i<s.totalPoints; i++)
 		{
-			unsigned int nthPoint = rand() % s.totalPoints;
+			unsigned int nthPoint = RandomNumber::randomInt(s.totalPoints);
 			swapPoint(i, nthPoint, s);
 		}
 	}
@@ -199,7 +199,7 @@ void SequenceStratifiedSampler::computeSamples(Sample & s)
 		}
 		for (unsigned int i = 0; i < s.totalPoints; i++)
 		{
-			unsigned int nthPoint = rand() % s.totalPoints;
+			unsigned int nthPoint = RandomNumber::randomInt(s.totalPoints);
 			swapPoint(i, nthPoint, s);
 		}
 	}
