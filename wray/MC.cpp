@@ -2,7 +2,8 @@
 #include "MC.h"
 #include <math.h>
 
-std::minstd_rand RandomNumber::s_randObj(12345);
+PCGRandomObj RandomNumber::s_PCGRandObj(12345,678);
+std::mt19937 RandomNumber::s_randObj(12345);
 std::uniform_real_distribution<float> RandomNumber::s_uniformFloatObj;
 std::uniform_int_distribution<> RandomNumber::s_uniformIntObj;
 
@@ -13,10 +14,7 @@ RandomNumber::RandomNumber(void)
 RandomNumber::~RandomNumber(void)
 {
 }
-float RandomNumber::randomFloat()
-{
-	return s_uniformFloatObj(s_randObj);
-}
+
 void RandomNumber::uniformSampleDisk(const float u1, const float u2, float &x, float &y)
 {
 	float r=sqrt(u1);
@@ -24,6 +22,7 @@ void RandomNumber::uniformSampleDisk(const float u1, const float u2, float &x, f
 	x=r*cos(theta);
 	y=r*sin(theta);
 }
+
 void RandomNumber::cosineSampleHemisphere(const float u1, const float u2, Vector3 &sample,float&PDF)
 {
 	uniformSampleDisk(u1,u2,sample.x,sample.y);

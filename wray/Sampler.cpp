@@ -156,7 +156,7 @@ void SequenceStratifiedSampler::computeSamples(Sample & s)
 	if (s.type == Sample::SAMPLE_1D)
 	{
 		for (unsigned int i = 0; i<s.totalPoints; i++)
-			s.pattern[i] = (float(i) + float(rand()) / 32767.0f) / s.size;
+			s.pattern[i] = (float(i) + RandomNumber::randomFloat()) / s.size;
 		for (unsigned int i = 0; i<s.totalPoints; i++)
 		{
 			unsigned int nthPoint = RandomNumber::randomInt(s.totalPoints);

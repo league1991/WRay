@@ -31,6 +31,7 @@
 #include <thread>
 #include <mutex>
 #include <random>
+#include <chrono>
 #include <omp.h>
 #include <xmmintrin.h>
 #include <emmintrin.h>

@@ -117,7 +117,13 @@ void TileRenderer::scheduleTasks()
 			task->resetTask();
 		}
 		m_renderPass++;
-		std::cout << "Render Pass: " << m_renderPass;
+
+		auto newTime = std::chrono::system_clock::now();
+		std::chrono::duration<double> duration = newTime - m_frameTime;
+		m_frameTime = newTime;
+		std::cout
+			<< "Render Pass: " << m_renderPass 
+			<< " time: " << duration.count() << "s" << std::endl;
 	}
 }
 
@@ -171,6 +177,7 @@ void TileRenderer::beginRender()
 	if (m_renderStatus == NOT_RENDERED)
 	{
 		m_renderStatus = WAITING_TO_RENDER;
+		m_frameTime = std::chrono::system_clock::now();
 	}
 }
 

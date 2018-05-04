@@ -110,9 +110,9 @@ Vector3 PathIntegrator::integrate(Ray&camRay)//ÑÕÉ«¼ÆËã
 		}
 	}
 	//	totalLight.showCoords();
-	//totalLight.x = min(totalLight.x,5.f);
-	//totalLight.y = min(totalLight.y,5.f);
-	//totalLight.z = min(totalLight.z,5.f);
+	totalLight.x = min(totalLight.x,5.f);
+	totalLight.y = min(totalLight.y,5.f);
+	totalLight.z = min(totalLight.z,5.f);
 	return totalLight;
 }
 void PathIntegrator::displayTime()

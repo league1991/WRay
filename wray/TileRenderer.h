@@ -102,6 +102,7 @@ protected:
 	std::unique_ptr<std::thread> m_scheduleThread;
 	std::vector<std::shared_ptr<TileTask>> m_tileTask;
 	RenderStatus m_renderStatus;
+	std::chrono::time_point<std::chrono::system_clock> m_frameTime;
 
 	// Scene Data
 	std::unique_ptr<Scene> m_scene;
