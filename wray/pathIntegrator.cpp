@@ -7,7 +7,7 @@ WSurfaceIntegrator(scene,tree),Dlighting(scene,tree),
 multiplier(imultiplier),
 lightSamples(4),BSDFSamples(4)
 {
-	pathMaxDepth=max(1,ipathDepth);
+	pathMaxDepth=max(1U,ipathDepth);
 	if(samplerType==Sampler::SAMPLER_RANDOM)
 		sampler=new RandomSampler;
 	else if(samplerType==Sampler::SAMPLER_STRATIFIED)
@@ -25,7 +25,7 @@ PathIntegrator::~PathIntegrator()
 
 void PathIntegrator::setPathMaxDepth(unsigned int idepth)
 {
-	pathMaxDepth=max(1,idepth);
+	pathMaxDepth=max(1U,idepth);
 	clearSamples();
 	allocateSamples();
 }
@@ -73,7 +73,6 @@ Vector3 PathIntegrator::integrate(Ray&camRay)//ÑÕÉ«¼ÆËã
 //				cout<<ray.tMin<<endl;
 //	ray.tMin=1e-5f;
 	int beginNode = -1, endNode = -1;
-	pathMaxDepth = 1;
 	for(unsigned int depth=0; depth<pathMaxDepth;depth++)
 	{
 		if(tree->intersect(ray,DG,&endNode,beginNode))

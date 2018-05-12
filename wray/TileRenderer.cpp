@@ -88,6 +88,7 @@ void TileRenderer::scheduleTasks()
 		if (nWorkingThreads == 0)
 		{
 			m_renderStatus = NOT_RENDERED;
+			m_renderPass = 0;
 		}
 		return;
 	}

@@ -17,7 +17,7 @@
 #include <sstream>
 #include <stdlib.h>
 #define GLUT_DISABLE_ATEXIT_HACK //这句话极其重要
-#include <GL/glut.h>
+#include "GL/freeglut.h"
 #include <time.h>
 #include <vector>
 #include <list>

@@ -153,10 +153,11 @@ void SequenceStratifiedSampler::setSampleIdx(int i)
 void SequenceStratifiedSampler::computeSamples(Sample & s)
 {
 	s.nthPoint = 0;
+	float* pattern = s.pattern.size() > 0?&s.pattern[0]:nullptr;
 	if (s.type == Sample::SAMPLE_1D)
 	{
-		for (unsigned int i = 0; i<s.totalPoints; i++)
-			s.pattern[i] = (float(i) + RandomNumber::randomFloat()) / s.size;
+		for (unsigned int i = 0; i<s.totalPoints; i++, pattern++)
+			*pattern = (float(i) + RandomNumber::randomFloat()) / s.size;
 		for (unsigned int i = 0; i<s.totalPoints; i++)
 		{
 			unsigned int nthPoint = RandomNumber::randomInt(s.totalPoints);
@@ -165,15 +166,15 @@ void SequenceStratifiedSampler::computeSamples(Sample & s)
 	}
 	else if (s.type == Sample::SAMPLE_2D)
 	{
-		for (unsigned int i = 0; i<s.size; i++)
+		for (unsigned int j = 0; j<s.size; j++)
 		{
 			//i为x方向,j为y方向
-			for (unsigned int j = 0; j<s.size; j++)
+			for (unsigned int i = 0; i<s.size; i++)
 			{
 				//x坐标
-				s.pattern[2 * (s.size*j + i)] = RandomNumber::randomFloat();
+				*pattern = RandomNumber::randomFloat(); pattern++;
 				//y坐标
-				s.pattern[2 * (s.size*j + i) + 1] = RandomNumber::randomFloat();
+				*pattern = RandomNumber::randomFloat(); pattern++;
 			}
 		}
 		for (unsigned int i = 0; i<s.totalPoints; i++)
@@ -191,9 +192,9 @@ void SequenceStratifiedSampler::computeSamples(Sample & s)
 			{
 				for (unsigned int k = 0; k < s.size; k++)
 				{
-					s.pattern[3 * (s.size*s.size*k + s.size*j + i)] = RandomNumber::randomFloat();
-					s.pattern[3 * (s.size*s.size*k + s.size*j + i) + 1] = RandomNumber::randomFloat();
-					s.pattern[3 * (s.size*s.size*k + s.size*j + i) + 2] = RandomNumber::randomFloat();
+					*pattern = RandomNumber::randomFloat(); ++pattern;
+					*pattern = RandomNumber::randomFloat(); ++pattern;
+					*pattern = RandomNumber::randomFloat(); ++pattern;
 				}
 			}
 		}
@@ -212,8 +213,8 @@ void SequenceStratifiedSampler::computeSamples(Sample & s)
 			int gridOffsetX, gridOffsetY;
 			computeOffset(i, gridOffsetX, gridOffsetY);
 
-			s.pattern[2 * i] = (gridOffsetX + inGridOffsetX) / float(m_dimension);
-			s.pattern[2 * i+1] = (gridOffsetY + inGridOffsetY) / float(m_dimension);
+			*pattern = (gridOffsetX + inGridOffsetX) / float(m_dimension); ++pattern;
+			*pattern = (gridOffsetY + inGridOffsetY) / float(m_dimension); ++pattern;
 		}
 	}
 }

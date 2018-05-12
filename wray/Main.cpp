@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 
-GLint winWidth=300,winHeight=300;
+GLint winWidth=512,winHeight= 512;
 
 float alpha=M_PI_2*3.0f,beta=0.0f;
 float r=10;  //这个变量用于与alpha, beta协同确定Lx, Ly, Lz（也就是相机位置）的值

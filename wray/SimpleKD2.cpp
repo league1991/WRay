@@ -68,7 +68,7 @@ void WSimpleKD2::buildTree( Scene&scene )
 	sort(edgeList.begin(), edgeList.end());
 
 	// 新建用于存放节点的内存
-	int approNodes = max(totalTriangles, 5000) * 8;
+	int approNodes = max(totalTriangles, 5000U) * 8;
 	kdInteriors = new WSKDInterior2[approNodes];	// 内部节点数组
 	kdLeafs     = (WSKDLeaf2*)malloc(approNodes);		// 叶节点数组
 	leafTriangles = new WTriangle*[approNodes];	// 叶节点三角形指针数组

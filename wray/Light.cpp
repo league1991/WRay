@@ -188,8 +188,8 @@ void ObjectLight::addTriangle(int objectID, int triangleID)
 
 void ObjectLight::sampleLight(float u1, float u2, float u3, WBSDF & bsdf, Vector3 & position, Vector3 & intensity, float & PDF)
 {
-	unsigned faceID = u1 * m_faceIDList.size();
-	faceID = max(0, min(m_faceIDList.size()-1, faceID));
+	int faceID = u1 * m_faceIDList.size();
+	faceID = max(0, min(int(m_faceIDList.size()-1), faceID));
 
 	auto& faceData = m_faceIDList[faceID];
 	MeshObject* object;
@@ -219,7 +219,7 @@ void ObjectLight::sampleLight(float u1, float u2, float u3, WBSDF & bsdf, Vector
 	if (m_isDoubleSide)
 		cosTheta = abs(cosTheta);
 	else
-		cosTheta = max(cosTheta, 0.0);
+		cosTheta = max(cosTheta, 0.0f);
 	if (cosTheta == 0)
 	{
 		PDF = 0;

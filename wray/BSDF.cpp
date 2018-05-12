@@ -116,7 +116,7 @@ float WFresnelDielectric::computeR(
 	float rParallel = (etaTO*cosWi - cosWt) / (etaTO*cosWi + cosWt);
 	float rPerpendicular = (cosWi - etaTO*cosWt) / (cosWi + etaTO*cosWt);
 	//	cout<<rParallel<<' '<<rPerpendicular<<endl;
-	return 0.5*(rParallel*rParallel + rPerpendicular*rPerpendicular);
+	return 0.5f*(rParallel*rParallel + rPerpendicular*rPerpendicular);
 }
 float WFresnelDielectric::evaluateF(Vector3&wi)
 {
@@ -146,7 +146,7 @@ WFresnelConductor::WFresnelConductor(
 {}
 Vector3 WFresnelConductor::evaluateF(Vector3&wi)
 {
-	Vector3 cosWi = Vector3(max(0.01, wi.dot(normal)));
+	Vector3 cosWi = Vector3(max(0.01f, wi.dot(normal)));
 	Vector3 cosWi2 = cosWi*cosWi;
 	Vector3 n2k2 = eta*eta + k*k;
 	// 	eta.showCoords();
@@ -163,7 +163,7 @@ Vector3 WFresnelConductor::evaluateF(Vector3&wi)
 float WMetalBSDF::computeD(const Vector3&wh)
 {
 	float coswh = max(0.01f, DG.normal.dot(wh));
-	return (exp + 2.0f)*pow(coswh, exp) / (2 * M_PI);
+	return (exp + 2.0f)*pow(coswh, exp) / (2 * float(M_PI));
 }
 float WMetalBSDF::computeG(const Vector3&wi, const Vector3&wo, const Vector3&wh)
 {
@@ -172,14 +172,14 @@ float WMetalBSDF::computeG(const Vector3&wi, const Vector3&wo, const Vector3&wh)
 	float NWi = DG.normal.dot(wi);
 	Vector3 Wo = wo;
 	float WoH = Wo.dot(wh);
-	return max(0.01, min(1.0f, min(NWo, NWi) * 2 * NH / WoH));
+	return max(0.01f, min(1.0f, min(NWo, NWi) * 2 * NH / WoH));
 }
 Vector3 WMetalBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 {
 	Vector3 rh = ri + ro;
 	rh.normalize();
 	fresnel.setNormal(rh);
-	float cosWo = max(DG.normal.dot(ro), 0.05);
+	float cosWo = max(DG.normal.dot(ro), 0.05f);
 	//     	cout<<computeD(rh)<<' '
 	//     		<<computeG(ri,ro,rh)<<' ';
 	//  	cout<<1/cosWo<<endl;
@@ -206,12 +206,12 @@ float WMetalBSDF::computePDF(const Vector3&wi, const Vector3&wo)
 	Vector3 H = wi + wo;
 	H.normalize();
 	DG.normal.normalize();
-	float cosH = max(0.05, H.dot(DG.normal));
+	float cosH = max(0.05f, H.dot(DG.normal));
 	// 	cout<<cosH<<ends;
 	// 	cout<<pow(cosH,exp)<<endl;
 	//	cout<<wo.dot(H)<<endl;
 	//	cout<<pow(cosH,exp)<<endl;
-	float pdf = max((exp + 1)*pow(cosH, exp) / (8 * M_PI*wo.dot(H)), 0.05);
+	float pdf = max((exp + 1)*pow(cosH, exp) / (8 * float(M_PI)*wo.dot(H)), 0.05f);
 	return pdf;
 }
 void WMetalBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf)
@@ -241,14 +241,14 @@ float WDielectricBSDF::computeG(const Vector3&wi, const Vector3&wo, const Vector
 	float NWi = DG.normal.dot(wi);
 	Vector3 Wo = wo;
 	float WoH = Wo.dot(wh);
-	return max(0.01, min(1.0f, min(NWo, NWi) * 2 * NH / WoH));
+	return max(0.01f, min(1.0f, min(NWo, NWi) * 2 * NH / WoH));
 }
 Vector3 WDielectricBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 {
 	Vector3 rh = ri + ro;
 	rh.normalize();
 	fresnel.setNormal(rh);
-	float cosWo = max(DG.normal.dot(ro), 0.05);
+	float cosWo = max(DG.normal.dot(ro), 0.05f);
 	//     	cout<<computeD(rh)<<' '
 	//     		<<computeG(ri,ro,rh)<<' ';
 	//  	cout<<1/cosWo<<endl;

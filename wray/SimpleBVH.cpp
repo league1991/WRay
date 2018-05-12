@@ -61,7 +61,7 @@ void WSimpleBVH::buildTreeKernel(
 		WBVHNode node;
 		node.type = WBVHNode::BVHN_LEAF;
 		node.nTriangles = min(triangleIDs.size(),
-							 WBVHNode::maxTrianglesPerLeaf);
+							 size_t(WBVHNode::maxTrianglesPerLeaf));
 
 		for (char ithTriangle = 0; ithTriangle < WBVHNode::maxTrianglesPerLeaf; ++ithTriangle)
 		{

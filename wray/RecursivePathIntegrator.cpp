@@ -11,7 +11,7 @@ multiplier(imultiplier),nBranchs(inBranch),
 lightSamples(1),BSDFSamples(1)
 
 {
-	maxDepth=max(1,ipathDepth);
+	maxDepth=max(1U,ipathDepth);
 	if(samplerType==Sampler::SAMPLER_RANDOM)
 		sampler=new RandomSampler;
 	allocateSamples();
@@ -23,7 +23,7 @@ WRecursivePathIntegrator::~WRecursivePathIntegrator()
 
 void WRecursivePathIntegrator::setPathMaxDepth(unsigned int idepth)
 {
-	maxDepth=max(1,idepth);
+	maxDepth=max(1U,idepth);
 	clearSamples();
 	allocateSamples();
 //	computeSamples();

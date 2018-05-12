@@ -38,7 +38,7 @@ void WMultiBVH::buildEnhancedTreeKernel(int ithNode,
 										int& currInterior, int& currLeaf, int curDepth)
 {
 	//printf("node\n");
-	nodeMaxDepth = max(nodeMaxDepth, curDepth);
+	nodeMaxDepth = max(int(nodeMaxDepth), curDepth);
 	WBVHNode& srcParent = nodes[ithNode];						// 当前子树的根节点
 	WMultiBVHNode& dstNode = multiInteriors[currInterior];	// 要构建的四叉树节点
 	int id_L1[2] = {ithNode + 1, srcParent.farNode};			// 第一层子节点序号
@@ -716,7 +716,7 @@ void WMultiBVH::setBBoxToNode( WMultiBVHNode& node, const WBoundingBox& bBox, in
 
 void WMultiBVH::makeLeaf( WMultiBVHLeaf& dstLeaf, WBVHNode& srcLeaf )
 {
-	for (unsigned int ithTri = 0; ithTri < min(srcLeaf.nTriangles, 4); ++ithTri)
+	for (unsigned int ithTri = 0; ithTri < min(srcLeaf.nTriangles, 4U); ++ithTri)
 	{
 		WTriangle* tri = srcLeaf.tris[ithTri];
 #if !defined(PER_TRIANGLE_INTERSECT) && !defined(PER_TRIANGLE_INTERSECT_TEST)
@@ -744,7 +744,7 @@ void WMultiBVH::makeLeaf( WMultiBVHLeaf& dstLeaf, WBVHNode& srcLeaf )
 #endif
 		dstLeaf.triangle[ithTri] = tri;
 	}
-	for(int ithTri = min(srcLeaf.nTriangles, 4); ithTri < 4; ++ithTri)
+	for(int ithTri = min(srcLeaf.nTriangles, 4U); ithTri < 4; ++ithTri)
 		dstLeaf.triangle[ithTri] = NULL;
 }
 

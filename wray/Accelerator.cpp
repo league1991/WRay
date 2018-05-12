@@ -16,20 +16,22 @@ WAccelerator::~WAccelerator(void)
 
 void* WAccelerator::allocAligned16( const unsigned int bytes )
 {
-	byte* ptr = (byte *) malloc( bytes + 16 + 4 );
+	const int ptrSize = sizeof(byte*);
+	byte* ptr = (byte *) malloc( bytes + 16 + ptrSize);
 	if (!ptr)
 		return NULL;
 
-	byte* alignedPtr = (byte *) ( ( (int) ptr ) + 15 & ~15 );
-	if ( alignedPtr - ptr < 4 ) {
+	byte* alignedPtr = (byte *) ( ( (size_t) ptr ) + 15 & ~15ULL );
+	if ( alignedPtr - ptr < ptrSize) {
 		alignedPtr += 16;
 	}
-	*((int *)(alignedPtr - 4)) = (int) ptr;
+	*((size_t *)(alignedPtr - ptrSize)) = (size_t) ptr;
 	return (void *) alignedPtr;
 }
 void WAccelerator::freeAligned16(void* ptr)
 {
-	free((void *) *((int *) ( ((byte *)ptr) - 4)));
+	const int ptrSize = sizeof(byte*);
+	free((void *) *((size_t *) ( ((byte*)ptr) - ptrSize)));
 }
 
 void WAccelerator::resetStatistics()
