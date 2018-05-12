@@ -153,7 +153,7 @@ void Scene::buildLightData()
 			{
 				if (lightMap.find(material) == lightMap.end())
 				{
-					lightMap[material] = new ObjectLight(Vector3(1000.0), tri.mtlId, this, true);
+					lightMap[material] = new ObjectLight(Vector3(1.0), tri.mtlId, this, true);
 				}
 				lightMap[material]->addTriangle(ithObj, ithTri);
 			}

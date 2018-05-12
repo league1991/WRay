@@ -72,7 +72,7 @@ void WRectangleLight::sampleLight(float u1, float u2, float u3, WBSDF &bsdf, Vec
 	iposition=position+u1*x+u2*y;
 	Vector3 delta=bsdf.DG.position-iposition;
 	float distanceSquared=delta.lengthSquared();
-	iintensity=intensity/distanceSquared;
+	iintensity=intensity;
 	delta.normalize();
 	float cosTheta=delta.dot(direction);
 	if(isDoubleSide)
@@ -213,7 +213,7 @@ void ObjectLight::sampleLight(float u1, float u2, float u3, WBSDF & bsdf, Vector
 	WBSDF* lightBSDF;
 	material->buildBSDF(DG, lightBSDF);
 	std::unique_ptr<WBSDF> lightBSDFPtr(lightBSDF);
-	intensity = m_intensity * lightBSDF->getEmission() / distanceSquared;
+	intensity = m_intensity * lightBSDF->getEmission();
 
 	float cosTheta = dir.dot(DG.normal);
 	if (m_isDoubleSide)

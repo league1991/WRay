@@ -22,7 +22,7 @@ bool WDirectLighting::isVisible(Vector3 pos1, Vector3 pos2, int* beginNode)
 }
 Vector3 WDirectLighting::computeDirectLight(WLight *light, WBSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample,const Vector3&ro, int* nodeInfo)
 {
-	// Sample light
+	// Sample from one light
 	float LSu,LSv,LSw;
 	lightSample.get3D(LSu,LSv,LSw);
 	float lightPDF;
@@ -30,12 +30,21 @@ Vector3 WDirectLighting::computeDirectLight(WLight *light, WBSDF *bsdf, Sample3D
 	light->sampleLight(LSu,LSv,LSw,*bsdf,lightPosition,intensity,lightPDF);
 	lightPDF /= scene->getLightNum();
 	Vector3 lightRadiance(0.0);
-	if (!intensity.isZero() && lightPDF > 0 && isVisible(bsdf->DG.position, lightPosition, nodeInfo))
+	if (!intensity.isZero())
 	{
-		Vector3 ri = lightPosition - bsdf->DG.position;
-		ri.normalize();
-		Vector3 fCos = bsdf->evaluateFCos(ri, ro);
-		lightRadiance = fCos*intensity / lightPDF;
+		if (isVisible(bsdf->DG.position, lightPosition, nodeInfo))
+		{
+			Vector3 ri = lightPosition - bsdf->DG.position;
+			ri.normalize();
+			Vector3 fCos = bsdf->evaluateFCos(ri, ro);
+			lightRadiance = fCos*intensity / lightPDF;
+		}
+		else
+		{
+			// LightPDF is measured in solid angle space
+			// If the surface is occluded, that means we failed to sample from light
+			lightPDF = 0;
+		}
 	}
 
 	// Get bsdf sample ray
@@ -69,7 +78,7 @@ Vector3 WDirectLighting::computeDirectLight(WLight *light, WBSDF *bsdf, Sample3D
 		return Vector3(0.0);
 	}
 	float lightWeight = RandomNumber::powerHeuristic(1, lightPDF, 1, bsdfPDF);
-	float bsdfWeight = RandomNumber::powerHeuristic(1, bsdfPDF, 1, lightPDF);
+	float bsdfWeight =  RandomNumber::powerHeuristic(1, bsdfPDF, 1, lightPDF);
 	return lightRadiance * lightWeight + bsdfRadiance * bsdfWeight;
 }
 
@@ -84,6 +93,7 @@ Vector3 WDirectLighting::sampleAllLights(WBSDF *bsdf, Sample3D &lightSample, Sam
 		pLight = scene->getLightPointer(ithLight);
 		color += computeDirectLight(pLight, bsdf, lightSample, bsdfSample, ro, nodeInfo);
 	}
+	color /= scene->getLightNum();
 	return color + bsdf->getEmission();
 }
 

@@ -1,7 +1,7 @@
 
 #include "stdafx.h"
 
-GLint winWidth=800,winHeight=600;
+GLint winWidth=300,winHeight=300;
 
 float alpha=M_PI_2*3.0f,beta=0.0f;
 float r=10;  //这个变量用于与alpha, beta协同确定Lx, Ly, Lz（也就是相机位置）的值
@@ -44,10 +44,6 @@ void init()
 	glLoadIdentity();
 	gluPerspective(fovDeg,float(winWidth)/float(winHeight), 0.1f,1000.0f);
 
-	auto renderer = TileRenderer::getInstance();
-	renderer->init();
-	renderer->readScene("CornellBox-me.obj");
-	renderer->setCamera(Vector3(Lx, Ly, Lz),Vector3(-1.0, -1.0, -1.0), Vector3(0, 1, 0), fov, winWidth, winHeight);
 }
 
 void displayFcn()
@@ -337,11 +333,22 @@ void timerFcn(int v)
 
 int main(int argc, char** argv)
 {
+	if (argc <= 1)
+	{
+		return 0;
+	}
+
 	glutInit(&argc,(char**)argv);
 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB|GLUT_DEPTH);
 	glutInitWindowPosition(100,100);
 	glutInitWindowSize(winWidth,winHeight);
 	glutCreateWindow("WRay");
+
+	std::string fileName = argv[1];
+	auto renderer = TileRenderer::getInstance();
+	renderer->init();
+	renderer->readScene(fileName);
+	renderer->setCamera(Vector3(Lx, Ly, Lz), Vector3(-1.0, -1.0, -1.0), Vector3(0, 1, 0), fov, winWidth, winHeight);
 
 	init();
 
