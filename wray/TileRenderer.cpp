@@ -104,7 +104,6 @@ void TileRenderer::scheduleTasks()
 		{
 			auto lastThread = freeThreads.back();
 			lastThread->runTask(task);
-			task->m_status = TileTask::EXECUTING;
 			freeThreads.erase(freeThreads.end() - 1);
 		}
 	}
@@ -224,6 +223,7 @@ bool RenderThread::runTask(std::shared_ptr<TileTask> newTask)
 	if (isWorking() || newTask == nullptr) {
 		return false;
 	}
+	newTask->m_status = TileTask::EXECUTING;
 	m_task = newTask;
 	m_cv.notify_all();
 	return true;

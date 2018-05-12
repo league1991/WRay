@@ -39,8 +39,8 @@ public:
 	//画出整个场景的包围盒,颜色为青绿色
 	void drawSceneBBox();
 	//往场景添加灯光
-	void addLight(WLight *light);
-	WLight* getLightPointer(unsigned int nthLight);
+	void addLight(Light *light);
+	Light* getLightPointer(unsigned int nthLight);
 	unsigned int getLightNum();
 	//表示不选择所有物体
 	void clearSelect();
@@ -80,7 +80,7 @@ public:
 	}
 
 private:
-	vector<WLight*>m_lights;					//存储灯光指针
+	vector<Light*>m_lights;					//存储灯光指针
 	WMaterial**materials;					//Material指针数组
 	unsigned int nMaterials;				//Material总数
 	std::vector<MeshObject>m_objects;		//Primitive数组

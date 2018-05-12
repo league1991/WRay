@@ -73,6 +73,7 @@ Vector3 PathIntegrator::integrate(Ray&camRay)//ÑÕÉ«¼ÆËã
 //				cout<<ray.tMin<<endl;
 //	ray.tMin=1e-5f;
 	int beginNode = -1, endNode = -1;
+	pathMaxDepth = 1;
 	for(unsigned int depth=0; depth<pathMaxDepth;depth++)
 	{
 		if(tree->intersect(ray,DG,&endNode,beginNode))

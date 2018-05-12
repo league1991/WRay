@@ -21,7 +21,7 @@ private:
 	//计算选定的灯光所产生的直接光照
 	//ro为光线出射方向
 	Vector3 computeDirectLight(
-		WLight *light,WBSDF*bsdf,Sample3D&lightSample,
+		Light *light,WBSDF*bsdf,Sample3D&lightSample,
 		Sample2D&bsdfSample,const Vector3&ro, int* nodeInfo = NULL);
 
 	bool isVisible(Vector3 pos1,Vector3 pos2, int* beginNode = NULL);

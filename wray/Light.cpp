@@ -3,11 +3,11 @@
 
 
 
-WLight::~WLight(void)
+Light::~Light(void)
 {
 }
 
-void WPointLight::sampleLight(float u1, float u2, float u3,
+void PointLight::sampleLight(float u1, float u2, float u3,
 							 WBSDF&bsdf,Vector3 &iposition, 
 							 Vector3 &iintensity, float&PDF)
 {
@@ -17,7 +17,7 @@ void WPointLight::sampleLight(float u1, float u2, float u3,
 	iintensity=intensity/distanceSquared;
 	PDF=1.0f;
 }
-void WPointLight::draw()
+void PointLight::draw()
 {
 	float delta=0.1f;
 	Vector3 xn,xp,yn,yp,zn,zp;
@@ -38,7 +38,7 @@ void WPointLight::draw()
 	glLineWidth(1.0f);
 }
 
-void WPointLight::getProperties( vector<float>& properties )
+void PointLight::getProperties( vector<float>& properties )
 {
 	properties.clear();
 	properties.push_back(intensity.x);
@@ -51,9 +51,9 @@ void WPointLight::getProperties( vector<float>& properties )
 	properties.push_back(1.0f);
 }
 
- WRectangleLight::WRectangleLight(Vector3 iposition,Vector3 idirection,
+ RectangleLight::RectangleLight(Vector3 iposition,Vector3 idirection,
 			   Vector3 up,float width,float height,Vector3 iintensity,bool iisDoubleSide):
-WLight(LIGHT_RECTANGLE,false)
+Light(LIGHT_RECTANGLE,false)
 {
 	position=iposition;
 	direction=idirection;
@@ -66,7 +66,7 @@ WLight(LIGHT_RECTANGLE,false)
 	intensity=iintensity;
 	isDoubleSide=iisDoubleSide;
 }
-void WRectangleLight::sampleLight(float u1, float u2, float u3, WBSDF &bsdf, Vector3 &iposition, Vector3 &iintensity, float &PDF)
+void RectangleLight::sampleLight(float u1, float u2, float u3, WBSDF &bsdf, Vector3 &iposition, Vector3 &iintensity, float &PDF)
 {
 	u1=u1*2-1;u2=u2*2-1;
 	iposition=position+u1*x+u2*y;
@@ -79,7 +79,7 @@ void WRectangleLight::sampleLight(float u1, float u2, float u3, WBSDF &bsdf, Vec
 		cosTheta=abs(cosTheta);
 	PDF=distanceSquared/(area*cosTheta);
 }
-void WRectangleLight::draw()
+void RectangleLight::draw()
 {
 	Vector3 xpyp,xnyp,xpyn,xnyn;
 	xpyp=position+x+y;
@@ -106,7 +106,7 @@ void WRectangleLight::draw()
 	glEnd();
 }
 
-void WRectangleLight::getProperties( vector<float>& properties )
+void RectangleLight::getProperties( vector<float>& properties )
 {
 	properties.clear();	
 	properties.push_back(position.x);

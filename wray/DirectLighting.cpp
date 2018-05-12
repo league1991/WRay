@@ -20,7 +20,7 @@ bool WDirectLighting::isVisible(Vector3 pos1, Vector3 pos2, int* beginNode)
 	int begNode = beginNode ? *beginNode : -1;
 	return !tree->isIntersect(r, begNode);
 }
-Vector3 WDirectLighting::computeDirectLight(WLight *light, WBSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample,const Vector3&ro, int* nodeInfo)
+Vector3 WDirectLighting::computeDirectLight(Light *light, WBSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample,const Vector3&ro, int* nodeInfo)
 {
 	// Sample from one light
 	float LSu,LSv,LSw;
@@ -84,7 +84,7 @@ Vector3 WDirectLighting::computeDirectLight(WLight *light, WBSDF *bsdf, Sample3D
 
 Vector3 WDirectLighting::sampleAllLights(WBSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample, const Vector3 &ro, int* nodeInfo)
 {	
-	WLight*pLight;
+	Light*pLight;
 	Vector3 color(0);
 	unsigned int lightNum=scene->getLightNum();
 	
@@ -99,7 +99,7 @@ Vector3 WDirectLighting::sampleAllLights(WBSDF *bsdf, Sample3D &lightSample, Sam
 
 Vector3 WDirectLighting::sampleOneLight(WBSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample, const Vector3 &ro, int* nodeInfo)
 {
-	WLight*pLight;
+	Light*pLight;
 	Vector3 color(0);
 	unsigned int lightNum = scene->getLightNum();
 

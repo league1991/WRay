@@ -1,6 +1,6 @@
 #pragma once
 #include "Vector3.h"
-class WLight
+class Light
 {
 public:
 	enum LightType{
@@ -10,9 +10,9 @@ public:
 	};
 	LightType type;
 
-	WLight(LightType itype,bool iisPoint):
+	Light(LightType itype,bool iisPoint):
 	type(itype),isPoint(iisPoint){};
-	virtual ~WLight(void);
+	virtual ~Light(void);
 	//是否点光源
 	bool isPoint;
 
@@ -29,13 +29,13 @@ public:
 	virtual bool isDeltaLight() = 0;
 };
 
-class WPointLight:public WLight
+class PointLight:public Light
 {
 public:
-	WPointLight(Vector3 iintensity,Vector3 iposition):
-	  WLight(LIGHT_POINT,true),intensity(iintensity),
+	PointLight(Vector3 iintensity,Vector3 iposition):
+	  Light(LIGHT_POINT,true),intensity(iintensity),
 	  position(iposition){}
-	~WPointLight(){}
+	~PointLight(){}
 
 	void setIntensity(Vector3 iintensity)
 	{intensity=iintensity;}
@@ -53,10 +53,10 @@ private :
 	Vector3 position;
 };
 
-class WRectangleLight:public WLight
+class RectangleLight:public Light
 {
 public:
-	WRectangleLight(Vector3 iposition,Vector3 idirection,
+	RectangleLight(Vector3 iposition,Vector3 idirection,
 		Vector3 up,float width,float height,
 		Vector3 iintensity,bool iisDoubleSide=true);
 	void setIntensity(Vector3 iintensity)
@@ -84,11 +84,11 @@ private:
 //2）把要发光的面加到灯光对象里面
 //3）调用灯光对象的函数，修改要发光的面的材质
 
-class ObjectLight:public WLight
+class ObjectLight:public Light
 {
 public:
 	ObjectLight(Vector3 iintensity, int materialID, Scene*iscene,bool iisDoubleSide):
-		WLight(LIGHT_OBJECT,false), m_materialID(materialID), m_intensity(iintensity),m_scene(iscene),m_isDoubleSide(iisDoubleSide)
+		Light(LIGHT_OBJECT,false), m_materialID(materialID), m_intensity(iintensity),m_scene(iscene),m_isDoubleSide(iisDoubleSide)
 	{}
 
 	void addTriangle(int objectID, int triangleID);

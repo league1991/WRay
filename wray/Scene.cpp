@@ -170,11 +170,11 @@ void Scene::drawSceneBBox()
 	glColor3f(0.1f,0.1f,0.5f);
 	sceneBox.draw();
 }
-void Scene::addLight(WLight *light)
+void Scene::addLight(Light *light)
 {
 	m_lights.push_back(light);
 }
-WLight* Scene::getLightPointer(unsigned int nthLight)
+Light* Scene::getLightPointer(unsigned int nthLight)
 {
 	return m_lights[nthLight];
 }
