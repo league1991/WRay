@@ -4,7 +4,7 @@
 #include <math.h>
 #include "DifferentialGeometry.h"
 #include <gl/glut.h>
-WDifferentialGeometry::WDifferentialGeometry(void)
+DifferentialGeometry::DifferentialGeometry(void)
 {
 // 	position=Vector3(0.0f,0.0f,0.0f);
 // 	normal=Vector3(0.0f,0.0f,1.0f);
@@ -15,11 +15,11 @@ WDifferentialGeometry::WDifferentialGeometry(void)
 // 	dpdu=dpdv=dndu=dndv=Vector3(0.0f,0.0f,0.0f);
 // 	mtlId=0;
 }
-WDifferentialGeometry::WDifferentialGeometry(const WDifferentialGeometry&DG)
+DifferentialGeometry::DifferentialGeometry(const DifferentialGeometry&DG)
 {
 	*this=DG;
 }
-WDifferentialGeometry::WDifferentialGeometry(
+DifferentialGeometry::DifferentialGeometry(
 				 const Vector3&iposition,const Vector3&inormal,
 				 const Vector3&irayDir,const Vector2f&itexCoord,
 				 const Vector3&idpdu,const Vector3&idpdv,
@@ -47,7 +47,7 @@ dndu(idndu),dndv(idndv),mtlId(imtlId)
 	bitangent.normalize();
 	tangent=bitangent.cross(normal);
 }
-WDifferentialGeometry::WDifferentialGeometry(
+DifferentialGeometry::DifferentialGeometry(
 				 const Vector3&iposition,const Vector3&inormal,
 				 const Vector3&itangent,const Vector3&ibitangent,
 				 const Vector3&irayDir,const Vector2f&itexCoord,
@@ -60,8 +60,8 @@ WDifferentialGeometry::WDifferentialGeometry(
 				 dpdu(idpdu),dpdv(idpdv),dndu(idndu),dndv(idndv),
 				 mtlId(imtlId){}
 
-WDifferentialGeometry::~WDifferentialGeometry(void){}
-void WDifferentialGeometry::draw()
+DifferentialGeometry::~DifferentialGeometry(void){}
+void DifferentialGeometry::draw()
 {
 	glBegin(GL_POINTS);
 	glVertex3f(position.x,position.y,position.z);

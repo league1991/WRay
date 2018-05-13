@@ -75,7 +75,7 @@ public:
 	//然后输入intersect函数初始化各个变量
 	float intersectTest(const Ray&r);
 	__m128 intersectTest(const WRayPacket& rp);
-	void intersect(Ray&r,WDifferentialGeometry&DG);
+	void intersect(Ray&r,DifferentialGeometry&DG);
 	//由uv参数获得表面一点及其法向量
 	//用于灯光的采样
 	void getPoint(float u,float v,
@@ -90,7 +90,7 @@ public:
 	//返回质心
 	Vector3 getCentroid();
 	// 
-	void buildDG(float b1, float b2, const Vector3& rayDir, WDifferentialGeometry& DG);
+	void buildDG(float b1, float b2, const Vector3& rayDir, DifferentialGeometry& DG);
 //#if INTERSECTION_METHOD==ISECTMETHOD_B
 	void buildAccelerateData(int triID = 0);			// 构建加速数据结构
 	TriAccel& getAccelerateData(){return tA;}

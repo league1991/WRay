@@ -599,7 +599,7 @@ bool WSimpleKD::isIntersect( Ray& r, int beginNode)
 	}
 	return false;
 }
-bool WSimpleKD::intersect( Ray& r,WDifferentialGeometry& DG, 
+bool WSimpleKD::intersect( Ray& r,DifferentialGeometry& DG, 
 						 int* endNode, int beginNode)
 {
 	++numIntersect;
@@ -703,7 +703,7 @@ bool WSimpleKD::intersect( Ray& r,WDifferentialGeometry& DG,
 }
 
 
-bool WSimpleKD::intersect4(Ray r[4], WDifferentialGeometry DG[4], int endNode[4], int beginNode[4])
+bool WSimpleKD::intersect4(Ray r[4], DifferentialGeometry DG[4], int endNode[4], int beginNode[4])
 {
 	return false;/*
 	++numIntersect;

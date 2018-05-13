@@ -86,9 +86,9 @@ public:
 	void buildTree(Scene&scene);
 	void clearTree();
 
-	bool intersect(Ray& r,WDifferentialGeometry& DG, 
+	bool intersect(Ray& r,DifferentialGeometry& DG, 
 		int* endNode = NULL, int beginNode = -1);
-	bool intersect4(Ray r[4], WDifferentialGeometry DG[4], int endNode[4] = NULL, int beginNode[4] = NULL);
+	bool intersect4(Ray r[4], DifferentialGeometry DG[4], int endNode[4] = NULL, int beginNode[4] = NULL);
 
 	bool isIntersect(Ray& r, int beginNode = -1);
 

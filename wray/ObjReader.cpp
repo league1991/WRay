@@ -436,7 +436,7 @@ void ObjReader::readMtlFile(const char*fileName)
 			ObjMaterial newMtl;
 			newMtl.name=mtlName;
 			newMtl.emission.x = newMtl.emission.y = newMtl.emission.z = 0;
-			newMtl.specular = 0;
+			newMtl.glossiness = 0;
 			Materials.push_back(newMtl);
 		}
 		//漫反射颜色对应的flag
@@ -471,7 +471,12 @@ void ObjReader::readMtlFile(const char*fileName)
 			ObjMaterial& newMtl = Materials.back();
 			float x,y,z;
 			file >> x >> y >> z;
-			newMtl.specular = (x+y+z)/3;
+			newMtl.specular = { x, y, z };
+		}
+		else if (flagStr == "Ns")
+		{
+			ObjMaterial& newMtl = Materials.back();
+			file >> newMtl.glossiness;
 		}
 	}
 	file.close();	file.clear();	

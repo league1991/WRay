@@ -20,7 +20,7 @@ bool WDirectLighting::isVisible(Vector3 pos1, Vector3 pos2, int* beginNode)
 	int begNode = beginNode ? *beginNode : -1;
 	return !tree->isIntersect(r, begNode);
 }
-Vector3 WDirectLighting::computeDirectLight(Light *light, WBSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample,const Vector3&ro, int* nodeInfo)
+Vector3 WDirectLighting::computeDirectLight(Light *light, BSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample,const Vector3&ro, int* nodeInfo)
 {
 	// Sample from one light
 	float LSu,LSv,LSw;
@@ -56,13 +56,13 @@ Vector3 WDirectLighting::computeDirectLight(Light *light, WBSDF *bsdf, Sample3D 
 
 	Vector3 bsdfRadiance(0.0);
 	Ray ray(bsdf->DG.position, sampleWi);
-	WDifferentialGeometry DG;
+	DifferentialGeometry DG;
 	int beginNode = 0, endNode;
 	if (tree->intersect(ray, DG, &endNode, beginNode))
 	{
 		WMaterial*mtl;
 		scene->getNthMaterial(mtl, DG.mtlId);
-		WBSDF* sourceBSDF;
+		BSDF* sourceBSDF;
 		mtl->buildBSDF(DG, sourceBSDF);
 		Vector3 emission = sourceBSDF->getEmission();
 		if (!emission.isZero() && bsdfPDF > 0)
@@ -82,7 +82,7 @@ Vector3 WDirectLighting::computeDirectLight(Light *light, WBSDF *bsdf, Sample3D 
 	return lightRadiance * lightWeight + bsdfRadiance * bsdfWeight;
 }
 
-Vector3 WDirectLighting::sampleAllLights(WBSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample, const Vector3 &ro, int* nodeInfo)
+Vector3 WDirectLighting::sampleAllLights(BSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample, const Vector3 &ro, int* nodeInfo)
 {	
 	Light*pLight;
 	Vector3 color(0);
@@ -97,7 +97,7 @@ Vector3 WDirectLighting::sampleAllLights(WBSDF *bsdf, Sample3D &lightSample, Sam
 	return color + bsdf->getEmission();
 }
 
-Vector3 WDirectLighting::sampleOneLight(WBSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample, const Vector3 &ro, int* nodeInfo)
+Vector3 WDirectLighting::sampleOneLight(BSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample, const Vector3 &ro, int* nodeInfo)
 {
 	Light*pLight;
 	Vector3 color(0);

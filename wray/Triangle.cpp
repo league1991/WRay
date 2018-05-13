@@ -140,7 +140,7 @@ float WTriangle::intersectTest(const Ray&r)
 	return t;
 #endif
 }
-void WTriangle::intersect(Ray&r,WDifferentialGeometry&DG)
+void WTriangle::intersect(Ray&r,DifferentialGeometry&DG)
 {
 
 #if INTERSECTION_METHOD == ISECTMETHOD_A
@@ -248,7 +248,7 @@ Vector3 WTriangle::getCentroid()
 	return (point1+point2+point3)/3.0f;
 }
 
-void WTriangle::buildDG(float b1, float b2, const Vector3& rayDir, WDifferentialGeometry& DG)
+void WTriangle::buildDG(float b1, float b2, const Vector3& rayDir, DifferentialGeometry& DG)
 {
 	float b3 = 1.f - b1 - b2;
 	DG.position = b3*point1 + b1*point2 + b2*point3;

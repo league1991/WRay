@@ -78,10 +78,10 @@ private:
 
 	//计算新的采样点，并把它加入八叉树
 	//返回E值
-	Vector3 computeNewSamples(WBSDF*bsdf);
+	Vector3 computeNewSamples(BSDF*bsdf);
 
 	//计算间接光照，返回L值
-	Vector3 computeIndirectLight(WBSDF*bsdf);
+	Vector3 computeIndirectLight(BSDF*bsdf);
 
 	//采用路径跟踪办法计算，直到达最大路径深度
 	//或者路径遇到漫反射表面的时候停止,返回L值

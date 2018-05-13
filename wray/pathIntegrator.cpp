@@ -64,7 +64,7 @@ Vector3 PathIntegrator::integrate(Ray&camRay)//颜色计算
 	computeSamples();
 //	BSDFSamples.display();
 //	cout<<"begin"<<endl;
-	WDifferentialGeometry DG;
+	DifferentialGeometry DG;
 	Vector3 pathThroughPut(1.0f);
 	Vector3 totalLight(0),directLight;
 	Vector3 ri,ro;
@@ -73,6 +73,7 @@ Vector3 PathIntegrator::integrate(Ray&camRay)//颜色计算
 //				cout<<ray.tMin<<endl;
 //	ray.tMin=1e-5f;
 	int beginNode = -1, endNode = -1;
+	//pathMaxDepth = 1;
 	for(unsigned int depth=0; depth<pathMaxDepth;depth++)
 	{
 		if(tree->intersect(ray,DG,&endNode,beginNode))
@@ -82,9 +83,9 @@ Vector3 PathIntegrator::integrate(Ray&camRay)//颜色计算
 			WMaterial*mtl;
 			scene->getNthMaterial(mtl,DG.mtlId);
 
-			WBSDF*bsdf;
+			BSDF*bsdf;
 			mtl->buildBSDF(DG,bsdf);
-			std::unique_ptr<WBSDF> bsdfPtr(bsdf);
+			std::unique_ptr<BSDF> bsdfPtr(bsdf);
 
 			ro=-1*ray.direction;
 			directLight=Dlighting.sampleAllLights(bsdf,lightSamples,BSDFSamples,ro, &endNode);

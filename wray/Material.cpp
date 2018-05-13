@@ -7,9 +7,9 @@ WMaterial::~WMaterial(void)
 {
 }
 
-void WLambertMaterial::buildBSDF(WDifferentialGeometry DG,WBSDF*&bsdf)
+void WLambertMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf)
 {
-	bsdf=new WLambertBSDF(DG,color);
+	bsdf=new LambertBSDF(DG,color);
 	bsdf->setEmission(this->getLight());
 }
 
@@ -22,14 +22,14 @@ void WLambertMaterial::getProperties( vector<float>& properties )
 	properties.push_back(1.0f);
 }
 
-void WPhongMaterial::buildBSDF(WDifferentialGeometry DG,WBSDF*&bsdf)
+void WPhongMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf)
 {
-	bsdf=new WPhongBSDF(DG,color,specular,glossiness);
+	bsdf=new PhongBSDF(DG,color,specular,glossiness);
 	bsdf->setEmission(this->getLight());
 }
-void WPerfectReflectionMaterial::buildBSDF(WDifferentialGeometry DG,WBSDF*&bsdf)
+void WPerfectReflectionMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf)
 {
-	bsdf=new WPerfectReflectionBSDF(DG,color);
+	bsdf=new PerfectReflectionBSDF(DG,color);
 	bsdf->setEmission(this->getLight());
 }
 
@@ -42,9 +42,9 @@ void WPerfectReflectionMaterial::getProperties( vector<float>& properties )
 	properties.push_back(1.0f);
 }
 
-void WPerfectRefractionMaterial::buildBSDF(WDifferentialGeometry DG,WBSDF*&bsdf)
+void WPerfectRefractionMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf)
 {
-	bsdf=new WPerfectRefractionBSDF(DG,color,IOR);
+	bsdf=new PerfectRefractionBSDF(DG,color,IOR);
 	bsdf->setEmission(this->getLight());
 }
 
@@ -71,13 +71,13 @@ void WMetalMaterial::refreshColor()
 	Vector3 colorSqrt=color.sqrtElement();
 	eta=(Vector3(1)+colorSqrt)/(Vector3(1)-colorSqrt);
 }
-void WMetalMaterial::buildBSDF(WDifferentialGeometry DG,WBSDF*&bsdf)
+void WMetalMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf)
 {
-	bsdf=new WMetalBSDF(DG,eta,k,exp);
+	bsdf=new MetalBSDF(DG,eta,k,exp);
 	bsdf->setEmission(this->getLight());
 }
-void WDielectricMaterial::buildBSDF(WDifferentialGeometry DG,WBSDF*&bsdf)
+void WDielectricMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf)
 {
-	bsdf=new WDielectricBSDF(DG,ior,color,exp);
+	bsdf=new DielectricBSDF(DG,ior,color,exp);
 	bsdf->setEmission(this->getLight());
 }

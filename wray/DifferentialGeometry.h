@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "Vector2.h"
 #include "Vector3.h"
-class WDifferentialGeometry
+class DifferentialGeometry
 {
 public:
 	Vector3 position;
@@ -13,25 +13,25 @@ public:
 	Vector3 dndu,dndv;
 	unsigned int mtlId;
 
-	WDifferentialGeometry(void);//注意此函数没有进行初始化
-	WDifferentialGeometry(const WDifferentialGeometry&DG);
+	DifferentialGeometry(void);//注意此函数没有进行初始化
+	DifferentialGeometry(const DifferentialGeometry&DG);
 
 	//此函数通过输入参数自动计算出主副切线
-	WDifferentialGeometry(
+	DifferentialGeometry(
 		const Vector3&iposition,const Vector3&inormal,
 		const Vector3&irayDir,const Vector2f&itexCoord,
 		const Vector3&idpdu,const Vector3&idpdv,
 		const Vector3&idndu,const Vector2f&idndv,
 		unsigned int imtlId);
 	
-	WDifferentialGeometry(
+	DifferentialGeometry(
 		const Vector3&iposition,const Vector3&inormal,
 		const Vector3&itangent,const Vector3&ibitangent,
 		const Vector3&irayDir,const Vector2f&itexCoord,
 		const Vector3&idpdu,const Vector3&idpdv,
 		const Vector3&idndu,const Vector2f&idndv,
 		unsigned int imtlId);
-	virtual ~WDifferentialGeometry(void);
+	virtual ~DifferentialGeometry(void);
 
 	void draw();		//在openGL画出交点，调试时用
 };

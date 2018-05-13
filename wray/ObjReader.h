@@ -9,7 +9,6 @@
 #endif
 struct float3
 {
-	float3(){x=y=z=0;}
 	float x,y,z;
 };
 struct float2
@@ -35,11 +34,12 @@ struct ObjMaterial
 {
 	string name;				//name of material
 	float3 diffuse;			//漫反射颜色
+	float3 specular;			// specular color
 	float3 emission;			//自发光颜色
 	float3 transparency;		//透明度
-	float   specular;			//高光强度
+	float   glossiness;			//高光强度
 	bool   isTransparent(){return transparency.x < 1 || transparency.y < 1 || transparency.z < 1;}
-	bool   isShiny(){return specular > 0;}
+	bool   isShiny(){return glossiness > 0;}
 };
 
 class ObjReader

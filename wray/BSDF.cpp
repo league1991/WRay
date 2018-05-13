@@ -1,15 +1,15 @@
 #include "StdAfx.h"
 #include "BSDF.h"
 
-WBSDF::~WBSDF(void)
+BSDF::~BSDF(void)
 {
 }
-void WBSDF::setDifferentialGeometry(WDifferentialGeometry &iDG)
+void BSDF::setDifferentialGeometry(DifferentialGeometry &iDG)
 {
 	this->DG = iDG;
 }
 
-Vector3 WLambertBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
+Vector3 LambertBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 {
 	//当颜色为纯白（1,1,1）时，对应的BSDF值为（1,1,1）/PI
 //	Vector3 fCos=color*M_INV_PI*abs(ri.dot(DG.normal));
@@ -18,7 +18,7 @@ Vector3 WLambertBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 		return Vector3(0.0f);
 	return color*M_INV_PI*max(ri.dot(DG.normal), 0.0f);
 }
-void WLambertBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &wo, float &pdf)
+void LambertBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &wo, float &pdf)
 {
 	Vector3 localVector;
 	RandomNumber::cosineSampleHemisphere(u, v, localVector, pdf);
@@ -28,18 +28,19 @@ void WLambertBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 
 		DG.normal*localVector.z;
 	//	sampleWi.normalize();
 }
-Vector3 WPhongBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
+Vector3 PhongBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 {
-	float cosTheta = max(ri.reflect(DG.normal).dot(ro), 0.0f);
-	Vector3 colorWithSpecular = color + Vector3(pow(cosTheta, glossiness)*specular);
-	return colorWithSpecular*M_INV_PI*max(ri.dot(DG.normal), 0.0f);
+	Vector3 H = 0.5 * (ri + ro);
+	H.normalize();
+	float cosTheta = max(DG.normal.dot(H), 0.0f);
+	return color * (pow(cosTheta, glossiness) * (glossiness+2)/(2 * M_PI))*max(ri.dot(DG.normal), 0.0f);
 }
-void WPerfectReflectionBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &wo, float &pdf)
+void PerfectReflectionBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &wo, float &pdf)
 {
 	sampleWi = wo.reflect(DG.normal);
 	pdf = 1.0f;
 }
-Vector3 WPerfectReflectionBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
+Vector3 PerfectReflectionBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 {
 	Vector3 riRef = ri.reflect(DG.normal);
 	if ((riRef - ro).length() < 1e-3f)
@@ -47,12 +48,12 @@ Vector3 WPerfectReflectionBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 	else return Vector3(0);
 }
 
-void WPerfectRefractionBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &wo, float &pdf)
+void PerfectRefractionBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &wo, float &pdf)
 {
 	sampleWi = refractionDirection(wo, DG.normal);
 	pdf = 1.0f;
 }
-Vector3 WPerfectRefractionBSDF::refractionDirection(
+Vector3 PerfectRefractionBSDF::refractionDirection(
 	const Vector3&i, const Vector3&normal)
 {
 	float cosThetaI = i.dot(normal);
@@ -75,18 +76,18 @@ Vector3 WPerfectRefractionBSDF::refractionDirection(
 		return -1.0f*ior*i + (cosThetaR - ior*cosThetaI)*normal;
 	}
 }
-Vector3 WPerfectRefractionBSDF::evaluateFCos(Vector3 &ri, const Vector3 &ro)
+Vector3 PerfectRefractionBSDF::evaluateFCos(Vector3 &ri, const Vector3 &ro)
 {
 	Vector3 riRef = refractionDirection(ri, DG.normal);
 	if ((riRef - ro).length() < 1e-3f)
 		return color/**abs(ri.dot(DG.normal))*/;
 	else return Vector3(0);
 }
-WFresnelDielectric::WFresnelDielectric(float iIOR, Vector3 inormal) :
+FresnelDielectric::FresnelDielectric(float iIOR, Vector3 inormal) :
 	IOR(iIOR), normal(inormal)
 {}
 
-Vector3 WFresnelDielectric::refractionDirection(
+Vector3 FresnelDielectric::refractionDirection(
 	const Vector3&i, const Vector3&nor)
 {
 	float cosThetaI = i.dot(nor);
@@ -109,7 +110,7 @@ Vector3 WFresnelDielectric::refractionDirection(
 		return -1.0f*ior*i + (cosThetaR - ior*cosThetaI)*nor;
 	}
 }
-float WFresnelDielectric::computeR(
+float FresnelDielectric::computeR(
 	float cosWi, float cosWt, float etaTO)
 {
 	//	cout<<cosWi<<cosWt<<endl;
@@ -118,7 +119,7 @@ float WFresnelDielectric::computeR(
 	//	cout<<rParallel<<' '<<rPerpendicular<<endl;
 	return 0.5f*(rParallel*rParallel + rPerpendicular*rPerpendicular);
 }
-float WFresnelDielectric::evaluateF(Vector3&wi)
+float FresnelDielectric::evaluateF(Vector3&wi)
 {
 	float cosWi = wi.dot(normal);
 	float ior, cosWt;
@@ -140,11 +141,11 @@ float WFresnelDielectric::evaluateF(Vector3&wi)
 		return computeR(cosWi, cosWt, 1 / ior);
 	}
 }
-WFresnelConductor::WFresnelConductor(
+FresnelConductor::FresnelConductor(
 	Vector3 ieta, Vector3 ik, Vector3 inormal) :
 	eta(ieta), k(ik), normal(inormal)
 {}
-Vector3 WFresnelConductor::evaluateF(Vector3&wi)
+Vector3 FresnelConductor::evaluateF(Vector3&wi)
 {
 	Vector3 cosWi = Vector3(max(0.01f, wi.dot(normal)));
 	Vector3 cosWi2 = cosWi*cosWi;
@@ -160,12 +161,12 @@ Vector3 WFresnelConductor::evaluateF(Vector3&wi)
 	//	rpe2.showCoords();
 	return 0.5*(rpa2 + rpe2);
 }
-float WMetalBSDF::computeD(const Vector3&wh)
+float MetalBSDF::computeD(const Vector3&wh)
 {
 	float coswh = max(0.01f, DG.normal.dot(wh));
 	return (exp + 2.0f)*pow(coswh, exp) / (2 * float(M_PI));
 }
-float WMetalBSDF::computeG(const Vector3&wi, const Vector3&wo, const Vector3&wh)
+float MetalBSDF::computeG(const Vector3&wi, const Vector3&wo, const Vector3&wh)
 {
 	float NH = DG.normal.dot(wh);
 	float NWo = DG.normal.dot(wo);
@@ -174,7 +175,7 @@ float WMetalBSDF::computeG(const Vector3&wi, const Vector3&wo, const Vector3&wh)
 	float WoH = Wo.dot(wh);
 	return max(0.01f, min(1.0f, min(NWo, NWi) * 2 * NH / WoH));
 }
-Vector3 WMetalBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
+Vector3 MetalBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 {
 	Vector3 rh = ri + ro;
 	rh.normalize();
@@ -201,7 +202,7 @@ Vector3 WMetalBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 
 	return Fcos;
 }
-float WMetalBSDF::computePDF(const Vector3&wi, const Vector3&wo)
+float MetalBSDF::computePDF(const Vector3&wi, const Vector3&wo)
 {
 	Vector3 H = wi + wo;
 	H.normalize();
@@ -214,7 +215,7 @@ float WMetalBSDF::computePDF(const Vector3&wi, const Vector3&wo)
 	float pdf = max((exp + 1)*pow(cosH, exp) / (8 * float(M_PI)*wo.dot(H)), 0.05f);
 	return pdf;
 }
-void WMetalBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf)
+void MetalBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf)
 {
 	float cosTheta = pow(u, 1.0f / (exp + 1.0f));
 	float sinTheta = sqrt(max(0.0f, 1.0f - cosTheta*cosTheta));
@@ -229,12 +230,12 @@ void WMetalBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo,
 	pdf = computePDF(sampleWi, wo);
 }
 
-float WDielectricBSDF::computeD(const Vector3&wh)
+float DielectricBSDF::computeD(const Vector3&wh)
 {
 	float coswh = max(0.01f, DG.normal.dot(wh));
 	return (exp + 2.0f)*pow(coswh, exp) / (2 * M_PI);
 }
-float WDielectricBSDF::computeG(const Vector3&wi, const Vector3&wo, const Vector3&wh)
+float DielectricBSDF::computeG(const Vector3&wi, const Vector3&wo, const Vector3&wh)
 {
 	float NH = DG.normal.dot(wh);
 	float NWo = DG.normal.dot(wo);
@@ -243,7 +244,7 @@ float WDielectricBSDF::computeG(const Vector3&wi, const Vector3&wo, const Vector
 	float WoH = Wo.dot(wh);
 	return max(0.01f, min(1.0f, min(NWo, NWi) * 2 * NH / WoH));
 }
-Vector3 WDielectricBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
+Vector3 DielectricBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 {
 	Vector3 rh = ri + ro;
 	rh.normalize();
@@ -268,7 +269,7 @@ Vector3 WDielectricBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 //	Fcos.showCoords();
 	return Fcos;
 }
-float WDielectricBSDF::computePDF(const Vector3&wi, const Vector3&wo)
+float DielectricBSDF::computePDF(const Vector3&wi, const Vector3&wo)
 {
 	Vector3 H = wi + wo;
 	H.normalize();
@@ -282,7 +283,7 @@ float WDielectricBSDF::computePDF(const Vector3&wi, const Vector3&wo)
 	//	cout<<pdf<<endl;
 	return pdf;
 }
-void WDielectricBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf)
+void DielectricBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf)
 {
 	float cosTheta = pow(u, 1.0f / (exp + 1.0f));
 	//	cout<<cosTheta<<endl;

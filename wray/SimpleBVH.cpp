@@ -440,7 +440,7 @@ void WSimpleBVH::drawTree( unsigned int nthBox/*=0*/,float R /*= 0.7*/, float G/
 }
 
 #ifdef STACKLESS_TRAVERSAL
-bool WSimpleBVH::intersect( Ray&r,WDifferentialGeometry&DG, int* endNode, int beginNode /*= 0*/ )
+bool WSimpleBVH::intersect( Ray&r,DifferentialGeometry&DG, int* endNode, int beginNode /*= 0*/ )
 {
 	++numIntersect;
 	WTriangle* currTriID = NULL;
@@ -518,7 +518,7 @@ bool WSimpleBVH::intersect( Ray&r,WDifferentialGeometry&DG, int* endNode, int be
 }
 #else
 //利用未压缩的BVH节点求交
-bool WSimpleBVH::intersect( Ray&r,WDifferentialGeometry&DG, int beginNode = 0 )
+bool WSimpleBVH::intersect( Ray&r,DifferentialGeometry&DG, int beginNode = 0 )
 {
 	vector<int>nodeIDStack;//记录节点的序号
 	vector<float>nodeTStack;//记录光线与节点包围盒求交所得的t

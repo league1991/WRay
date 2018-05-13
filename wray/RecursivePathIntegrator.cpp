@@ -55,11 +55,11 @@ Vector3 WRecursivePathIntegrator::integrateCore( Ray ray,unsigned int depth,int 
 //	computeSamples();
 // 	if(depth==maxDepth)
 // 		return Vector3(0);
-	WDifferentialGeometry DG;
+	DifferentialGeometry DG;
 	Vector3 totalLight(0),directLight,indirectLight(0);
 	Vector3 ri,ro;
 	float rayPDF;
-	WBSDF*bsdf;
+	BSDF*bsdf;
 	WMaterial*mtl;
 	int endNode = 0;
 	if(tree->intersect(ray,DG,&endNode, beginNode))

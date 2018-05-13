@@ -17,7 +17,7 @@ public:
 	bool isPoint;
 
 	virtual void sampleLight(
-		float u1,float u2,float u3,WBSDF&bsdf,
+		float u1,float u2,float u3,BSDF&bsdf,
 		Vector3&iposition,Vector3&iintensity,float&PDF)=0;
 	virtual void draw()=0;
 	//获得属性数组,
@@ -41,7 +41,7 @@ public:
 	{intensity=iintensity;}
 	void setPosition(Vector3 iposition)
 	{position=iposition;}
-	void sampleLight(float u1,float u2,float u3, WBSDF&bsdf,Vector3&iposition,Vector3&iintensity,float&PDF);
+	void sampleLight(float u1,float u2,float u3, BSDF&bsdf,Vector3&iposition,Vector3&iintensity,float&PDF);
 	void draw();
 	//获得属性数组，包括灯光的强度，灯光的位置
 	//属性的顺序是：强度 r g b a ， 位置 x y z w
@@ -63,7 +63,7 @@ public:
 	{intensity=iintensity;}
 	void setPosition(Vector3 iposition)
 	{position=iposition;}
-	void sampleLight(float u1,float u2,float u3,WBSDF&bsdf, Vector3&iposition,Vector3&iintensity,float&PDF);
+	void sampleLight(float u1,float u2,float u3,BSDF&bsdf, Vector3&iposition,Vector3&iintensity,float&PDF);
 	void draw();
 	//获得属性数组，包括灯光的强度，灯光的位置
 	//属性的顺序是：强度 r g b a ， 位置 x y z w
@@ -94,7 +94,7 @@ public:
 	void addTriangle(int objectID, int triangleID);
 
 	void sampleLight(
-		float u1, float u2, float u3, WBSDF&bsdf,
+		float u1, float u2, float u3, BSDF&bsdf,
 		Vector3&iposition, Vector3&iintensity, float&PDF);
 	void draw(){};
 	void clear() { m_faceIDList.clear(); }

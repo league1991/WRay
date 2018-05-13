@@ -95,8 +95,8 @@ void WIrradianceCacheIntegrator::clearTree()
 
 Vector3 WIrradianceCacheIntegrator::integrate(Ray&ray)
 {
-	WDifferentialGeometry DG;
-	WBSDF*bsdf=NULL;
+	DifferentialGeometry DG;
+	BSDF*bsdf=NULL;
 	Vector3 ro,directLight=Vector3(0),indirectLight=Vector3(0);
 	int beginNode = 0, endNode;
 	if(tree->intersect(ray,DG,&endNode,beginNode))
@@ -119,8 +119,8 @@ Vector3 WIrradianceCacheIntegrator::integrate(Ray&ray)
 
 //		directLight.showCoords();
 		//对于镜面反射和折射，直接用路径跟踪办法
-		if(!(bsdf->type==WBSDF::BSDF_LAMBERT||
-			bsdf->type==WBSDF::BSDF_PHONG))
+		if(!(bsdf->type==BSDF::BSDF_LAMBERT||
+			bsdf->type==BSDF::BSDF_PHONG))
 		{
 //				return Vector3(0);
 			float bsdfU,bsdfV;
@@ -151,7 +151,7 @@ Vector3 WIrradianceCacheIntegrator::integrate(Ray&ray)
 				Vector3 pathThroughPut=
 					bsdf->evaluateFCos(ri,ro)/PDF;
 //				WBSDF*pathBSDF;
-				WDifferentialGeometry pathDG;
+				DifferentialGeometry pathDG;
 //				Material*pathMtl;
 //				float pathBSDFU,pathBSDFV;
 				bool isGetLambert=false;
@@ -239,8 +239,8 @@ void WIrradianceCacheIntegrator::pathTracing(
 {
 	Vector3 pathDirectLight;
 	Vector3 ri,ro;
-	WBSDF*pathBSDF;
-	WDifferentialGeometry pathDG;
+	BSDF*pathBSDF;
+	DifferentialGeometry pathDG;
 	WMaterial*pathMtl;
 	float pathBSDFU,pathBSDFV;
 	unsigned int depth=maxTracingDepth;
@@ -262,8 +262,8 @@ void WIrradianceCacheIntegrator::pathTracing(
 			//如果发射的光线遇到漫反射表面
 			//停止路径跟踪，用irradianceCach
 			//方法估算直接光照
-			if(pathBSDF->type==WBSDF::BSDF_LAMBERT||
-				pathBSDF->type==WBSDF::BSDF_PHONG)
+			if(pathBSDF->type==BSDF::BSDF_LAMBERT||
+				pathBSDF->type==BSDF::BSDF_PHONG)
 			{
 				isGetLambert=true;
 //				delete pathBSDF;
@@ -314,7 +314,7 @@ bool WIrradianceCacheIntegrator::interpolate(
 	//否则返回false
 	return interpolator.finalInterpolate(E);
 }
-Vector3 WIrradianceCacheIntegrator::computeNewSamples(WBSDF*bsdf)
+Vector3 WIrradianceCacheIntegrator::computeNewSamples(BSDF*bsdf)
 {
 	float bsdfU,bsdfV;
 	float rayTotalLength=0;
@@ -324,7 +324,7 @@ Vector3 WIrradianceCacheIntegrator::computeNewSamples(WBSDF*bsdf)
 	sampler->computeSamples(LambertBSDFSamples);
 	Vector3 L(0);
 	Vector3 Li;
-	WDifferentialGeometry DG;
+	DifferentialGeometry DG;
 	Ray ray;
 	Vector3 ri,ro;
 	ro=bsdf->DG.rayDir;
@@ -382,7 +382,7 @@ Vector3 WIrradianceCacheIntegrator::computeNewSamples(WBSDF*bsdf)
 	return E;
 }
 
-Vector3 WIrradianceCacheIntegrator::computeIndirectLight(WBSDF *bsdf)
+Vector3 WIrradianceCacheIntegrator::computeIndirectLight(BSDF *bsdf)
 {
 	Vector3 E;
 	if(!interpolate(bsdf->DG.position,bsdf->DG.normal,E))

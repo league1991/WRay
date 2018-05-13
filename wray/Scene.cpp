@@ -54,8 +54,11 @@ void Scene::buildScene(ObjReader &reader)
 		emission=reader.Materials[i].emission;
 		//		cout<<mtlName<<diffuse.x<<diffuse.y<<diffuse.z<<endl;
 		if (mtl.isShiny())
-		{
-			materials[i] = new WPhongMaterial(mtlName, i, Vector3(diffuse.x,diffuse.y,diffuse.z), mtl.specular, 1, Vector3(emission.x,emission.y,emission.z));			
+		{ 
+			materials[i] = new WPhongMaterial(mtlName, i, 
+				Vector3(diffuse.x,diffuse.y,diffuse.z), 
+				Vector3(mtl.specular.x, mtl.specular.y, mtl.specular.z),
+				mtl.glossiness, Vector3(emission.x,emission.y,emission.z));
 		}
 		else if (mtl.isTransparent())
 		{
