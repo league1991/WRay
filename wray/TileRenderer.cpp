@@ -196,6 +196,7 @@ void RenderThread::run() {
 		while (true) {
 			std::unique_lock<std::mutex> lck(m_mutex);
 			if (m_task) {
+				m_task->m_status = TileTask::EXECUTING;
 				auto renderer = TileRenderer::getInstance();
 				auto camera = renderer->getCamera();
 				for (int y = m_task->m_beginHeight; y < m_task->m_beginHeight + m_task->m_height; ++y)
@@ -224,7 +225,6 @@ bool RenderThread::runTask(std::shared_ptr<TileTask> newTask)
 	if (isWorking() || newTask == nullptr) {
 		return false;
 	}
-	newTask->m_status = TileTask::EXECUTING;
 	m_task = newTask;
 	m_cv.notify_all();
 	return true;
