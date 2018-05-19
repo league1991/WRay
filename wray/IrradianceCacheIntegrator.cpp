@@ -224,11 +224,13 @@ Vector3 WIrradianceCacheIntegrator::integrate(Ray&ray)
 		{
 //			return Vector3(0);
 			indirectLight+=computeIndirectLight(bsdf);
-			delete bsdf;
+			//delete bsdf;
+			mtl->freeBSDF(bsdf);
 			return directLight+indirectLight;
 		}
 	}
-	delete bsdf;
+	//delete bsdf;
+	WMaterial::freeBSDF(bsdf);
 	return Vector3(0);
 }
 
@@ -282,7 +284,8 @@ void WIrradianceCacheIntegrator::pathTracing(
 			ray.tMax=M_INF_BIG;
 
 			pathThroughPut*=pathBSDF->evaluateFCos(ri,ro)/PDF;
-			delete pathBSDF;	
+			//delete pathBSDF;
+			pathMtl->freeBSDF(pathBSDF);
 			beginNode = endNode;
 		}
 		else 

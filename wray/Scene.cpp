@@ -53,7 +53,7 @@ void Scene::buildScene(ObjReader &reader)
 		diffuse=reader.Materials[i].diffuse;
 		emission=reader.Materials[i].emission;
 		//		cout<<mtlName<<diffuse.x<<diffuse.y<<diffuse.z<<endl;
-		if (mtl.isShiny())
+		if (mtl.isShiny() && false)
 		{ 
 			materials[i] = new WPhongMaterial(mtlName, i, 
 				Vector3(diffuse.x,diffuse.y,diffuse.z), 

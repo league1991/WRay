@@ -186,6 +186,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MC.cpp" />
+    <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="MetropolisIntegrator.cpp" />
     <ClCompile Include="MultiBVH.cpp" />
     <ClCompile Include="ObjReader.cpp" />
@@ -238,6 +239,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="MathValues.h" />
     <ClInclude Include="MC.h" />
+    <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="MetropolisIntegrator.h" />
     <ClInclude Include="MultiBVH.h" />
     <ClInclude Include="ObjReader.h" />

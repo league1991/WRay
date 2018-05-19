@@ -70,7 +70,7 @@ Vector3 WDirectLighting::computeDirectLight(Light *light, BSDF *bsdf, Sample3D &
 			Vector3 fCos = bsdf->evaluateFCos(sampleWi, ro);
 			bsdfRadiance = fCos*emission / bsdfPDF;
 		}
-		delete sourceBSDF;
+		mtl->freeBSDF(sourceBSDF);
 	}
 
 	if (lightPDF <= 0 && bsdfPDF <= 0)

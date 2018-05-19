@@ -44,6 +44,7 @@ using namespace std;
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
+#include "MemoryPool.h"
 #include "DisplaySystem.h"
 #include "ObjReader.h"
 #include "Ray.h"

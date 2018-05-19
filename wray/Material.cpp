@@ -2,6 +2,7 @@
 #include "Material.h"
 
 
+MemoryPool WMaterial::s_bsdfPool(4,4*1024);
 
 WMaterial::~WMaterial(void)
 {
@@ -9,7 +10,8 @@ WMaterial::~WMaterial(void)
 
 void WLambertMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf)
 {
-	bsdf=new LambertBSDF(DG,color);
+	void* buffer = s_bsdfPool.allocate<LambertBSDF>();
+	bsdf=new (buffer)LambertBSDF(DG,color);
 	bsdf->setEmission(this->getLight());
 }
 
@@ -24,12 +26,14 @@ void WLambertMaterial::getProperties( vector<float>& properties )
 
 void WPhongMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf)
 {
-	bsdf=new PhongBSDF(DG,color,specular,glossiness);
+	void* buffer = s_bsdfPool.allocate<PhongBSDF>();
+	bsdf=new (buffer)PhongBSDF(DG,color,specular,glossiness);
 	bsdf->setEmission(this->getLight());
 }
 void WPerfectReflectionMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf)
 {
-	bsdf=new PerfectReflectionBSDF(DG,color);
+	void* buffer = s_bsdfPool.allocate<PerfectReflectionBSDF>();
+	bsdf=new (buffer)PerfectReflectionBSDF(DG,color);
 	bsdf->setEmission(this->getLight());
 }
 
@@ -44,7 +48,8 @@ void WPerfectReflectionMaterial::getProperties( vector<float>& properties )
 
 void WPerfectRefractionMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf)
 {
-	bsdf=new PerfectRefractionBSDF(DG,color,IOR);
+	void* buffer = s_bsdfPool.allocate<PerfectRefractionBSDF>();
+	bsdf=new (buffer)PerfectRefractionBSDF(DG,color,IOR);
 	bsdf->setEmission(this->getLight());
 }
 
@@ -73,11 +78,13 @@ void WMetalMaterial::refreshColor()
 }
 void WMetalMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf)
 {
-	bsdf=new MetalBSDF(DG,eta,k,exp);
+	void* buffer = s_bsdfPool.allocate<MetalBSDF>();
+	bsdf=new (buffer)MetalBSDF(DG,eta,k,exp);
 	bsdf->setEmission(this->getLight());
 }
 void WDielectricMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf)
 {
-	bsdf=new DielectricBSDF(DG,ior,color,exp);
+	void* buffer = s_bsdfPool.allocate<DielectricBSDF>();
+	bsdf=new (buffer)DielectricBSDF(DG,ior,color,exp);
 	bsdf->setEmission(this->getLight());
 }

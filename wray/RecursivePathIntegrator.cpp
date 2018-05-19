@@ -95,7 +95,8 @@ Vector3 WRecursivePathIntegrator::integrateCore( Ray ray,unsigned int depth,int 
 			indirectLight+=L*bsdf->evaluateFCos(ri,ro)/rayPDF*multiplier;
 		}
 //		indirectLight.showCoords();
-		delete bsdf;
+		//delete bsdf;
+		mtl->freeBSDF(bsdf);
 		indirectLight/=nBranchs;
 		totalLight=directLight+indirectLight;
 	}

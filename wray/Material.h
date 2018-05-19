@@ -24,6 +24,10 @@ public:
 	//由此函数新建对象
 	virtual void buildBSDF(
 		DifferentialGeometry DG,BSDF*&bsdf)=0;
+	static void freeBSDF(BSDF* bsdf)
+	{
+		s_bsdfPool.free<BSDF>(bsdf);
+	}
 
 	virtual void setColor(Vector3 icolor){color=icolor;}
 	Vector3 getColor(){return color;}
@@ -37,6 +41,8 @@ protected:
 	MaterialType type;
 	string name;
 	unsigned int ID;
+
+	static MemoryPool s_bsdfPool;
 };
 class WLambertMaterial:public WMaterial
 {

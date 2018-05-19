@@ -212,8 +212,8 @@ void ObjectLight::sampleLight(float u1, float u2, float u3, BSDF & bsdf, Vector3
 	m_scene->getNthMaterial(material, triangle.mtlId);
 	BSDF* lightBSDF;
 	material->buildBSDF(DG, lightBSDF);
-	std::unique_ptr<BSDF> lightBSDFPtr(lightBSDF);
 	intensity = m_intensity * lightBSDF->getEmission();
+	material->freeBSDF(lightBSDF);
 
 	float cosTheta = dir.dot(DG.normal);
 	if (m_isDoubleSide)
