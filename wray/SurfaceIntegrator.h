@@ -4,7 +4,7 @@ class WSurfaceIntegrator
 {
 public:
 	WSurfaceIntegrator(Scene*iscene,WAccelerator*itree):
-	  scene(iscene),tree(itree){};
+	  scene(iscene),tree(itree), m_memoryPool(4,4*1024){};
 	virtual ~WSurfaceIntegrator(void);
 	virtual Vector3 integrate(Ray&ray){return Vector3(0);}
 	virtual void displayTime(){}
@@ -18,6 +18,7 @@ public:
 		m_numPixelSamples = numPixelSamples;
 	}
 protected:
+	MemoryPool m_memoryPool;
 	Vector2i m_pixelPos;
 	int m_pixelSampleIdx;
 	int m_numPixelSamples;

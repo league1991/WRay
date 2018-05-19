@@ -18,7 +18,7 @@ public:
 
 	virtual void sampleLight(
 		float u1,float u2,float u3,BSDF&bsdf,
-		Vector3&iposition,Vector3&iintensity,float&PDF)=0;
+		Vector3&iposition,Vector3&iintensity,float&PDF, MemoryPool& memoryPool)=0;
 	virtual void draw()=0;
 	//获得属性数组,
 	//此函数用于把所有灯光的属性打包到一个float4纹理中
@@ -41,7 +41,7 @@ public:
 	{intensity=iintensity;}
 	void setPosition(Vector3 iposition)
 	{position=iposition;}
-	void sampleLight(float u1,float u2,float u3, BSDF&bsdf,Vector3&iposition,Vector3&iintensity,float&PDF);
+	void sampleLight(float u1,float u2,float u3, BSDF&bsdf,Vector3&iposition,Vector3&iintensity,float&PDF, MemoryPool& memoryPool);
 	void draw();
 	//获得属性数组，包括灯光的强度，灯光的位置
 	//属性的顺序是：强度 r g b a ， 位置 x y z w
@@ -63,7 +63,7 @@ public:
 	{intensity=iintensity;}
 	void setPosition(Vector3 iposition)
 	{position=iposition;}
-	void sampleLight(float u1,float u2,float u3,BSDF&bsdf, Vector3&iposition,Vector3&iintensity,float&PDF);
+	void sampleLight(float u1,float u2,float u3,BSDF&bsdf, Vector3&iposition,Vector3&iintensity,float&PDF, MemoryPool& memoryPool);
 	void draw();
 	//获得属性数组，包括灯光的强度，灯光的位置
 	//属性的顺序是：强度 r g b a ， 位置 x y z w
@@ -95,7 +95,7 @@ public:
 
 	void sampleLight(
 		float u1, float u2, float u3, BSDF&bsdf,
-		Vector3&iposition, Vector3&iintensity, float&PDF);
+		Vector3&iposition, Vector3&iintensity, float&PDF, MemoryPool& memoryPool);
 	void draw(){};
 	void clear() { m_faceIDList.clear(); }
 	virtual bool isDeltaLight() { return false; }

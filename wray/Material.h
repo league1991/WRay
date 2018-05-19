@@ -23,10 +23,10 @@ public:
 	//由材质创建BSDF,bsdf指针不需要预先新建对象
 	//由此函数新建对象
 	virtual void buildBSDF(
-		DifferentialGeometry DG,BSDF*&bsdf)=0;
-	static void freeBSDF(BSDF* bsdf)
+		DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool)=0;
+	static void freeBSDF(BSDF* bsdf, MemoryPool& customPool)
 	{
-		s_bsdfPool.free<BSDF>(bsdf);
+		customPool.free<BSDF>(bsdf);
 	}
 
 	virtual void setColor(Vector3 icolor){color=icolor;}
@@ -41,8 +41,6 @@ protected:
 	MaterialType type;
 	string name;
 	unsigned int ID;
-
-	static MemoryPool s_bsdfPool;
 };
 class WLambertMaterial:public WMaterial
 {
@@ -55,7 +53,7 @@ public:
 	//设置颜色
 //	void setColor(Vector3 icolor){color=icolor;}
 	//创建一个LambertBSDF
-	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf);
+	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool);
 	void getProperties(vector<float>& properties);
 
 };
@@ -75,7 +73,7 @@ public:
 	{specular=ispecular;}
 	void setGlossiness(float iglossiness)
 	{glossiness=iglossiness;}
-	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf);
+	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool);
 protected:
 	Vector3 specular;
 	float glossiness;
@@ -93,7 +91,7 @@ public:
 
 
 //	  void setColor(Vector3 icolor){color=icolor;}
-	  void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf);
+	  void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool);
 	  void getProperties(vector<float>& properties);
 private:
 
@@ -109,7 +107,7 @@ public:
 		  icolor,ilight),IOR(iIOR){}
 	~WPerfectRefractionMaterial(){}
 
-	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf);
+	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool);
 	void setIOR(float ior){IOR=ior;}
 
 	void getProperties(vector<float>& properties);
@@ -122,7 +120,7 @@ class WMetalMaterial:public WMaterial
 public:
 	WMetalMaterial(string iName,unsigned int iID,Vector3 Fr,float iexp, Vector3 ilight=Vector3(0));
 	~WMetalMaterial(){}
-	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf);
+	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool);
 	void refreshColor();
 	void setGlossiness(float iglossiness)
 	{exp=iglossiness;}
@@ -138,7 +136,7 @@ public:
 	WMaterial(WMaterial::MATERIAL_DIELECTRIC,iName,iID,icolor,ilight),
 	exp(iexp),ior(iior){}
 	~WDielectricMaterial(){}
-	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf);
+	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool);
 	void setParams(float iglossiness,float iior)
 	{exp=iglossiness;iior=ior;}
 	void setGlossiness(float iglossiness)

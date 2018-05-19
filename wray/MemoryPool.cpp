@@ -4,7 +4,6 @@
 
 void * MemoryBlockCache::allocateBlock()
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
 	Block* newBlock;
 	if (m_freeList == nullptr)
 	{
@@ -30,7 +29,6 @@ void * MemoryBlockCache::allocateBlock()
 
 void MemoryBlockCache::freeBlock(void * blockData)
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
 	Block* block = static_cast<Block*>(blockData) - 1;
 	if (block->m_prev)
 	{
@@ -51,7 +49,6 @@ void MemoryBlockCache::freeBlock(void * blockData)
 
 void MemoryBlockCache::clearAllBlocks()
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
 	Block* blockPtr = m_usedList;
 	while (blockPtr)
 	{

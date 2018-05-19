@@ -84,7 +84,7 @@ Vector3 PathIntegrator::integrate(Ray&camRay)//颜色计算
 			scene->getNthMaterial(mtl,DG.mtlId);
 
 			BSDF*bsdf;
-			mtl->buildBSDF(DG,bsdf);
+			mtl->buildBSDF(DG,bsdf,m_memoryPool);
 
 			ro=-1*ray.direction;
 			directLight=Dlighting.sampleAllLights(bsdf,lightSamples,BSDFSamples,ro, &endNode);
@@ -98,7 +98,7 @@ Vector3 PathIntegrator::integrate(Ray&camRay)//颜色计算
 			ray.tMax=M_INF_BIG;
 			pathThroughPut*=bsdf->evaluateFCos(ri,ro)/rayPDF;
 			beginNode = endNode;
-			mtl->freeBSDF(bsdf);
+			mtl->freeBSDF(bsdf, m_memoryPool);
 		}
 		else 
 			break;

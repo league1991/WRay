@@ -65,7 +65,7 @@ Vector3 WRecursivePathIntegrator::integrateCore( Ray ray,unsigned int depth,int 
 	if(tree->intersect(ray,DG,&endNode, beginNode))
 	{
 		scene->getNthMaterial(mtl,DG.mtlId);
-		mtl->buildBSDF(DG,bsdf);
+		mtl->buildBSDF(DG,bsdf, m_memoryPool);
 		ro=-1*ray.direction;
 		//			timer.end();
 		//计算直接光照
@@ -96,7 +96,7 @@ Vector3 WRecursivePathIntegrator::integrateCore( Ray ray,unsigned int depth,int 
 		}
 //		indirectLight.showCoords();
 		//delete bsdf;
-		mtl->freeBSDF(bsdf);
+		mtl->freeBSDF(bsdf, m_memoryPool);
 		indirectLight/=nBranchs;
 		totalLight=directLight+indirectLight;
 	}

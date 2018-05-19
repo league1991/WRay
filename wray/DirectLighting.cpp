@@ -27,7 +27,7 @@ Vector3 WDirectLighting::computeDirectLight(Light *light, BSDF *bsdf, Sample3D &
 	lightSample.get3D(LSu,LSv,LSw);
 	float lightPDF;
 	Vector3 lightPosition, intensity;
-	light->sampleLight(LSu,LSv,LSw,*bsdf,lightPosition,intensity,lightPDF);
+	light->sampleLight(LSu,LSv,LSw,*bsdf,lightPosition,intensity,lightPDF, m_memoryPool);
 	lightPDF /= scene->getLightNum();
 	Vector3 lightRadiance(0.0);
 	if (!intensity.isZero())
@@ -63,14 +63,14 @@ Vector3 WDirectLighting::computeDirectLight(Light *light, BSDF *bsdf, Sample3D &
 		WMaterial*mtl;
 		scene->getNthMaterial(mtl, DG.mtlId);
 		BSDF* sourceBSDF;
-		mtl->buildBSDF(DG, sourceBSDF);
+		mtl->buildBSDF(DG, sourceBSDF, m_memoryPool);
 		Vector3 emission = sourceBSDF->getEmission();
 		if (!emission.isZero() && bsdfPDF > 0)
 		{
 			Vector3 fCos = bsdf->evaluateFCos(sampleWi, ro);
 			bsdfRadiance = fCos*emission / bsdfPDF;
 		}
-		mtl->freeBSDF(sourceBSDF);
+		mtl->freeBSDF(sourceBSDF, m_memoryPool);
 	}
 
 	if (lightPDF <= 0 && bsdfPDF <= 0)

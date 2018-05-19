@@ -104,7 +104,7 @@ Vector3 WIrradianceCacheIntegrator::integrate(Ray&ray)
 		//由材质生成BSDF
 		WMaterial*mtl;
 		scene->getNthMaterial(mtl,DG.mtlId);
-		mtl->buildBSDF(DG,bsdf);
+		mtl->buildBSDF(DG,bsdf, m_memoryPool);
 		sampler->computeSamples(LambertBSDFSamples);
 		sampler->computeSamples(lightSamples);
 
@@ -225,12 +225,12 @@ Vector3 WIrradianceCacheIntegrator::integrate(Ray&ray)
 //			return Vector3(0);
 			indirectLight+=computeIndirectLight(bsdf);
 			//delete bsdf;
-			mtl->freeBSDF(bsdf);
+			mtl->freeBSDF(bsdf, m_memoryPool);
 			return directLight+indirectLight;
 		}
 	}
 	//delete bsdf;
-	WMaterial::freeBSDF(bsdf);
+	WMaterial::freeBSDF(bsdf, m_memoryPool);
 	return Vector3(0);
 }
 
@@ -258,7 +258,7 @@ void WIrradianceCacheIntegrator::pathTracing(
 		{
 			//找到交点的材质和BSDF
 			scene->getNthMaterial(pathMtl,pathDG.mtlId);
-			pathMtl->buildBSDF(pathDG,pathBSDF);
+			pathMtl->buildBSDF(pathDG,pathBSDF, m_memoryPool);
 			ro=-1*ray.direction;
 
 			//如果发射的光线遇到漫反射表面
@@ -285,7 +285,7 @@ void WIrradianceCacheIntegrator::pathTracing(
 
 			pathThroughPut*=pathBSDF->evaluateFCos(ri,ro)/PDF;
 			//delete pathBSDF;
-			pathMtl->freeBSDF(pathBSDF);
+			pathMtl->freeBSDF(pathBSDF, m_memoryPool);
 			beginNode = endNode;
 		}
 		else 
