@@ -60,7 +60,7 @@ Vector3 WDirectLighting::computeDirectLight(Light *light, BSDF *bsdf, Sample3D &
 	int beginNode = 0, endNode;
 	if (tree->intersect(ray, DG, &endNode, beginNode))
 	{
-		WMaterial*mtl;
+		Material*mtl;
 		scene->getNthMaterial(mtl, DG.mtlId);
 		BSDF* sourceBSDF;
 		mtl->buildBSDF(DG, sourceBSDF, m_memoryPool);

@@ -80,7 +80,7 @@ Vector3 PathIntegrator::integrate(Ray&camRay)//ÑÕÉ«¼ÆËã
 		{
 			if(depth==0)
 				camRay.tMax=ray.tMax;
-			WMaterial*mtl;
+			Material*mtl;
 			scene->getNthMaterial(mtl,DG.mtlId);
 
 			BSDF*bsdf;

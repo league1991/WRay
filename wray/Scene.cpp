@@ -42,7 +42,7 @@ void Scene::buildScene(ObjReader &reader)
 	//创建整个场景的包围盒
 	//创建材质数组
 	nMaterials=reader.Materials.size();
-	materials=new WMaterial*[nMaterials];
+	materials=new Material*[nMaterials];
 	string mtlName;
 	float3 diffuse;
 	float3 emission;
@@ -53,19 +53,22 @@ void Scene::buildScene(ObjReader &reader)
 		diffuse=reader.Materials[i].diffuse;
 		emission=reader.Materials[i].emission;
 		//		cout<<mtlName<<diffuse.x<<diffuse.y<<diffuse.z<<endl;
-		if (mtl.isShiny() && false)
+		if (mtl.isShiny())
 		{ 
-			materials[i] = new WPhongMaterial(mtlName, i, 
-				Vector3(diffuse.x,diffuse.y,diffuse.z), 
-				Vector3(mtl.specular.x, mtl.specular.y, mtl.specular.z),
-				mtl.glossiness, Vector3(emission.x,emission.y,emission.z));
+			//materials[i] = new PhongMaterial(mtlName, i, 
+			//	Vector3(diffuse.x,diffuse.y,diffuse.z), 
+			//	Vector3(mtl.specular.x, mtl.specular.y, mtl.specular.z),
+			//	mtl.glossiness, Vector3(emission.x,emission.y,emission.z));
+			materials[i] = new GGXMetalMaterial(mtlName, i,
+				Vector3(diffuse.x, diffuse.y, diffuse.z),
+				mtl.glossiness / 100.0, Vector3(emission.x, emission.y, emission.z));
 		}
 		else if (mtl.isTransparent())
 		{
-			materials[i] = new WPerfectRefractionMaterial(mtlName, i, Vector3(diffuse.x,diffuse.y,diffuse.z), 1.33, Vector3(emission.x,emission.y,emission.z));
+			materials[i] = new PerfectRefractionMaterial(mtlName, i, Vector3(diffuse.x,diffuse.y,diffuse.z), 1.33, Vector3(emission.x,emission.y,emission.z));
 		}
 		else
-			materials[i]=new WLambertMaterial(mtlName,i,Vector3(diffuse.x,diffuse.y,diffuse.z),Vector3(emission.x,emission.y,emission.z));
+			materials[i]=new LambertMaterial(mtlName,i,Vector3(diffuse.x,diffuse.y,diffuse.z),Vector3(emission.x,emission.y,emission.z));
 	}
 	buildTriangleArray();
 	buildLightData();
@@ -95,16 +98,16 @@ void Scene::getObject(MeshObject*&iprimitives,unsigned int nthPrim)
 {
 	iprimitives=&(m_objects[nthPrim]);
 }
-void Scene::getMaterials(WMaterial**&imaterials,unsigned int&nMtl)
+void Scene::getMaterials(Material**&imaterials,unsigned int&nMtl)
 {
 	nMtl=nMaterials;
 	imaterials=this->materials;
 }
-void Scene::getNthMaterial(WMaterial*&imaterial,unsigned int nthMtl)
+void Scene::getNthMaterial(Material*&imaterial,unsigned int nthMtl)
 {
 	imaterial=materials[nthMtl];
 }
-void Scene::setNthMaterial(WMaterial*imaterial,unsigned int nthMtl)
+void Scene::setNthMaterial(Material*imaterial,unsigned int nthMtl)
 {
 	if(nthMtl>=0&&nthMtl<nMaterials)
 	{
@@ -140,7 +143,7 @@ void Scene::buildSceneBBox()
 }
 void Scene::buildLightData()
 {
-	std::unordered_map<WMaterial*, ObjectLight*> lightMap;
+	std::unordered_map<Material*, ObjectLight*> lightMap;
 
 	for (int ithObj = 0; ithObj < m_objects.size(); ithObj++)
 	{
@@ -151,7 +154,7 @@ void Scene::buildLightData()
 		for (int ithTri = 0; ithTri < nTriangle; ithTri++)
 		{
 			object.getTriangle(ithTri, tri);
-			WMaterial* material = materials[tri.mtlId];
+			Material* material = materials[tri.mtlId];
 			if (material->isEmissive())
 			{
 				if (lightMap.find(material) == lightMap.end())

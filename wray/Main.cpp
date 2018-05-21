@@ -357,7 +357,7 @@ int main(int argc, char** argv)
 	glutKeyboardFunc(keyFcn);
 	glutMouseFunc(mouseFcn);
 	glutMotionFunc(mouseMoveFcn);
-	glutTimerFunc(500, timerFcn, -1);
+	glutTimerFunc(1000, timerFcn, -1);
 
 	glutMainLoop();
 	return 0;

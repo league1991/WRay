@@ -26,7 +26,7 @@ class RandomNumber
 public:
 	RandomNumber(void);
 	virtual ~RandomNumber(void);
-	static float randomFloat()
+	static inline float randomFloat()
 	{
 		//return rand() / 32767.0;
 		//return s_uniformFloatObj(s_randObj);
@@ -42,6 +42,7 @@ public:
 	}
 	static void randomSeed(unsigned int seed)
 	{
+		//srand(seed);
 		//s_randObj.seed(seed);
 		s_PCGRandObj.m_inc = seed;
 		s_PCGRandObj.m_state = 12345;

@@ -1,6 +1,6 @@
 #pragma once
 #include "BSDF.h"
-class WMaterial
+class Material
 {
 public:
 	enum MaterialType{
@@ -9,17 +9,18 @@ public:
 		MATERIAL_PERFECTREFLECTION=2,
 		MATERIAL_PERFECTREFRACTION=3,
 		MATERIAL_METAL=4,
-		MATERIAL_DIELECTRIC=5
+		MATERIAL_DIELECTRIC=5,
+		MATERIAL_GGX_METAL=6,
 	};
 
 
-	WMaterial(
+	Material(
 		MaterialType itype,string iName,unsigned int iID,
 		Vector3 icolor=Vector3(1),Vector3 iLight=Vector3(0)):
 	type(itype),name(iName),ID(iID),
 	color(icolor),light(iLight){}
 
-	virtual ~WMaterial(void);
+	virtual ~Material(void);
 	//由材质创建BSDF,bsdf指针不需要预先新建对象
 	//由此函数新建对象
 	virtual void buildBSDF(
@@ -42,13 +43,13 @@ protected:
 	string name;
 	unsigned int ID;
 };
-class WLambertMaterial:public WMaterial
+class LambertMaterial:public Material
 {
 public:
-	WLambertMaterial(string iName,unsigned int iID,
+	LambertMaterial(string iName,unsigned int iID,
 		Vector3 icolor, Vector3 ilight=Vector3(0)):
-	WMaterial(MATERIAL_LAMBERT,iName,iID,icolor,ilight){}
-	~WLambertMaterial(){}
+	Material(MATERIAL_LAMBERT,iName,iID,icolor,ilight){}
+	~LambertMaterial(){}
 
 	//设置颜色
 //	void setColor(Vector3 icolor){color=icolor;}
@@ -57,12 +58,12 @@ public:
 	void getProperties(vector<float>& properties);
 
 };
-class WPhongMaterial:public WLambertMaterial
+class PhongMaterial:public LambertMaterial
 {
 public:
-	WPhongMaterial(string iName,unsigned int iID,
+	PhongMaterial(string iName,unsigned int iID,
 		const Vector3& icolor,const Vector3& ispecular,float iglossiness, Vector3& ilight=Vector3(0)):
-	WLambertMaterial(iName,iID,icolor,ilight),
+	LambertMaterial(iName,iID,icolor,ilight),
 		specular(ispecular),
 		glossiness(iglossiness){type=MATERIAL_PHONG;}
 	void setParams(float ispecular,
@@ -79,15 +80,15 @@ protected:
 	float glossiness;
 };
 //完全光滑表面的材质
-class WPerfectReflectionMaterial:public WMaterial
+class PerfectReflectionMaterial:public Material
 {
 public:
-	WPerfectReflectionMaterial(string iName,unsigned int iID,
+	PerfectReflectionMaterial(string iName,unsigned int iID,
 		Vector3 icolor=Vector3(1), Vector3 ilight=Vector3(0)):
-	  WMaterial(
+	  Material(
 		  MATERIAL_PERFECTREFLECTION,iName,iID,icolor,ilight)
 	  {}
-	  ~WPerfectReflectionMaterial(){}
+	  ~PerfectReflectionMaterial(){}
 
 
 //	  void setColor(Vector3 icolor){color=icolor;}
@@ -97,15 +98,15 @@ private:
 
 };
 //完全透明且光滑物体的材质
-class WPerfectRefractionMaterial:public WMaterial
+class PerfectRefractionMaterial:public Material
 {
 public:
-	WPerfectRefractionMaterial(string iName,unsigned int iID,
+	PerfectRefractionMaterial(string iName,unsigned int iID,
 		Vector3 icolor=Vector3(1),float iIOR=1.33, Vector3 ilight=Vector3(0)):
-	WMaterial(
+	Material(
 		  MATERIAL_PERFECTREFRACTION,iName,iID,
 		  icolor,ilight),IOR(iIOR){}
-	~WPerfectRefractionMaterial(){}
+	~PerfectRefractionMaterial(){}
 
 	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool);
 	void setIOR(float ior){IOR=ior;}
@@ -115,11 +116,11 @@ private:
 
 	float IOR;
 };
-class WMetalMaterial:public WMaterial
+class MetalMaterial:public Material
 {
 public:
-	WMetalMaterial(string iName,unsigned int iID,Vector3 Fr,float iexp, Vector3 ilight=Vector3(0));
-	~WMetalMaterial(){}
+	MetalMaterial(string iName,unsigned int iID,Vector3 Fr,float iexp, Vector3 ilight=Vector3(0));
+	~MetalMaterial(){}
 	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool);
 	void refreshColor();
 	void setGlossiness(float iglossiness)
@@ -128,14 +129,26 @@ private:
 	Vector3 k,eta;
 	float exp;
 };
-class WDielectricMaterial:public WMaterial
+class GGXMetalMaterial :public Material
 {
 public:
-	WDielectricMaterial(string iName,unsigned int iID,
+	GGXMetalMaterial(string iName, unsigned int iID, Vector3 Fr, float iexp, Vector3 ilight = Vector3(0));
+	~GGXMetalMaterial() {}
+	void buildBSDF(DifferentialGeometry DG, BSDF*&bsdf, MemoryPool& customPool);
+	void refreshColor();
+	void setGlossiness(float iglossiness);
+private:
+	Vector3 k, eta;
+	float exp;
+};
+class DielectricMaterial:public Material
+{
+public:
+	DielectricMaterial(string iName,unsigned int iID,
 		Vector3 icolor,float iexp,float iior, Vector3 ilight=Vector3(0)):
-	WMaterial(WMaterial::MATERIAL_DIELECTRIC,iName,iID,icolor,ilight),
+	Material(Material::MATERIAL_DIELECTRIC,iName,iID,icolor,ilight),
 	exp(iexp),ior(iior){}
-	~WDielectricMaterial(){}
+	~DielectricMaterial(){}
 	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool);
 	void setParams(float iglossiness,float iior)
 	{exp=iglossiness;iior=ior;}

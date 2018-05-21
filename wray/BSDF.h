@@ -11,7 +11,8 @@ public:
 		BSDF_PERFECTREFLECTION = 2,
 		BSDF_PERFECTREFRACTION = 3,
 		BSDF_METAL = 4,
-		BSDF_DIELECTRIC = 5
+		BSDF_DIELECTRIC = 5,
+		BSDF_GGX_METAL = 6,
 	};
 
 	BSDF(DifferentialGeometry& iDG, BSDFType itype,
@@ -193,11 +194,7 @@ public:
 		fresnel(ieta, ik, iDG.normal),
 		exp(iexp) {}
 	~MetalBSDF() {}
-	void sampleRay(
-		float u, float v,
-		Vector3&sampleWi, const Vector3&wo,
-		float&pdf);
-
+	void sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
 	Vector3 evaluateFCos(Vector3&ri, const Vector3&ro);
 	virtual bool isDeltaBSDF() { return false; }
 private:
@@ -206,6 +203,24 @@ private:
 	float computePDF(const Vector3&wi, const Vector3&wo);
 	FresnelConductor fresnel;
 	float exp;
+};
+
+class GGXMetalBSDF :public BSDF
+{
+public:
+	GGXMetalBSDF(DifferentialGeometry iDG, Vector3 ieta, Vector3 ik, float ag) :
+		BSDF(iDG, BSDF_GGX_METAL), fresnel(ieta, ik, iDG.normal), m_ag(ag) {}
+	~GGXMetalBSDF() {}
+	void sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
+	Vector3 evaluateFCos(Vector3&ri, const Vector3&ro);
+	virtual bool isDeltaBSDF() { return false; }
+private:
+	float computeD(const Vector3&wh);
+	float computeG(const Vector3&wi, const Vector3&wo, const Vector3&wh);
+	float computeG1(const Vector3&v, const Vector3&wh);
+	float computePDF(const Vector3&wi, const Vector3&wo);
+	FresnelConductor fresnel;
+	float m_ag;
 };
 
 //此BSDF表示不透明绝缘体的BSDF

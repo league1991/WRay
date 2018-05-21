@@ -25,11 +25,11 @@ public:
 	void getObjects(MeshObject*&iprimitives,unsigned int&nPrims);
 	void getObject(MeshObject*&iprimitives,unsigned int nthPrim);
 	//获得材质指针数组的指针，以及材质的个数
-	void getMaterials(WMaterial**&imaterials,unsigned int&nMtl);
+	void getMaterials(Material**&imaterials,unsigned int&nMtl);
 	//获得第nthMtl个材质
-	void getNthMaterial(WMaterial*&imaterial,unsigned int nthMtl);
+	void getNthMaterial(Material*&imaterial,unsigned int nthMtl);
 	//设置第nthMtl个材质
-	void setNthMaterial(WMaterial*imaterial,unsigned int nthMtl);
+	void setNthMaterial(Material*imaterial,unsigned int nthMtl);
 	//返回基本体的总数
 	unsigned int getPrimNum(){return m_objects.size();}
 	//返回子基本体的总数
@@ -81,7 +81,7 @@ public:
 
 private:
 	vector<Light*>m_lights;					//存储灯光指针
-	WMaterial**materials;					//Material指针数组
+	Material**materials;					//Material指针数组
 	unsigned int nMaterials;				//Material总数
 	std::vector<MeshObject>m_objects;		//Primitive数组
 	unsigned int nSubPrimitives;			//SubPrimitive总数

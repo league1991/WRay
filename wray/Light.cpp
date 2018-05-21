@@ -208,7 +208,7 @@ void ObjectLight::sampleLight(float u1, float u2, float u3, BSDF & bsdf, Vector3
 	DifferentialGeometry DG;
 	triangle.buildDG(u, v, dir, DG);
 
-	WMaterial* material;
+	Material* material;
 	m_scene->getNthMaterial(material, triangle.mtlId);
 	BSDF* lightBSDF;
 	material->buildBSDF(DG, lightBSDF, memoryPool);

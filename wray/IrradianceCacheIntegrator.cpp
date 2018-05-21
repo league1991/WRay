@@ -102,7 +102,7 @@ Vector3 WIrradianceCacheIntegrator::integrate(Ray&ray)
 	if(tree->intersect(ray,DG,&endNode,beginNode))
 	{
 		//由材质生成BSDF
-		WMaterial*mtl;
+		Material*mtl;
 		scene->getNthMaterial(mtl,DG.mtlId);
 		mtl->buildBSDF(DG,bsdf, m_memoryPool);
 		sampler->computeSamples(LambertBSDFSamples);
@@ -230,7 +230,7 @@ Vector3 WIrradianceCacheIntegrator::integrate(Ray&ray)
 		}
 	}
 	//delete bsdf;
-	WMaterial::freeBSDF(bsdf, m_memoryPool);
+	Material::freeBSDF(bsdf, m_memoryPool);
 	return Vector3(0);
 }
 
@@ -243,7 +243,7 @@ void WIrradianceCacheIntegrator::pathTracing(
 	Vector3 ri,ro;
 	BSDF*pathBSDF;
 	DifferentialGeometry pathDG;
-	WMaterial*pathMtl;
+	Material*pathMtl;
 	float pathBSDFU,pathBSDFV;
 	unsigned int depth=maxTracingDepth;
 	float PDF;

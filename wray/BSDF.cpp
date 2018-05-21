@@ -147,19 +147,25 @@ FresnelConductor::FresnelConductor(
 {}
 Vector3 FresnelConductor::evaluateF(Vector3&wi)
 {
-	Vector3 cosWi = Vector3(max(0.01f, wi.dot(normal)));
-	Vector3 cosWi2 = cosWi*cosWi;
+	float cosWi = wi.dot(normal);
+	if (cosWi <= 0.f)
+	{
+		return Vector3(0);
+	}
+	Vector3 cosWi2 = Vector3(cosWi* cosWi);
 	Vector3 n2k2 = eta*eta + k*k;
-	// 	eta.showCoords();
-	// 	k.showCoords();
-	//	n2k2.showCoords();
-	Vector3 rpa2 = (n2k2*cosWi2 - 2 * eta*cosWi + Vector3(1)) /
-		(n2k2*cosWi2 + 2 * eta*cosWi + Vector3(1));
-	Vector3 rpe2 = (n2k2 - 2 * eta*cosWi + cosWi2) /
-		(n2k2 + 2 * eta*cosWi + cosWi2);
-	//	rpa2.showCoords();
-	//	rpe2.showCoords();
-	return 0.5*(rpa2 + rpe2);
+	Vector3 rpa2A = (n2k2*cosWi2 - 2 * eta*cosWi + Vector3(1));
+	Vector3 rpa2B = (n2k2*cosWi2 + 2 * eta*cosWi + Vector3(1));
+	Vector3 rpe2A = (n2k2 - 2 * eta*cosWi + cosWi2);
+	Vector3 rpe2B = (n2k2 + 2 * eta*cosWi + cosWi2);
+	if (rpa2B.x <= 0 || rpa2B.y <= 0 || rpa2B.z <= 0 ||
+		rpe2B.x <= 0 || rpe2B.y <= 0 || rpe2B.z <= 0 ||
+		rpa2A.x <= 0 || rpa2A.y <= 0 || rpa2A.z <= 0 ||
+		rpe2A.x <= 0 || rpe2A.y <= 0 || rpe2A.z <= 0)
+	{
+		return Vector3(0);
+	}
+	return 0.5*(rpa2A / rpa2B + rpe2A / rpe2B);
 }
 float MetalBSDF::computeD(const Vector3&wh)
 {
@@ -181,37 +187,16 @@ Vector3 MetalBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 	rh.normalize();
 	fresnel.setNormal(rh);
 	float cosWo = max(DG.normal.dot(ro), 0.05f);
-	//     	cout<<computeD(rh)<<' '
-	//     		<<computeG(ri,ro,rh)<<' ';
-	//  	cout<<1/cosWo<<endl;
-	//	fresnel.evaluateF(ri).showCoords();
-	Vector3 Fcos =//Vector3(1,0.1,0.1)*//;
-		computeD(rh)*
-		computeG(ri, ro, rh)*
-		fresnel.evaluateF(ri)
-		/ (4 * cosWo)
-		;
-	// 	if(Fcos.lengthSquared()>100)
-	//		return Vector3(1);
-	/*
-		if(!(Fcos.length()<10))
-		{
-		cout<<Fcos.length();
-		Fcos.showCoords();
-		}*/
-
+	Vector3 Fcos = computeD(rh)*computeG(ri, ro, rh)* fresnel.evaluateF(ri) / (4 * cosWo);
 	return Fcos;
 }
+
 float MetalBSDF::computePDF(const Vector3&wi, const Vector3&wo)
 {
 	Vector3 H = wi + wo;
 	H.normalize();
 	DG.normal.normalize();
 	float cosH = max(0.05f, H.dot(DG.normal));
-	// 	cout<<cosH<<ends;
-	// 	cout<<pow(cosH,exp)<<endl;
-	//	cout<<wo.dot(H)<<endl;
-	//	cout<<pow(cosH,exp)<<endl;
 	float pdf = max((exp + 1)*pow(cosH, exp) / (8 * float(M_PI)*wo.dot(H)), 0.05f);
 	return pdf;
 }
@@ -235,6 +220,7 @@ float DielectricBSDF::computeD(const Vector3&wh)
 	float coswh = max(0.01f, DG.normal.dot(wh));
 	return (exp + 2.0f)*pow(coswh, exp) / (2 * M_PI);
 }
+
 float DielectricBSDF::computeG(const Vector3&wi, const Vector3&wo, const Vector3&wh)
 {
 	float NH = DG.normal.dot(wh);
@@ -299,3 +285,73 @@ void DielectricBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3
 	pdf = computePDF(sampleWi, wo);
 }
 
+void GGXMetalBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
+{
+	float theta = atan(m_ag * sqrt(u) / sqrt(1.f - u));
+	float phi = 2 * M_PI * v;
+	float sinTheta = sin(theta);
+	float cosTheta = cos(theta);
+	Vector3 localH(sinTheta*cos(phi), sinTheta*sin(phi), cosTheta);
+	Vector3 H =
+		localH.x*DG.tangent +
+		localH.y*DG.bitangent +
+		localH.z*DG.normal;
+	sampleWi = wo.reflect(H);
+	sampleWi.normalize();
+	pdf = computePDF(sampleWi, wo);
+}
+
+Vector3 GGXMetalBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
+{
+	Vector3 rh = ri + ro;
+	rh.normalize();
+	fresnel.setNormal(rh);
+	float cosWo = DG.normal.dot(ro);
+	if (cosWo <= 0)
+	{
+		return Vector3(0);
+	}
+	Vector3 Fcos = computeD(rh)*computeG(ri, ro, rh) *fresnel.evaluateF(ri) / (4 * cosWo);
+	return Fcos;
+}
+
+float GGXMetalBSDF::computeD(const Vector3 & wh)
+{
+	float cosThetaM = wh.dot(DG.normal);
+	if (cosThetaM <= 0)
+	{
+		return 0.f;
+	}
+	float cosThetaM2 = cosThetaM * cosThetaM;
+	float tanThetaM2 = 1 / (cosThetaM2)-1;
+	float ag2 = m_ag * m_ag;
+	float ag2tan2 = ag2 + tanThetaM2;
+	return ag2 / (M_PI * cosThetaM2 * cosThetaM2 *ag2tan2*ag2tan2);
+}
+
+float GGXMetalBSDF::computeG(const Vector3 & wi, const Vector3 & wo, const Vector3 & wh)
+{
+	return computeG1(wi, wh) * computeG1(wo, wh);
+}
+
+float GGXMetalBSDF::computeG1(const Vector3 & v, const Vector3 & wh)
+{
+	float vm = v.dot(wh);
+	float vn = v.dot(DG.normal);
+	if (vm * vn <= 0)
+	{
+		return 0.f;
+	}
+	float tanv2 = 1 / (vn*vn) - 1;
+	float g1 = 2.f / (1.f + sqrt(1.f + m_ag*m_ag*tanv2));
+	return g1;
+}
+
+float GGXMetalBSDF::computePDF(const Vector3 & wi, const Vector3 & wo)
+{
+	Vector3 H = wi + wo;
+	H.normalize();
+	float pm = computeD(H) * abs(H.dot(DG.normal));
+	float jacobian = 1.f / (4.f * wo.dot(H));
+	return max(pm * jacobian, 0.0001f);
+}

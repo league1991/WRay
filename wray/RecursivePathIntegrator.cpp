@@ -60,7 +60,7 @@ Vector3 WRecursivePathIntegrator::integrateCore( Ray ray,unsigned int depth,int 
 	Vector3 ri,ro;
 	float rayPDF;
 	BSDF*bsdf;
-	WMaterial*mtl;
+	Material*mtl;
 	int endNode = 0;
 	if(tree->intersect(ray,DG,&endNode, beginNode))
 	{
