@@ -26,7 +26,7 @@ void RandomNumber::uniformSampleDisk(const float u1, const float u2, float &x, f
 void RandomNumber::cosineSampleHemisphere(const float u1, const float u2, Vector3 &sample,float&PDF)
 {
 	uniformSampleDisk(u1,u2,sample.x,sample.y);
-	sample.z=sqrt(max(1-sample.x*sample.x-sample.y*sample.y,0.001f));
+	sample.z=sqrt(max(1-sample.x*sample.x-sample.y*sample.y,0.01f));
 	PDF=sample.z*M_INV_PI;
 }
 void RandomNumber::uniformSampleTriangle(float u1, float u2, float &u, float &v)

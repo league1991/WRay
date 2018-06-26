@@ -11,6 +11,7 @@ public:
 		MATERIAL_METAL=4,
 		MATERIAL_DIELECTRIC=5,
 		MATERIAL_GGX_METAL=6,
+        MATERIAL_GGX_OPAQUE=7,
 	};
 
 
@@ -72,7 +73,7 @@ public:
 	glossiness=iglossiness;}
 	void setSpecular(float ispecular)
 	{specular=ispecular;}
-	void setGlossiness(float iglossiness)
+	void setRoughness(float iglossiness)
 	{glossiness=iglossiness;}
 	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool);
 protected:
@@ -123,12 +124,13 @@ public:
 	~MetalMaterial(){}
 	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool);
 	void refreshColor();
-	void setGlossiness(float iglossiness)
+	void setRoughness(float iglossiness)
 	{exp=iglossiness;}
 private:
 	Vector3 k,eta;
 	float exp;
 };
+
 class GGXMetalMaterial :public Material
 {
 public:
@@ -136,11 +138,27 @@ public:
 	~GGXMetalMaterial() {}
 	void buildBSDF(DifferentialGeometry DG, BSDF*&bsdf, MemoryPool& customPool);
 	void refreshColor();
-	void setGlossiness(float iglossiness);
+	void setRoughness(float roughness);
 private:
 	Vector3 k, eta;
 	float exp;
 };
+
+class GGXOpaqueMaterial : public Material
+{
+public:
+    GGXOpaqueMaterial(string name, unsigned int ID,
+        Vector3 color, float ag, float ior, Vector3 light = Vector3(0)) :
+        Material(Material::MATERIAL_DIELECTRIC, name, ID, color, light),
+        m_ag(ag), m_ior(ior) {}
+
+    void buildBSDF(DifferentialGeometry DG, BSDF *& bsdf, MemoryPool & customPool);
+
+    void setRoughness(float roughness);
+private:
+    float m_ag, m_ior;
+};
+
 class DielectricMaterial:public Material
 {
 public:
@@ -152,7 +170,7 @@ public:
 	void buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool);
 	void setParams(float iglossiness,float iior)
 	{exp=iglossiness;iior=ior;}
-	void setGlossiness(float iglossiness)
+	void setRoughness(float iglossiness)
 	{exp=iglossiness;}
 	void setIOR(float iior)
 	{ior=iior;}

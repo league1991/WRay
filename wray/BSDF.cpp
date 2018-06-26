@@ -12,8 +12,6 @@ void BSDF::setDifferentialGeometry(DifferentialGeometry &iDG)
 Vector3 LambertBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 {
 	//当颜色为纯白（1,1,1）时，对应的BSDF值为（1,1,1）/PI
-//	Vector3 fCos=color*M_INV_PI*abs(ri.dot(DG.normal));
-//	fCos.showCoords();
 	if (ro.dot(DG.normal) <= 0.0f)
 		return Vector3(0.0f);
 	return color*M_INV_PI*max(ri.dot(DG.normal), 0.0f);
@@ -22,11 +20,10 @@ void LambertBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &
 {
 	Vector3 localVector;
 	RandomNumber::cosineSampleHemisphere(u, v, localVector, pdf);
-	sampleWi =//localVector;//DG.normal;
+	sampleWi =
 		DG.tangent*localVector.x +
 		DG.bitangent*localVector.y +
 		DG.normal*localVector.z;
-	//	sampleWi.normalize();
 }
 Vector3 PhongBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 {
@@ -113,13 +110,11 @@ Vector3 FresnelDielectric::refractionDirection(
 float FresnelDielectric::computeR(
 	float cosWi, float cosWt, float etaTO)
 {
-	//	cout<<cosWi<<cosWt<<endl;
 	float rParallel = (etaTO*cosWi - cosWt) / (etaTO*cosWi + cosWt);
 	float rPerpendicular = (cosWi - etaTO*cosWt) / (cosWi + etaTO*cosWt);
-	//	cout<<rParallel<<' '<<rPerpendicular<<endl;
 	return 0.5f*(rParallel*rParallel + rPerpendicular*rPerpendicular);
 }
-float FresnelDielectric::evaluateF(Vector3&wi)
+float FresnelDielectric::evaluateF(const Vector3&wi)
 {
 	float cosWi = wi.dot(normal);
 	float ior, cosWt;
@@ -127,7 +122,6 @@ float FresnelDielectric::evaluateF(Vector3&wi)
 	{
 		ior = 1 / IOR;
 		cosWt = sqrt(1.0f - ior*ior*(1.0f - cosWi*cosWi));
-		//		cout<<cosWt<<endl;
 		return computeR(cosWi, cosWt, IOR);
 	}
 	else
@@ -145,7 +139,7 @@ FresnelConductor::FresnelConductor(
 	Vector3 ieta, Vector3 ik, Vector3 inormal) :
 	eta(ieta), k(ik), normal(inormal)
 {}
-Vector3 FresnelConductor::evaluateF(Vector3&wi)
+Vector3 FresnelConductor::evaluateF(const Vector3&wi)
 {
 	float cosWi = wi.dot(normal);
 	if (cosWi <= 0.f)
@@ -236,12 +230,7 @@ Vector3 DielectricBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 	rh.normalize();
 	fresnel.setNormal(rh);
 	float cosWo = max(DG.normal.dot(ro), 0.05f);
-	//     	cout<<computeD(rh)<<' '
-	//     		<<computeG(ri,ro,rh)<<' ';
-	//  	cout<<1/cosWo<<endl;
-//		cout<<fresnel.evaluateF(ri)<<endl;
 	float F = fresnel.evaluateF(ri);
-	//	cout<<F<<ends;
 	Vector3 eColor = color*max(ri.dot(DG.normal), 0.0f);
 	Vector3 Fcos =
 		computeD(rh)*
@@ -250,9 +239,6 @@ Vector3 DielectricBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 		/ (4 * cosWo) +
 		eColor*(1 - F)
 		;
-	// 	if(Fcos.lengthSquared()>100)
-	// 		return Vector3(1);
-//	Fcos.showCoords();
 	return Fcos;
 }
 float DielectricBSDF::computePDF(const Vector3&wi, const Vector3&wo)
@@ -261,18 +247,12 @@ float DielectricBSDF::computePDF(const Vector3&wi, const Vector3&wo)
 	H.normalize();
 	DG.normal.normalize();
 	float cosH = H.dot(DG.normal);
-	// 	cout<<cosH<<ends;
-	// 	cout<<exp<<endl;
-	//	cout<<wo.dot(H)<<endl;
-	//	cout<<pow(cosH,exp)<<endl;
 	float pdf = (exp + 1)*pow(cosH, exp) / (8 * M_PI*wo.dot(H));
-	//	cout<<pdf<<endl;
 	return pdf;
 }
 void DielectricBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf)
 {
 	float cosTheta = pow(u, 1.0f / (exp + 1.0f));
-	//	cout<<cosTheta<<endl;
 	float sinTheta = sqrt(max(0.0f, 1.0f - cosTheta*cosTheta));
 	float phi = v*2.0*M_PI;
 	Vector3 localH(sinTheta*cos(phi), sinTheta*sin(phi), cosTheta);
@@ -287,18 +267,14 @@ void DielectricBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3
 
 void GGXMetalBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
 {
-	float theta = atan(m_ag * sqrt(u) / sqrt(1.f - u));
-	float phi = 2 * M_PI * v;
-	float sinTheta = sin(theta);
-	float cosTheta = cos(theta);
-	Vector3 localH(sinTheta*cos(phi), sinTheta*sin(phi), cosTheta);
+    Vector3 localH = m_distribution.sampleRay(u, v, sampleWi, wo);
 	Vector3 H =
 		localH.x*DG.tangent +
 		localH.y*DG.bitangent +
 		localH.z*DG.normal;
 	sampleWi = wo.reflect(H);
 	sampleWi.normalize();
-	pdf = computePDF(sampleWi, wo);
+	pdf = m_distribution.computePDF(sampleWi, wo);
 }
 
 Vector3 GGXMetalBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
@@ -311,47 +287,111 @@ Vector3 GGXMetalBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
 	{
 		return Vector3(0);
 	}
-	Vector3 Fcos = computeD(rh)*computeG(ri, ro, rh) *fresnel.evaluateF(ri) / (4 * cosWo);
+	Vector3 Fcos = m_distribution.computeD(rh)*m_distribution.computeG(ri, ro, rh) *fresnel.evaluateF(ri) / (4 * cosWo);
 	return Fcos;
 }
 
-float GGXMetalBSDF::computeD(const Vector3 & wh)
+float GGXDistribution::computeD(const Vector3 & wh) const
 {
-	float cosThetaM = wh.dot(DG.normal);
-	if (cosThetaM <= 0)
-	{
-		return 0.f;
-	}
-	float cosThetaM2 = cosThetaM * cosThetaM;
-	float tanThetaM2 = 1 / (cosThetaM2)-1;
-	float ag2 = m_ag * m_ag;
-	float ag2tan2 = ag2 + tanThetaM2;
-	return ag2 / (M_PI * cosThetaM2 * cosThetaM2 *ag2tan2*ag2tan2);
+    float cosThetaM = wh.dot(m_dg->normal);
+    if (cosThetaM <= 0)
+    {
+        return 0.f;
+    }
+    float cosThetaM2 = cosThetaM * cosThetaM;
+    float tanThetaM2 = 1 / (cosThetaM2)-1;
+    float ag2 = m_ag * m_ag;
+    float ag2tan2 = ag2 + tanThetaM2;
+    return ag2 / (M_PI * cosThetaM2 * cosThetaM2 *ag2tan2*ag2tan2);
 }
 
-float GGXMetalBSDF::computeG(const Vector3 & wi, const Vector3 & wo, const Vector3 & wh)
+float GGXDistribution::computeG1(const Vector3 & v, const Vector3 & wh) const
 {
-	return computeG1(wi, wh) * computeG1(wo, wh);
+    float vm = v.dot(wh);
+    float vn = v.dot(m_dg->normal);
+    if (vm * vn <= 0)
+    {
+        return 0.f;
+    }
+    float tanv2 = 1 / (vn*vn) - 1;
+    float g1 = 2.f / (1.f + sqrt(1.f + m_ag*m_ag*tanv2));
+    return g1;
 }
 
-float GGXMetalBSDF::computeG1(const Vector3 & v, const Vector3 & wh)
+float GGXDistribution::computePDF(const Vector3 & wi, const Vector3 & wo)
 {
-	float vm = v.dot(wh);
-	float vn = v.dot(DG.normal);
-	if (vm * vn <= 0)
-	{
-		return 0.f;
-	}
-	float tanv2 = 1 / (vn*vn) - 1;
-	float g1 = 2.f / (1.f + sqrt(1.f + m_ag*m_ag*tanv2));
-	return g1;
+    Vector3 H = wi + wo;
+    H.normalize();
+    float pm = computeD(H) * abs(H.dot(m_dg->normal));
+    float jacobian = 1.f / (4.f * wo.dot(H));
+    return max(pm * jacobian, 0.0001f);
 }
 
-float GGXMetalBSDF::computePDF(const Vector3 & wi, const Vector3 & wo)
+Vector3 GGXDistribution::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo) const
 {
-	Vector3 H = wi + wo;
-	H.normalize();
-	float pm = computeD(H) * abs(H.dot(DG.normal));
-	float jacobian = 1.f / (4.f * wo.dot(H));
-	return max(pm * jacobian, 0.0001f);
+    float theta = atan(m_ag * sqrt(u) / sqrt(1.f - u));
+    float phi = 2 * M_PI * v;
+    float sinTheta = sin(theta);
+    float cosTheta = cos(theta);
+    return Vector3(sinTheta*cos(phi), sinTheta*sin(phi), cosTheta);
+}
+
+void GGXOpaqueBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
+{
+    Vector3 localVector;
+    RandomNumber::cosineSampleHemisphere(u, v, localVector, pdf);
+    sampleWi =
+        DG.tangent*localVector.x +
+        DG.bitangent*localVector.y +
+        DG.normal*localVector.z;
+
+    //float u0 = RandomNumber::randomFloat();
+    //float v0 = RandomNumber::randomFloat();
+    //Vector3 localH = m_distribution.sampleRay(u0, v0, sampleWi, wo);
+    //Vector3 H =
+    //    localH.x*DG.tangent +
+    //    localH.y*DG.bitangent +
+    //    localH.z*DG.normal;
+    //m_fresnel.setNormal(H);
+    //sampleWi = wo.reflect(H);
+    //sampleWi.normalize();
+    //pdf = m_distribution.computePDF(sampleWi, wo);
+
+    //// Use fresnel value as the probability of reflection
+    //float f = m_fresnel.evaluateF(wo);
+    //if(RandomNumber::randomFloat() > f)
+    //{
+    //    // Refraction or scattering occurs
+    //    Vector3 localVector;
+    //    float pdfLambert;
+    //    RandomNumber::cosineSampleHemisphere(u, v, localVector, pdfLambert);
+    //    sampleWi =
+    //        DG.tangent*localVector.x +
+    //        DG.bitangent*localVector.y +
+    //        DG.normal*localVector.z;
+    //    pdf *= (1.0 - f) * pdfLambert;
+    //}
+    //else
+    //{
+    //    pdf *= f;
+    //}
+}
+
+Vector3 GGXOpaqueBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
+{
+    Vector3 rh = ri + ro;
+    rh.normalize();
+    m_fresnel.setNormal(rh);
+    float cosWo = DG.normal.dot(ro);
+    if (cosWo <= 0)
+    {
+        return Vector3(0);
+    }
+    float D = m_distribution.computeD(rh);
+    float G = m_distribution.computeG(ri, ro, rh);
+    float F = m_fresnel.evaluateF(ri);
+    float specular = D * G * F / (4 * cosWo);
+    float diffuseFactor = M_INV_PI*max(ri.dot(DG.normal), 0.0f);
+    Vector3 Fcos = Vector3(specular) + (1 - F)*diffuseFactor* m_diffuseColor;
+    return Fcos;
 }

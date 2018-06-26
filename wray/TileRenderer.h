@@ -82,9 +82,7 @@ public:
 protected:
 	void scheduleTasks();
 
-	int getSystemCores() {
-		return max(1u, std::thread::hardware_concurrency());
-	}
+    int getSystemCores();
 
 	int renderThreadFunc() {}
 

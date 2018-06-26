@@ -13,11 +13,12 @@ public:
 		BSDF_METAL = 4,
 		BSDF_DIELECTRIC = 5,
 		BSDF_GGX_METAL = 6,
+        BSDF_GGX_OPAQUE = 7,
 	};
 
-	BSDF(DifferentialGeometry& iDG, BSDFType itype,
+	BSDF(const DifferentialGeometry& iDG, BSDFType itype, MemoryPool* pool,
 		bool iisEmissive = false, const Vector3& iemission = Vector3(0)) :
-		DG(iDG), type(itype), isEmissive(iisEmissive), emission(0) {};
+		DG(iDG), type(itype), isEmissive(iisEmissive), emission(0), m_memoryPool(pool) {};
 	virtual ~BSDF(void);
 
 	//对BSDF求值,顺带乘以入射角余弦
@@ -47,16 +48,16 @@ public:
 	BSDFType type;
 	DifferentialGeometry DG;
 	bool isEmissive;
-private:
+protected:
 	Vector3 emission;
-
+    MemoryPool* m_memoryPool;
 };
 
 class LambertBSDF :public BSDF
 {
 public:
-	LambertBSDF(DifferentialGeometry& iDG, const Vector3 &icolor) :
-		BSDF(iDG, BSDF_LAMBERT), color(icolor) {}
+	LambertBSDF(const DifferentialGeometry& iDG, const Vector3 &icolor, MemoryPool* pool) :
+		BSDF(iDG, BSDF_LAMBERT, pool), color(icolor) {}
 	~LambertBSDF() {}
 
 	//随机选择一条光线方向
@@ -92,9 +93,9 @@ protected:
 class PhongBSDF :public LambertBSDF
 {
 public:
-	PhongBSDF(DifferentialGeometry& iDG, const Vector3& icolor,
-		const Vector3& ispecular, float iglossiness) :
-		LambertBSDF(iDG, icolor), specular(ispecular), glossiness(iglossiness)
+	PhongBSDF(const DifferentialGeometry& iDG, const Vector3& icolor,
+		const Vector3& ispecular, float iglossiness, MemoryPool* pool) :
+		LambertBSDF(iDG, icolor, pool), specular(ispecular), glossiness(iglossiness)
 	{
 		type = BSDF_PHONG;
 	}
@@ -110,8 +111,8 @@ private:
 class PerfectReflectionBSDF :public BSDF
 {
 public:
-	PerfectReflectionBSDF(DifferentialGeometry& iDG,
-		Vector3& icolor) :BSDF(iDG, BSDF::BSDF_PERFECTREFLECTION), color(icolor) {}
+	PerfectReflectionBSDF(const DifferentialGeometry& iDG,
+		Vector3& icolor, MemoryPool* pool) :BSDF(iDG, BSDF::BSDF_PERFECTREFLECTION, pool), color(icolor) {}
 	~PerfectReflectionBSDF() {};
 	void sampleRay(
 		float u, float v,
@@ -133,8 +134,8 @@ private:
 class PerfectRefractionBSDF :public BSDF
 {
 public:
-	PerfectRefractionBSDF(DifferentialGeometry& iDG,
-		Vector3& icolor, float iIOR) :BSDF(iDG, BSDF::BSDF_PERFECTREFRACTION), color(icolor), IOR(iIOR) {}
+	PerfectRefractionBSDF(const DifferentialGeometry& iDG,
+		Vector3& icolor, float iIOR, MemoryPool* pool) :BSDF(iDG, BSDF::BSDF_PERFECTREFRACTION, pool), color(icolor), IOR(iIOR) {}
 	~PerfectRefractionBSDF() {}
 	void sampleRay(
 		float u, float v,
@@ -162,8 +163,8 @@ public:
 	//计算折射光线方向，已包含全反射效果
 	Vector3 refractionDirection(
 		const Vector3&i, const Vector3&normal);
-	float evaluateF(Vector3&wi);
-	void setNormal(Vector3&inormal) { normal = inormal; }
+	float evaluateF(const Vector3&wi);
+	void setNormal(const Vector3&inormal) { normal = inormal; }
 	virtual bool isDeltaBSDF() { return false; }
 private:
 	//计算r值 ，etaTO为折射率
@@ -177,8 +178,8 @@ class FresnelConductor
 {
 public:
 	FresnelConductor(Vector3 ieta, Vector3 ik, Vector3 inormal);
-	Vector3 evaluateF(Vector3&wi);
-	void setNormal(Vector3&inormal) { normal = inormal; }
+	Vector3 evaluateF(const Vector3&wi);
+	void setNormal(const Vector3&inormal) { normal = inormal; }
 private:
 	Vector3 eta, k, normal;
 
@@ -188,9 +189,9 @@ private:
 class MetalBSDF :public BSDF
 {
 public:
-	MetalBSDF(DifferentialGeometry iDG,
-		Vector3 ieta, Vector3 ik, float iexp) :
-		BSDF(iDG, BSDF_METAL),
+	MetalBSDF(const DifferentialGeometry& iDG,
+		Vector3 ieta, Vector3 ik, float iexp, MemoryPool* pool) :
+		BSDF(iDG, BSDF_METAL, pool),
 		fresnel(ieta, ik, iDG.normal),
 		exp(iexp) {}
 	~MetalBSDF() {}
@@ -205,31 +206,67 @@ private:
 	float exp;
 };
 
+class GGXDistribution
+{
+public:
+    GGXDistribution(DifferentialGeometry* dg, float ag) :m_ag(ag), m_dg(dg) {}
+    
+    float computeD(const Vector3 & wh) const;
+    float computeG1(const Vector3 & v, const Vector3 & wh) const;
+    float computeG(const Vector3 & wi, const Vector3 & wo, const Vector3 & wh) const
+    {
+        return computeG1(wi, wh) * computeG1(wo, wh);
+    }
+    float computePDF(const Vector3 & wi, const Vector3 & wo);
+
+    float ag() const { return m_ag; }
+    Vector3 sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo) const;
+private:
+    float m_ag;
+    DifferentialGeometry* m_dg;
+};
+
 class GGXMetalBSDF :public BSDF
 {
 public:
-	GGXMetalBSDF(DifferentialGeometry iDG, Vector3 ieta, Vector3 ik, float ag) :
-		BSDF(iDG, BSDF_GGX_METAL), fresnel(ieta, ik, iDG.normal), m_ag(ag) {}
+	GGXMetalBSDF(const DifferentialGeometry& iDG, Vector3 ieta, Vector3 ik, float ag, MemoryPool* pool) :
+		BSDF(iDG, BSDF_GGX_METAL, pool), fresnel(ieta, ik, iDG.normal), m_distribution(&DG, ag) {}
 	~GGXMetalBSDF() {}
 	void sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
 	Vector3 evaluateFCos(Vector3&ri, const Vector3&ro);
 	virtual bool isDeltaBSDF() { return false; }
 private:
-	float computeD(const Vector3&wh);
-	float computeG(const Vector3&wi, const Vector3&wo, const Vector3&wh);
-	float computeG1(const Vector3&v, const Vector3&wh);
-	float computePDF(const Vector3&wi, const Vector3&wo);
+    GGXDistribution  m_distribution;
 	FresnelConductor fresnel;
-	float m_ag;
+};
+
+class GGXOpaqueBSDF : public BSDF
+{
+public:
+    GGXOpaqueBSDF(const DifferentialGeometry& iDG, float ior,
+        Vector3 icolor, float ag, MemoryPool* pool) :
+        BSDF(iDG, BSDF_GGX_OPAQUE, pool),
+        m_fresnel(ior, iDG.normal),
+        m_distribution(&DG, ag),
+        m_diffuseColor(icolor) {}
+
+    void sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
+
+    Vector3 evaluateFCos(Vector3&ri, const Vector3&ro);
+    virtual bool isDeltaBSDF() { return false; }
+private:
+    GGXDistribution  m_distribution;
+    FresnelDielectric m_fresnel;
+    Vector3 m_diffuseColor;
 };
 
 //此BSDF表示不透明绝缘体的BSDF
 class DielectricBSDF :public BSDF
 {
 public:
-	DielectricBSDF(DifferentialGeometry iDG, float iior,
-		Vector3 icolor, float iexp) :
-		BSDF(iDG, BSDF_DIELECTRIC),
+	DielectricBSDF(const DifferentialGeometry& iDG, float iior,
+		Vector3 icolor, float iexp, MemoryPool* pool) :
+		BSDF(iDG, BSDF_DIELECTRIC, pool),
 		fresnel(iior, iDG.normal),
 		color(icolor), exp(iexp) {}
 	~DielectricBSDF() {}
