@@ -393,6 +393,42 @@ Vector3 GGXOpaqueBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
     return Fcos;
 }
 
+void GGXTransparentBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
+{
+    bool oOutSide = wo.dot(DG.normal) > 0;
+    Vector3 localH = m_distribution.sampleRay(u, v, sampleWi, wo);
+    Vector3 H = localH.x*DG.tangent + localH.y*DG.bitangent + localH.z*DG.normal;
+    m_fresnel.setNormal(H);
+    float reflProb = m_fresnel.evaluateF(wo);
+    sampleWi = wo.reflect(H);
+    sampleWi.normalize();
+    pdf = m_distribution.computePDF(sampleWi, wo);
+    if (RandomNumber::randomFloat() < reflProb)
+    {
+        // reflection
+        pdf *= reflProb;
+    }
+    else
+    {
+        // refraction
+        float iorO = oOutSide?1:m_fresnel.getIOR();
+        float iorI = oOutSide?m_fresnel.getIOR():1;
+        bool isRefract;
+        sampleWi = wo.refract(H, iorO, iorI, isRefract);
+        pdf *= (1 - reflProb);
+        if (isRefract)
+        {
+            // multiply dWrefl / dWrefr
+            float ih = abs(sampleWi.dot(H));
+            float oh = abs(wo.dot(H));
+            float numerator = 4 * iorO * iorO * ih * oh;
+            float denominator = iorI * ih + iorO * oh;
+            denominator *= denominator;
+            pdf *= numerator / denominator;
+        }
+    }
+}
+
 Vector3 GGXTransparentBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
 {
     float cosWi = ri.dot(DG.normal);

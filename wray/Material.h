@@ -159,6 +159,21 @@ private:
     float m_ag, m_ior;
 };
 
+class GGXTransparentMaterial : public Material
+{
+public:
+    GGXTransparentMaterial(string name, unsigned int ID,
+        Vector3 color, float ag, float ior, Vector3 light = Vector3(0)) :
+        Material(Material::MATERIAL_DIELECTRIC, name, ID, color, light),
+        m_ag(ag), m_ior(ior) {}
+
+    void buildBSDF(DifferentialGeometry DG, BSDF *& bsdf, MemoryPool & customPool);
+
+    void setRoughness(float roughness);
+private:
+    float m_ag, m_ior;
+};
+
 class DielectricMaterial:public Material
 {
 public:

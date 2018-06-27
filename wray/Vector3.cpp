@@ -101,14 +101,28 @@ Vector3 Vector3::cross(const Vector3&i)const
 		z*i.x-x*i.z,
 		x*i.y-y*i.x);
 }
-Vector3 Vector3::reflect(Vector3 normal)const
+Vector3 Vector3::reflect(const Vector3& normal)const
 {
-//	normal.normalize();
-// 	float dCos=this->dot(normal);
-// 	Vector3 delta=normal*dCos-(*this);
-// 	return (*this)+2.0f*delta;
 	Vector3 r=(*this)*(-1.0f);
 	return r+normal*this->dot(normal)*2.0f;
+}
+Vector3 Vector3::refract(const Vector3 & normal, float thisIOR, float otherIOR, bool& isRefract) const
+{
+    float cosThetaI = this->dot(normal);
+    float sinThetaI = sqrt(1 - cosThetaI * cosThetaI);
+    float sinThetaR = sinThetaI * thisIOR / otherIOR;
+    if (sinThetaR > 1)
+    {
+        isRefract = false;
+        return reflect(normal);
+    }
+    float cosThetaR = sqrt(1 - sinThetaR * sinThetaR);
+    Vector3 horiI = (*this) - normal * cosThetaI;
+    horiI.normalize();
+    Vector3 horiO = -1 * sinThetaR * horiI;
+    Vector3 vertO = (cosThetaI > 0?-1:1) * cosThetaR * normal;
+    isRefract = true;
+    return horiO + vertO;
 }
 void Vector3::showCoords()const
 {

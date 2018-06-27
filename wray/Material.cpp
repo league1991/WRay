@@ -123,3 +123,15 @@ void GGXOpaqueMaterial::setRoughness(float roughness)
 {
     m_ag = roughness;
 }
+
+void GGXTransparentMaterial::buildBSDF(DifferentialGeometry DG, BSDF *& bsdf, MemoryPool & customPool)
+{
+    void* buffer = customPool.allocate<GGXTransparentBSDF>();
+    bsdf = new (buffer)GGXTransparentBSDF(DG, m_ior, m_ag, color, &customPool);
+    bsdf->setEmission(this->getLight());
+}
+
+void GGXTransparentMaterial::setRoughness(float roughness)
+{
+    m_ag = roughness;
+}

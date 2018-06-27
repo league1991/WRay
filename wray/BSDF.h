@@ -270,24 +270,7 @@ public:
         m_distribution(&DG, ag),
         m_color(color) {}
 
-    void sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf)
-    {
-        bool oOutSide = wo.dot(DG.normal) > 0;
-        Vector3 localH = m_distribution.sampleRay(u, v, sampleWi, wo);
-        Vector3 H =
-            localH.x*DG.tangent +
-            localH.y*DG.bitangent +
-            localH.z*DG.normal;
-        m_fresnel.setNormal(H);
-        float reflProb = m_fresnel.evaluateF(wo);
-        sampleWi = wo.reflect(H);
-        sampleWi.normalize();
-        pdf = m_distribution.computePDF(sampleWi, wo);
-        if (RandomNumber::randomFloat() < reflProb)
-        {
-            // reflection
-        }
-    }
+    void sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
 
     Vector3 evaluateFCos(Vector3&ri, const Vector3&ro);
 

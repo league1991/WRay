@@ -55,7 +55,8 @@ public:
 	//单位化
 	Vector3 normalize();
 	//计算反射向量
-	Vector3 reflect(const Vector3 normal)const;
+	Vector3 reflect(const Vector3& normal)const;
+    Vector3 refract(const Vector3& normal, float thisIOR, float otherIOR, bool& isRefract) const;
 	Vector3 sqrtElement()const;
 
 	bool isZero() { return x == 0 && y == 0 && z == 0; }
