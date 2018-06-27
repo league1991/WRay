@@ -166,6 +166,7 @@ public:
 	float evaluateF(const Vector3&wi);
 	void setNormal(const Vector3&inormal) { normal = inormal; }
 	virtual bool isDeltaBSDF() { return false; }
+    float getIOR() const { return IOR; }
 private:
 	//计算r值 ，etaTO为折射率
 	float computeR(float cosWi, float cosWt, float etaTO);
@@ -258,6 +259,43 @@ private:
     GGXDistribution  m_distribution;
     FresnelDielectric m_fresnel;
     Vector3 m_diffuseColor;
+};
+
+class GGXTransparentBSDF : public BSDF
+{
+public:
+    GGXTransparentBSDF(const DifferentialGeometry& iDG, float ior,float ag, const Vector3& color, MemoryPool* pool) :
+        BSDF(iDG, BSDF_GGX_OPAQUE, pool),
+        m_fresnel(ior, iDG.normal),
+        m_distribution(&DG, ag),
+        m_color(color) {}
+
+    void sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf)
+    {
+        bool oOutSide = wo.dot(DG.normal) > 0;
+        Vector3 localH = m_distribution.sampleRay(u, v, sampleWi, wo);
+        Vector3 H =
+            localH.x*DG.tangent +
+            localH.y*DG.bitangent +
+            localH.z*DG.normal;
+        m_fresnel.setNormal(H);
+        float reflProb = m_fresnel.evaluateF(wo);
+        sampleWi = wo.reflect(H);
+        sampleWi.normalize();
+        pdf = m_distribution.computePDF(sampleWi, wo);
+        if (RandomNumber::randomFloat() < reflProb)
+        {
+            // reflection
+        }
+    }
+
+    Vector3 evaluateFCos(Vector3&ri, const Vector3&ro);
+
+    virtual bool isDeltaBSDF() { return false; }
+private:
+    GGXDistribution  m_distribution;
+    FresnelDielectric m_fresnel;
+    Vector3 m_color;
 };
 
 //此BSDF表示不透明绝缘体的BSDF

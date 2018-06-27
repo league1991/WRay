@@ -293,11 +293,8 @@ Vector3 GGXMetalBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
 
 float GGXDistribution::computeD(const Vector3 & wh) const
 {
-    float cosThetaM = wh.dot(m_dg->normal);
-    if (cosThetaM <= 0)
-    {
-        return 0.f;
-    }
+    // Both sides are OK
+    float cosThetaM = abs(wh.dot(m_dg->normal));
     float cosThetaM2 = cosThetaM * cosThetaM;
     float tanThetaM2 = 1 / (cosThetaM2)-1;
     float ag2 = m_ag * m_ag;
@@ -394,4 +391,48 @@ Vector3 GGXOpaqueBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
     float diffuseFactor = M_INV_PI*max(ri.dot(DG.normal), 0.0f);
     Vector3 Fcos = Vector3(specular) + (1 - F)*diffuseFactor* m_diffuseColor;
     return Fcos;
+}
+
+Vector3 GGXTransparentBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
+{
+    float cosWi = ri.dot(DG.normal);
+    float cosWo = ro.dot(DG.normal);
+    bool iOutside = cosWi > 0;
+    bool oOutside = cosWo > 0;
+    if (cosWi * cosWo > 0)
+    {
+        // incoming and outgoing direction are at the same side, reflection occurs
+        Vector3 rh = ri + ro;
+        rh.normalize();
+        m_fresnel.setNormal(rh);
+        float D = m_distribution.computeD(rh);
+        float G = m_distribution.computeG(ri, ro, rh);
+        float F = m_fresnel.evaluateF(ri);
+        float specular = D * G * F / (4 * cosWo);
+        return Vector3(specular);
+    }
+    else
+    {
+        // transmission occurs
+        float iorI = iOutside ? 1 : m_fresnel.getIOR();
+        float iorO = oOutside ? 1 : m_fresnel.getIOR();
+        Vector3 rh = -1.0 * (iorI * ri + iorO * ro);
+        rh.normalize();
+
+        m_fresnel.setNormal(rh);
+        float F = m_fresnel.evaluateF(ri);
+        float D = m_distribution.computeD(rh);
+
+        Vector3 ri_ = iOutside ? ri : ri * -1;
+        Vector3 ro_ = oOutside ? ro : ro * -1;
+        Vector3 rh_ = rh.dot(DG.normal) > 0 ? rh : rh * -1;
+        float G = m_distribution.computeG(ri_, ro_, rh_);
+
+        float ih = ri.dot(rh);
+        float oh = ro.dot(rh);
+        float numerator = abs(ih * oh / (cosWi * cosWo)) * iorO * iorO * (1 - F) * G * D;
+        float denominator = iorI * ih + iorO * oh;
+        denominator *= denominator;
+        return numerator / denominator * m_color;
+    }
 }
