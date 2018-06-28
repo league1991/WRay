@@ -466,9 +466,11 @@ Vector3 GGXTransparentBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
 
         float ih = ri.dot(rh);
         float oh = ro.dot(rh);
-        float numerator = abs(ih * oh / (cosWi * cosWo)) * iorO * iorO * (1 - F) * G * D;
+        float numerator = abs(ih * oh / (cosWo)) * iorO * iorO * (1 - F) * G * D;
         float denominator = iorI * ih + iorO * oh;
         denominator *= denominator;
-        return numerator / denominator * m_color;
+        float reflBRDF = D * G * (1 - F) / abs(4 * cosWo);
+        Vector3 refrBRDF = numerator / denominator * m_color;
+        return reflBRDF;
     }
 }

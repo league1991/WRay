@@ -60,16 +60,14 @@ void Scene::buildScene(ObjReader &reader)
 			//	Vector3(mtl.specular.x, mtl.specular.y, mtl.specular.z),
 			//	mtl.glossiness, Vector3(emission.x,emission.y,emission.z));
 
-			//materials[i] = new GGXMetalMaterial(mtlName, i,
-			//	Vector3(diffuse.x, diffuse.y, diffuse.z),
-			//	0.05, Vector3(emission.x, emission.y, emission.z));
+			materials[i] = new GGXMetalMaterial(mtlName, i,	Vector3(diffuse.x, diffuse.y, diffuse.z), 0.5, Vector3(emission.x, emission.y, emission.z));
 
-            materials[i] = new GGXOpaqueMaterial(mtlName, i, Vector3(diffuse.x, diffuse.y, diffuse.z), 0.3, 1.3, Vector3(emission.x, emission.y, emission.z));
+            //materials[i] = new GGXOpaqueMaterial(mtlName, i, Vector3(diffuse.x, diffuse.y, diffuse.z), 0.3, 1.3, Vector3(emission.x, emission.y, emission.z));
 		}
 		else if (mtl.isTransparent())
 		{
 			//materials[i] = new PerfectRefractionMaterial(mtlName, i, Vector3(diffuse.x,diffuse.y,diffuse.z), 1.33, Vector3(emission.x,emission.y,emission.z));
-            materials[i] = new GGXTransparentMaterial(mtlName, i, Vector3(diffuse.x, diffuse.y, diffuse.z), 0.2, 1.33, Vector3(emission.x, emission.y, emission.z));
+            materials[i] = new GGXTransparentMaterial(mtlName, i, Vector3(diffuse.x, diffuse.y, diffuse.z), 0.1, 1.33, Vector3(emission.x, emission.y, emission.z));
 		}
 		else
 			materials[i]=new LambertMaterial(mtlName,i,Vector3(diffuse.x,diffuse.y,diffuse.z),Vector3(emission.x,emission.y,emission.z));
