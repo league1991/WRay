@@ -91,12 +91,12 @@ Vector3 PathIntegrator::integrate(Ray&camRay)//ÑÕÉ«¼ÆËã
 			totalLight+=pathThroughPut*directLight;
 			float bsdfU,bsdfV;
 			BSDFSamples.get2D(bsdfU,bsdfV);
-			bsdf->sampleRay(bsdfU, bsdfV,ri,ro,rayPDF);
+			Vector3 fCos = bsdf->sampleRay(bsdfU, bsdfV,ri,ro,rayPDF);
 			ray.point=DG.position;
 			ray.direction=ri;
 			ray.tMin = 0.01f;
 			ray.tMax=M_INF_BIG;
-			pathThroughPut*=bsdf->evaluateFCos(ri,ro)/rayPDF;
+			pathThroughPut *= fCos /rayPDF;
 			beginNode = endNode;
 			mtl->freeBSDF(bsdf, m_memoryPool);
 		}

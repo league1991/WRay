@@ -16,7 +16,7 @@ Vector3 LambertBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 		return Vector3(0.0f);
 	return color*M_INV_PI*max(ri.dot(DG.normal), 0.0f);
 }
-void LambertBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &wo, float &pdf)
+Vector3 LambertBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &wo, float &pdf)
 {
 	Vector3 localVector;
 	RandomNumber::cosineSampleHemisphere(u, v, localVector, pdf);
@@ -28,6 +28,7 @@ void LambertBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &
     {
         sampleWi *= -1;
     }
+    return evaluateFCos(sampleWi, wo);
 }
 Vector3 PhongBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 {
@@ -36,10 +37,11 @@ Vector3 PhongBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 	float cosTheta = max(DG.normal.dot(H), 0.0f);
 	return color * (pow(cosTheta, glossiness) * (glossiness+2)/(2 * M_PI))*max(ri.dot(DG.normal), 0.0f);
 }
-void PerfectReflectionBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &wo, float &pdf)
+Vector3 PerfectReflectionBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &wo, float &pdf)
 {
 	sampleWi = wo.reflect(DG.normal);
 	pdf = 1.0f;
+    return evaluateFCos(sampleWi, wo);
 }
 Vector3 PerfectReflectionBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 {
@@ -49,10 +51,11 @@ Vector3 PerfectReflectionBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 	else return Vector3(0);
 }
 
-void PerfectRefractionBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &wo, float &pdf)
+Vector3 PerfectRefractionBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &wo, float &pdf)
 {
 	sampleWi = refractionDirection(wo, DG.normal);
 	pdf = 1.0f;
+    return evaluateFCos(sampleWi, wo);
 }
 Vector3 PerfectRefractionBSDF::refractionDirection(
 	const Vector3&i, const Vector3&normal)
@@ -198,7 +201,7 @@ float MetalBSDF::computePDF(const Vector3&wi, const Vector3&wo)
 	float pdf = max((exp + 1)*pow(cosH, exp) / (8 * float(M_PI)*wo.dot(H)), 0.05f);
 	return pdf;
 }
-void MetalBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf)
+Vector3 MetalBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf)
 {
 	float cosTheta = pow(u, 1.0f / (exp + 1.0f));
 	float sinTheta = sqrt(max(0.0f, 1.0f - cosTheta*cosTheta));
@@ -211,6 +214,7 @@ void MetalBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, 
 	sampleWi = wo.reflect(H);
 	sampleWi.normalize();
 	pdf = computePDF(sampleWi, wo);
+    return evaluateFCos(sampleWi, wo);
 }
 
 float DielectricBSDF::computeD(const Vector3&wh)
@@ -254,7 +258,7 @@ float DielectricBSDF::computePDF(const Vector3&wi, const Vector3&wo)
 	float pdf = (exp + 1)*pow(cosH, exp) / (8 * M_PI*wo.dot(H));
 	return pdf;
 }
-void DielectricBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf)
+Vector3 DielectricBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf)
 {
 	float cosTheta = pow(u, 1.0f / (exp + 1.0f));
 	float sinTheta = sqrt(max(0.0f, 1.0f - cosTheta*cosTheta));
@@ -267,9 +271,10 @@ void DielectricBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vector3
 	sampleWi = wo.reflect(H);
 	sampleWi.normalize();
 	pdf = computePDF(sampleWi, wo);
+    return evaluateFCos(sampleWi, wo);
 }
 
-void GGXMetalBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
+Vector3 GGXMetalBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
 {
     Vector3 localH = m_distribution.sampleRay(u, v, sampleWi, wo);
 	Vector3 H =
@@ -279,6 +284,7 @@ void GGXMetalBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3
 	sampleWi = wo.reflect(H);
 	sampleWi.normalize();
 	pdf = m_distribution.computePDF(sampleWi, wo);
+    return evaluateFCos(sampleWi, wo);
 }
 
 Vector3 GGXMetalBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
@@ -337,7 +343,7 @@ Vector3 GGXDistribution::sampleRay(float u, float v, Vector3 & sampleWi, const V
     return Vector3(sinTheta*cos(phi), sinTheta*sin(phi), cosTheta);
 }
 
-void GGXOpaqueBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
+Vector3 GGXOpaqueBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
 {
     Vector3 localVector;
     RandomNumber::cosineSampleHemisphere(u, v, localVector, pdf);
@@ -350,6 +356,7 @@ void GGXOpaqueBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector
     {
         sampleWi *= -1;
     }
+    return evaluateFCos(sampleWi, wo);
     //float u0 = RandomNumber::getGlobalObj()->randomFloat();
     //float v0 = RandomNumber::getGlobalObj()->randomFloat();
     //Vector3 localH = m_distribution.sampleRay(u0, v0, sampleWi, wo);
@@ -401,7 +408,7 @@ Vector3 GGXOpaqueBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
     return Fcos;
 }
 
-void GGXTransparentBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
+Vector3 GGXTransparentBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
 {
     bool oOutSide = wo.dot(DG.normal) > 0;
     Vector3 localH = m_distribution.sampleRay(u, v, sampleWi, wo);
@@ -435,6 +442,7 @@ void GGXTransparentBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const V
             pdf *= numerator / denominator;
         }
     }
+    return evaluateFCos(sampleWi, wo);
 }
 
 Vector3 GGXTransparentBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
@@ -467,8 +475,8 @@ Vector3 GGXTransparentBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
         float F = m_fresnel.evaluateF(ri);
         float D = m_distribution.computeD(rh);
 
-        Vector3 ri_ = iOutside ? ri : ri * -1;
-        Vector3 ro_ = oOutside ? ro : ro * -1;
+        Vector3 ri_ = iOutside ? ri : ri.reflect(rh) * -1;
+        Vector3 ro_ = oOutside ? ro : ro.reflect(rh) * -1;
         Vector3 rh_ = rh.dot(DG.normal) > 0 ? rh : rh * -1;
         float G = m_distribution.computeG(ri_, ro_, rh_);
 
@@ -479,6 +487,6 @@ Vector3 GGXTransparentBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
         denominator *= denominator;
         float reflBRDF = D * G * (1 - F) / abs(4 * cosWo);
         Vector3 refrBRDF = numerator / denominator * m_color;
-        return reflBRDF;
+        return refrBRDF;
     }
 }

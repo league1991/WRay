@@ -52,7 +52,7 @@ Vector3 WDirectLighting::computeDirectLight(Light *light, BSDF *bsdf, Sample3D &
 	bsdfSample.get2D(BSu, BSv);
 	Vector3 sampleWi;
 	float bsdfPDF;
-	bsdf->sampleRay(BSu, BSv, sampleWi, ro, bsdfPDF);
+	Vector3 fCos = bsdf->sampleRay(BSu, BSv, sampleWi, ro, bsdfPDF);
 
 	Vector3 bsdfRadiance(0.0);
 	Ray ray(bsdf->DG.position, sampleWi);
@@ -68,7 +68,6 @@ Vector3 WDirectLighting::computeDirectLight(Light *light, BSDF *bsdf, Sample3D &
 		emission = sourceBSDF->getEmission();
 		if (!emission.isZero() && bsdfPDF > 0)
 		{
-			Vector3 fCos = bsdf->evaluateFCos(sampleWi, ro);
 			bsdfRadiance = fCos*emission / bsdfPDF;
 		}
 		mtl->freeBSDF(sourceBSDF, m_memoryPool);
@@ -81,7 +80,6 @@ Vector3 WDirectLighting::computeDirectLight(Light *light, BSDF *bsdf, Sample3D &
             Vector3 emission = envLight->getEnvironmentEmission();
             if (!emission.isZero() && bsdfPDF > 0)
             {
-                Vector3 fCos = bsdf->evaluateFCos(sampleWi, ro);
                 bsdfRadiance = fCos*emission / bsdfPDF;
             }
         }

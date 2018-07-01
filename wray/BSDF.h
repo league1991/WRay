@@ -27,7 +27,7 @@ public:
 	//根据随机采样的u v值计算采样的光线
 	//pdf为对应位置的概率密度
 	//sampleWi是要计算的采样光线
-	virtual void sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf) = 0;
+	virtual Vector3 sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf) = 0;
 	virtual Vector3 rho(Vector3&wo) { return Vector3(0); }
 	virtual Vector3 getEmission() { return emission; }
 	virtual void     setEmission(const Vector3& emi) { emission = emi; }
@@ -62,7 +62,7 @@ public:
 
 	//随机选择一条光线方向
 	//光线的方向服从余弦分布
-	void sampleRay(
+    Vector3 sampleRay(
 		float u, float v,
 		Vector3&sampleWi, const Vector3&wo, float&pdf);
 	//此为BSDF求值函数
@@ -114,7 +114,7 @@ public:
 	PerfectReflectionBSDF(const DifferentialGeometry& iDG,
 		Vector3& icolor, MemoryPool* pool) :BSDF(iDG, BSDF::BSDF_PERFECTREFLECTION, pool), color(icolor) {}
 	~PerfectReflectionBSDF() {};
-	void sampleRay(
+    Vector3 sampleRay(
 		float u, float v,
 		Vector3&sampleWi, const Vector3&wo,
 		float&pdf);
@@ -137,7 +137,7 @@ public:
 	PerfectRefractionBSDF(const DifferentialGeometry& iDG,
 		Vector3& icolor, float iIOR, MemoryPool* pool) :BSDF(iDG, BSDF::BSDF_PERFECTREFRACTION, pool), color(icolor), IOR(iIOR) {}
 	~PerfectRefractionBSDF() {}
-	void sampleRay(
+    Vector3 sampleRay(
 		float u, float v,
 		Vector3&sampleWi, const Vector3&wo,
 		float&pdf);
@@ -196,7 +196,7 @@ public:
 		fresnel(ieta, ik, iDG.normal),
 		exp(iexp) {}
 	~MetalBSDF() {}
-	void sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
+    Vector3 sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
 	Vector3 evaluateFCos(Vector3&ri, const Vector3&ro);
 	virtual bool isDeltaBSDF() { return false; }
 private:
@@ -233,7 +233,7 @@ public:
 	GGXMetalBSDF(const DifferentialGeometry& iDG, Vector3 ieta, Vector3 ik, float ag, MemoryPool* pool) :
 		BSDF(iDG, BSDF_GGX_METAL, pool), fresnel(ieta, ik, iDG.normal), m_distribution(&DG, ag) {}
 	~GGXMetalBSDF() {}
-	void sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
+    Vector3 sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
 	Vector3 evaluateFCos(Vector3&ri, const Vector3&ro);
 	virtual bool isDeltaBSDF() { return false; }
 private:
@@ -251,7 +251,7 @@ public:
         m_distribution(&DG, ag),
         m_diffuseColor(icolor) {}
 
-    void sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
+    Vector3 sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
 
     Vector3 evaluateFCos(Vector3&ri, const Vector3&ro);
     virtual bool isDeltaBSDF() { return false; }
@@ -270,7 +270,7 @@ public:
         m_distribution(&DG, ag),
         m_color(color) {}
 
-    void sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
+    Vector3 sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
 
     Vector3 evaluateFCos(Vector3&ri, const Vector3&ro);
 
@@ -291,7 +291,7 @@ public:
 		fresnel(iior, iDG.normal),
 		color(icolor), exp(iexp) {}
 	~DielectricBSDF() {}
-	void sampleRay(
+    Vector3 sampleRay(
 		float u, float v,
 		Vector3&sampleWi, const Vector3&wo,
 		float&pdf);
