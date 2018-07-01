@@ -6,7 +6,8 @@ public:
 	enum LightType{
 		LIGHT_POINT=0,
 		LIGHT_RECTANGLE=1,
-		LIGHT_OBJECT=2
+		LIGHT_OBJECT=2,
+        LIGHT_SIMPLE_SKY=3,
 	};
 	LightType type;
 
@@ -16,9 +17,12 @@ public:
 	//是否点光源
 	bool isPoint;
 
+    virtual bool isEnvironmentLight() const { return false; }
+
 	virtual void sampleLight(
 		float u1,float u2,float u3,BSDF&bsdf,
 		Vector3&iposition,Vector3&iintensity,float&PDF, MemoryPool& memoryPool)=0;
+
 	virtual void draw()=0;
 	//获得属性数组,
 	//此函数用于把所有灯光的属性打包到一个float4纹理中
@@ -112,4 +116,44 @@ private:
 
 	bool m_isDoubleSide;
 	int m_materialID;
+};
+
+class SimpleSkyLight :public Light
+{
+public:
+    SimpleSkyLight(const Vector3& iintensity, const WBoundingBox& sceneBox) :
+        Light(LIGHT_SIMPLE_SKY, true), intensity(iintensity)
+    {
+        m_sceneCenter = sceneBox.center();
+        m_sceneRadius = sceneBox.extent().length();
+    }
+    ~SimpleSkyLight() {}
+
+    void setIntensity(Vector3 iintensity)
+    {
+        intensity = iintensity;
+    }
+
+    void sampleLight(float u1, float u2, float u3, BSDF&bsdf, Vector3&iposition, Vector3&iintensity, float&PDF, MemoryPool& memoryPool)
+    {
+        iintensity = intensity;
+        Vector3 sample;
+        RandomNumber::uniformSampleSphere(u1, u2, sample, PDF);
+        iposition = bsdf.DG.position + m_sceneRadius * 2.f * sample;
+    }
+
+    bool isEnvironmentLight() const { return true; }
+
+    void draw() {}
+    virtual void getProperties(vector<float>& properties)
+    {
+        properties.push_back(intensity.x);
+        properties.push_back(intensity.y);
+        properties.push_back(intensity.z);
+    }
+    virtual bool isDeltaLight() { return true; }
+private:
+    Vector3 intensity;
+    Vector3 m_sceneCenter;
+    float   m_sceneRadius;
 };

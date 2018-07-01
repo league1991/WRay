@@ -54,6 +54,18 @@ void RandomNumber::cosineSampleHemisphere(const float u1, const float u2, Vector
 	sample.z=sqrt(max(1-sample.x*sample.x-sample.y*sample.y,0.01f));
 	PDF=sample.z*M_INV_PI;
 }
+void RandomNumber::uniformSampleSphere(float u1, float u2, Vector3 & sample, float & PDF)
+{
+    float cosTheta = 1 - 2.0f * u2;
+    float sinTheta = sqrt(1 - cosTheta * cosTheta);
+    float phi = 2 * M_PI * u1;
+    float sinPhi = sin(phi);
+    float cosPhi = cos(phi);
+    sample.x = cosPhi * sinTheta;
+    sample.y = sinPhi * sinTheta;
+    sample.z = cosTheta;
+    PDF = 1.0f / (4.0f * M_PI);
+}
 void RandomNumber::uniformSampleTriangle(float u1, float u2, float &u, float &v)
 {
 	float squrU1=sqrt(u1);

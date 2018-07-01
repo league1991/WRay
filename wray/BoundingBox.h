@@ -48,6 +48,8 @@ public:
 	int maxAxis();	
 	WBoundingBox operator=(const WBoundingBox&box);
 	bool operator== (const WBoundingBox& box)const;
+    Vector3 center() const { return 0.5*(pMin + pMax); }
+    Vector3 extent() const { return pMax - pMin; }
 private:
 	inline void swap(float&t1,float&t2);
 };

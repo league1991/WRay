@@ -79,8 +79,12 @@ public:
 		}
 	}
 
+    void setEnvironmentLight(Light* light);
+    Light* getEnvironmentLight() { return m_envLight; }
+
 private:
 	vector<Light*>m_lights;					//存储灯光指针
+    Light* m_envLight;                      // Environment Light
 	Material**materials;					//Material指针数组
 	unsigned int nMaterials;				//Material总数
 	std::vector<MeshObject>m_objects;		//Primitive数组

@@ -349,6 +349,9 @@ int main(int argc, char** argv)
 	renderer->init();
 	renderer->readScene(fileName);
 	renderer->setCamera(Vector3(Lx, Ly, Lz), Vector3(-1.0, -1.0, -1.0), Vector3(0, 1, 0), fov, winWidth, winHeight);
+    
+    auto scene = renderer->getScene();
+    scene->setEnvironmentLight(new SimpleSkyLight(Vector3(5, 5, 5), scene->getBBox()));
 
 	init();
 

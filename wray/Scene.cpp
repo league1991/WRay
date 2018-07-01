@@ -196,6 +196,15 @@ void Scene::clearSelect()
 		m_objects[i].isSelected=false;
 }
 
+void Scene::setEnvironmentLight(Light * light)
+{
+    if (light->isEnvironmentLight())
+    {
+        m_envLight = light;
+        m_lights.push_back(light);
+    }
+}
+
 void Scene::buildTriangleArray()
 {
 	unsigned int totalTris=0;
