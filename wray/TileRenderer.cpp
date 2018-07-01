@@ -128,7 +128,7 @@ void TileRenderer::scheduleTasks()
 }
 
 int TileRenderer::getSystemCores() {
-    return max(1u, min(4u, std::thread::hardware_concurrency()));
+    return max(1u, std::thread::hardware_concurrency());
 }
 
 bool TileRenderer::resize(int width, int height)
