@@ -39,6 +39,7 @@ public:
 	Vector3 point1,point2,point3;
 	Vector2f texCoord1,texCoord2,texCoord3;
 	Vector3 normal1,normal2,normal3;
+    Vector3 geometricNormal;
 	unsigned int mtlId;
 
 	WTriangle(

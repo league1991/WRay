@@ -24,6 +24,10 @@ void LambertBSDF::sampleRay(float u, float v, Vector3 &sampleWi, const Vector3 &
 		DG.tangent*localVector.x +
 		DG.bitangent*localVector.y +
 		DG.normal*localVector.z;
+    if (sampleWi.dot(DG.geometricNormal) < 0)
+    {
+        sampleWi *= -1;
+    }
 }
 Vector3 PhongBSDF::evaluateFCos(Vector3&ri, const Vector3&ro)
 {
@@ -342,6 +346,10 @@ void GGXOpaqueBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector
         DG.bitangent*localVector.y +
         DG.normal*localVector.z;
 
+    if (sampleWi.dot(DG.geometricNormal) < 0)
+    {
+        sampleWi *= -1;
+    }
     //float u0 = RandomNumber::getGlobalObj()->randomFloat();
     //float v0 = RandomNumber::getGlobalObj()->randomFloat();
     //Vector3 localH = m_distribution.sampleRay(u0, v0, sampleWi, wo);

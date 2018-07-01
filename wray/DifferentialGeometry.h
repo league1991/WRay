@@ -7,6 +7,7 @@ class DifferentialGeometry
 public:
 	Vector3 position;
 	Vector3 normal,tangent,bitangent;
+    Vector3 geometricNormal;
 	Vector2f texCoord;
 	Vector3 rayDir;
 	Vector3 dpdu,dpdv;

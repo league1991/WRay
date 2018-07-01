@@ -60,7 +60,13 @@ WTriangle::WTriangle(
 		 texCoord1(itexCoord1),texCoord2(itexCoord2),texCoord3(itexCoord3),
 		 normal1(inormal1),normal2(inormal2),normal3(inormal3),
 		 mtlId(imtlId)
-{}
+{
+    Vector3 edge21 = point2 - point1;
+    Vector3 edge31 = point3 - point1;
+    geometricNormal = edge21.cross(edge31);
+    float l = geometricNormal.length();
+    geometricNormal = geometricNormal * ((geometricNormal.dot(normal1) > 0?1:-1) / l);
+}
 
 WTriangle::~WTriangle(void)
 {
@@ -254,23 +260,16 @@ void WTriangle::buildDG(float b1, float b2, const Vector3& rayDir, DifferentialG
 	DG.position = b3*point1 + b1*point2 + b2*point3;
 	DG.normal = b3*normal1 + b1*normal2 + b2*normal3;
 	DG.texCoord = b3*texCoord1 + b1*texCoord2 + b2*texCoord3;
+    DG.geometricNormal = geometricNormal;
 	DG.normal.normalize();
 	DG.mtlId = this->mtlId;
 
 	//算出副切线
 	DG.rayDir = -1 * rayDir;
-	DG.bitangent = DG.normal.cross(DG.rayDir);
+	DG.bitangent = Vector3(DG.normal.z, 0 , -DG.normal.x);
 	if (DG.bitangent.lengthSquared()<1e-4f)
 	{
-		//认为是零向量，此时normal和rayDir或者共线，或者至少一个为0
-		if (abs(DG.normal.x)>abs(DG.normal.y))
-		{
-			DG.bitangent = Vector3(-DG.normal.z, 0.0f, DG.normal.x);
-		}
-		else
-		{
-			DG.bitangent = Vector3(0.0f, DG.normal.z, -DG.normal.y);
-		}
+        DG.bitangent = Vector3(DG.normal.y, -DG.normal.x, 0);
 	}
 	//算出主切线
 	DG.bitangent.normalize();

@@ -58,13 +58,14 @@ Vector3 WDirectLighting::computeDirectLight(Light *light, BSDF *bsdf, Sample3D &
 	Ray ray(bsdf->DG.position, sampleWi);
 	DifferentialGeometry DG;
 	int beginNode = 0, endNode;
+    Vector3 emission(0);
 	if (tree->intersect(ray, DG, &endNode, beginNode))
 	{
 		Material*mtl;
 		scene->getNthMaterial(mtl, DG.mtlId);
 		BSDF* sourceBSDF;
 		mtl->buildBSDF(DG, sourceBSDF, m_memoryPool);
-		Vector3 emission = sourceBSDF->getEmission();
+		emission = sourceBSDF->getEmission();
 		if (!emission.isZero() && bsdfPDF > 0)
 		{
 			Vector3 fCos = bsdf->evaluateFCos(sampleWi, ro);
@@ -72,6 +73,19 @@ Vector3 WDirectLighting::computeDirectLight(Light *light, BSDF *bsdf, Sample3D &
 		}
 		mtl->freeBSDF(sourceBSDF, m_memoryPool);
 	}
+    else
+    {
+        auto envLight = scene->getEnvironmentLight();
+        if (envLight)
+        {
+            Vector3 emission = envLight->getEnvironmentEmission();
+            if (!emission.isZero() && bsdfPDF > 0)
+            {
+                Vector3 fCos = bsdf->evaluateFCos(sampleWi, ro);
+                bsdfRadiance = fCos*emission / bsdfPDF;
+            }
+        }
+    }
 
 	if (lightPDF <= 0 && bsdfPDF <= 0)
 	{

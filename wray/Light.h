@@ -22,7 +22,7 @@ public:
 	virtual void sampleLight(
 		float u1,float u2,float u3,BSDF&bsdf,
 		Vector3&iposition,Vector3&iintensity,float&PDF, MemoryPool& memoryPool)=0;
-
+    virtual Vector3 getEnvironmentEmission() const { return Vector3(0); }
 	virtual void draw()=0;
 	//获得属性数组,
 	//此函数用于把所有灯光的属性打包到一个float4纹理中
@@ -141,6 +141,8 @@ public:
         RandomNumber::uniformSampleSphere(u1, u2, sample, PDF);
         iposition = bsdf.DG.position + m_sceneRadius * 2.f * sample;
     }
+
+    virtual Vector3 getEnvironmentEmission() const { return intensity; }
 
     bool isEnvironmentLight() const { return true; }
 
