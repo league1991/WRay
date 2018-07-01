@@ -411,7 +411,7 @@ void GGXTransparentBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const V
     sampleWi = wo.reflect(H);
     sampleWi.normalize();
     pdf = m_distribution.computePDF(sampleWi, wo);
-    if (RandomNumber::getGlobalObj()->randomFloat() < reflProb)
+    if (RandomNumber::getThreadObj()->randomFloat() < reflProb)
     {
         // reflection
         pdf *= reflProb;

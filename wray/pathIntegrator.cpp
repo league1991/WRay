@@ -105,7 +105,7 @@ Vector3 PathIntegrator::integrate(Ray&camRay)//ÑÕÉ«¼ÆËã
 		if (depth > 3)
 		{
 			float continueProb = 0.7;
-			if (RandomNumber::getGlobalObj()->randomFloat() > continueProb)
+			if (RandomNumber::getThreadObj()->randomFloat() > continueProb)
 				break;
 			pathThroughPut/=continueProb;
 		}

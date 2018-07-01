@@ -42,7 +42,7 @@ inline void RandomNumber::randomSeed(unsigned int seed)
     m_PCGRandObj.m_state = 12345;
 }
 
-RandomNumber * RandomNumber::getGlobalObj()
+RandomNumber * RandomNumber::getThreadObj()
 {
     auto id = std::this_thread::get_id();
     auto rngIt = s_threadRNG.find(id);

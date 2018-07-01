@@ -34,7 +34,7 @@ public:
     int randomInt(int count);
     void randomSeed(unsigned int seed);
 
-    static RandomNumber* getGlobalObj();
+    static RandomNumber* getThreadObj();
 
 	//以下是随机采样函数，输入0-1的随机数，返回采样的坐标值
 	//对圆形采样，返回单位圆内部的坐标值
