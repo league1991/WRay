@@ -3,7 +3,7 @@
 #include "Scene.h"
 
 PathIntegrator::PathIntegrator(Scene *scene, WAccelerator *tree, unsigned int ipathDepth, Sampler::SamplerType samplerType,float imultiplier):
-WSurfaceIntegrator(scene,tree),Dlighting(scene,tree),
+SurfaceIntegrator(scene,tree),Dlighting(scene,tree),
 multiplier(imultiplier),
 lightSamples(4),BSDFSamples(4)
 {
@@ -84,7 +84,7 @@ Vector3 PathIntegrator::integrate(Ray&camRay)//颜色计算
 			scene->getNthMaterial(mtl,DG.mtlId);
 
 			BSDF*bsdf;
-			mtl->buildBSDF(DG,bsdf,m_memoryPool);
+			mtl->buildBSDF(DG,bsdf, m_rng,m_memoryPool);
 
 			ro=-1*ray.direction;
 			directLight=Dlighting.sampleAllLights(bsdf,lightSamples,BSDFSamples,ro, &endNode);
@@ -105,7 +105,7 @@ Vector3 PathIntegrator::integrate(Ray&camRay)//颜色计算
 		if (depth > 3)
 		{
 			float continueProb = 0.7;
-			if (RandomNumber::getGlobalObj()->randomFloat() > continueProb)
+			if (m_rng.randomFloat() > continueProb)
 				break;
 			pathThroughPut/=continueProb;
 		}

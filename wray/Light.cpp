@@ -9,7 +9,7 @@ Light::~Light(void)
 
 void PointLight::sampleLight(float u1, float u2, float u3,
 							 BSDF&bsdf,Vector3 &iposition, 
-							 Vector3 &iintensity, float&PDF, MemoryPool& memoryPool)
+							 Vector3 &iintensity, float&PDF, RandomNumber& rng, MemoryPool& memoryPool)
 {
 	iposition=position;
 	Vector3 delta=iposition-bsdf.DG.position;
@@ -66,7 +66,7 @@ Light(LIGHT_RECTANGLE,false)
 	intensity=iintensity;
 	isDoubleSide=iisDoubleSide;
 }
-void RectangleLight::sampleLight(float u1, float u2, float u3, BSDF &bsdf, Vector3 &iposition, Vector3 &iintensity, float &PDF, MemoryPool& memoryPool)
+void RectangleLight::sampleLight(float u1, float u2, float u3, BSDF &bsdf, Vector3 &iposition, Vector3 &iintensity, float &PDF, RandomNumber& rng, MemoryPool& memoryPool)
 {
 	u1=u1*2-1;u2=u2*2-1;
 	iposition=position+u1*x+u2*y;
@@ -186,7 +186,7 @@ void ObjectLight::addTriangle(int objectID, int triangleID)
 	m_faceIDList.emplace_back(FaceID{ objectID, triangleID });
 }
 
-void ObjectLight::sampleLight(float u1, float u2, float u3, BSDF & bsdf, Vector3 & position, Vector3 & intensity, float & PDF, MemoryPool& memoryPool)
+void ObjectLight::sampleLight(float u1, float u2, float u3, BSDF & bsdf, Vector3 & position, Vector3 & intensity, float & PDF, RandomNumber& rng, MemoryPool& memoryPool)
 {
 	int faceID = u1 * m_faceIDList.size();
 	faceID = max(0, min(int(m_faceIDList.size()-1), faceID));
@@ -211,7 +211,7 @@ void ObjectLight::sampleLight(float u1, float u2, float u3, BSDF & bsdf, Vector3
 	Material* material;
 	m_scene->getNthMaterial(material, triangle.mtlId);
 	BSDF* lightBSDF;
-	material->buildBSDF(DG, lightBSDF, memoryPool);
+	material->buildBSDF(DG, lightBSDF, rng, memoryPool);
 	intensity = m_intensity * lightBSDF->getEmission();
 	material->freeBSDF(lightBSDF, memoryPool);
 

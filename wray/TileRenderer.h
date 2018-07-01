@@ -44,7 +44,7 @@ private:
 	std::unique_ptr<std::thread> m_thread;
 
 	// Per-thread data
-	std::unique_ptr<WSurfaceIntegrator> m_integrator;
+	std::unique_ptr<SurfaceIntegrator> m_integrator;
 };
 
 class TileRenderer

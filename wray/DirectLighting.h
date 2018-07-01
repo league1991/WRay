@@ -1,13 +1,13 @@
 #pragma once
 #include "surfaceintegrator.h"
 
-class WDirectLighting :
-	public WSurfaceIntegrator
+class DirectLighting :
+	public SurfaceIntegrator
 {
 public:
-	WDirectLighting(Scene *iscene,WAccelerator*itree):
-	  WSurfaceIntegrator(iscene,itree){}
-	virtual ~WDirectLighting(void);
+	DirectLighting(Scene *iscene,WAccelerator*itree):
+	  SurfaceIntegrator(iscene,itree){}
+	virtual ~DirectLighting(void);
 
 	//计算场景所有灯光的光照
 	Vector3 sampleAllLights(

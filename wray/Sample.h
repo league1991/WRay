@@ -34,6 +34,7 @@ protected:
 	std::vector<float> pattern;
 	unsigned int nthPoint;//当前的采样点
 	unsigned int totalPoints;//采样点的总数
+    RandomNumber m_rng;
 };
 class Sample1D:public Sample
 {

@@ -46,7 +46,7 @@ bool Sample1D::get1D(float &x)
 	}
 	else
 	{
-		x = RandomNumber::getGlobalObj()->randomFloat();
+		x = m_rng.randomFloat();
 		return false;
 	}
 }
@@ -72,8 +72,8 @@ bool Sample2D::get2D(float&x,float&y)
 	}
 	else
 	{
-		x = RandomNumber::getGlobalObj()->randomFloat();
-		y = RandomNumber::getGlobalObj()->randomFloat();
+		x = m_rng.randomFloat();
+		y = m_rng.randomFloat();
 		return false;
 	}
 }
@@ -99,9 +99,9 @@ bool Sample3D::get3D(float&x,float&y,float&z)
 	}
 	else
 	{
-		x = RandomNumber::getGlobalObj()->randomFloat();
-		y = RandomNumber::getGlobalObj()->randomFloat();
-		z = RandomNumber::getGlobalObj()->randomFloat();
+		x = m_rng.randomFloat();
+		y = m_rng.randomFloat();
+		z = m_rng.randomFloat();
 		return false;
 	}
 }
@@ -128,8 +128,8 @@ bool SequenceSample2D::get2D(float & x, float & y)
 	}
 	else
 	{
-		x = RandomNumber::getGlobalObj()->randomFloat();
-		y = RandomNumber::getGlobalObj()->randomFloat();
+		x = m_rng.randomFloat();
+		y = m_rng.randomFloat();
 		return false;
 	}
 }

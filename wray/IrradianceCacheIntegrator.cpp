@@ -15,7 +15,7 @@ WIrradianceCacheIntegrator::WIrradianceCacheIntegrator(
 	float idistanceErrorFactor,
 	float ismoothFactor):
 
-	WSurfaceIntegrator(iscene,itree),
+	SurfaceIntegrator(iscene,itree),
 	interpolator(
 	imaxNormalError,imaxPlanarError,ismoothFactor,iminSamples),
 	octTree(iscene,ioctTreeMaxDepth),
@@ -104,7 +104,7 @@ Vector3 WIrradianceCacheIntegrator::integrate(Ray&ray)
 		//由材质生成BSDF
 		Material*mtl;
 		scene->getNthMaterial(mtl,DG.mtlId);
-		mtl->buildBSDF(DG,bsdf, m_memoryPool);
+		mtl->buildBSDF(DG,bsdf, m_rng, m_memoryPool);
 		sampler->computeSamples(LambertBSDFSamples);
 		sampler->computeSamples(lightSamples);
 
@@ -258,7 +258,7 @@ void WIrradianceCacheIntegrator::pathTracing(
 		{
 			//找到交点的材质和BSDF
 			scene->getNthMaterial(pathMtl,pathDG.mtlId);
-			pathMtl->buildBSDF(pathDG,pathBSDF, m_memoryPool);
+			pathMtl->buildBSDF(pathDG,pathBSDF, m_rng, m_memoryPool);
 			ro=-1*ray.direction;
 
 			//如果发射的光线遇到漫反射表面
@@ -276,8 +276,8 @@ void WIrradianceCacheIntegrator::pathTracing(
 				pathBSDF,lightSamples,LambertBSDFSamples,ro);
 			indirectLight+=pathThroughPut*pathDirectLight;
 
-			pathBSDFU=RandomNumber::getGlobalObj()->randomFloat();
-			pathBSDFV=RandomNumber::getGlobalObj()->randomFloat();
+			pathBSDFU= m_rng.randomFloat();
+			pathBSDFV= m_rng.randomFloat();
 			pathBSDF->sampleRay(pathBSDFU,pathBSDFV,ri,ro,PDF);
 			ray.point=pathDG.position;
 			ray.direction=ri;

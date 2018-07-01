@@ -1,11 +1,11 @@
 #pragma once
 
-class WSurfaceIntegrator
+class SurfaceIntegrator
 {
 public:
-	WSurfaceIntegrator(Scene*iscene,WAccelerator*itree):
+	SurfaceIntegrator(Scene*iscene,WAccelerator*itree):
 	  scene(iscene),tree(itree), m_memoryPool(4,4*1024){};
-	virtual ~WSurfaceIntegrator(void);
+	virtual ~SurfaceIntegrator(void);
 	virtual Vector3 integrate(Ray&ray){return Vector3(0);}
 	virtual void displayTime(){}
 	// prepare samples for the following render pass
@@ -18,6 +18,7 @@ public:
 		m_numPixelSamples = numPixelSamples;
 	}
 protected:
+    RandomNumber m_rng;
 	MemoryPool m_memoryPool;
 	Vector2i m_pixelPos;
 	int m_pixelSampleIdx;

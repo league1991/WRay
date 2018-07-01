@@ -2,7 +2,7 @@
 #include "MetropolisIntegrator.h"
 
 WMetropolisIntegrator::WMetropolisIntegrator(	
-	Scene*iscene,WAccelerator*itree,Camera* icamera):WSurfaceIntegrator(iscene,itree)
+	Scene*iscene,WAccelerator*itree,Camera* icamera):SurfaceIntegrator(iscene,itree)
 {
 	tree = itree;
 	scene = iscene;

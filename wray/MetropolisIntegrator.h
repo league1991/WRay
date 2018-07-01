@@ -1,6 +1,6 @@
 #pragma once
 
-class WMetropolisIntegrator:WSurfaceIntegrator
+class WMetropolisIntegrator:SurfaceIntegrator
 {
 public:
 	WMetropolisIntegrator(

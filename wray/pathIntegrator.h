@@ -2,7 +2,7 @@
 #include "surfaceintegrator.h"
 
 class PathIntegrator :
-	public WSurfaceIntegrator
+	public SurfaceIntegrator
 {
 public:
 	PathIntegrator(Scene*scene,WAccelerator*tree,
@@ -24,7 +24,7 @@ private:
 	Sample3D lightSamples;
 
 	vector<Sample2D> BSDFSampleGroup;
-	WDirectLighting Dlighting;
+	DirectLighting Dlighting;
 	unsigned int pathMaxDepth;
 	float multiplier;
 	void clearSamples();

@@ -5,10 +5,10 @@ Material::~Material(void)
 {
 }
 
-void LambertMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool)
+void LambertMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, RandomNumber& rng, MemoryPool& customPool)
 {
 	void* buffer = customPool.allocate<LambertBSDF>();
-	bsdf=new (buffer)LambertBSDF(DG,color, &customPool);
+	bsdf=new (buffer)LambertBSDF(DG,color, &rng, &customPool);
 	bsdf->setEmission(this->getLight());
 }
 
@@ -21,16 +21,16 @@ void LambertMaterial::getProperties( vector<float>& properties )
 	properties.push_back(1.0f);
 }
 
-void PhongMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool)
+void PhongMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, RandomNumber& rng, MemoryPool& customPool)
 {
 	void* buffer = customPool.allocate<PhongBSDF>();
-	bsdf=new (buffer)PhongBSDF(DG,color,specular,glossiness, &customPool);
+	bsdf=new (buffer)PhongBSDF(DG,color,specular,glossiness, &rng, &customPool);
 	bsdf->setEmission(this->getLight());
 }
-void PerfectReflectionMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool)
+void PerfectReflectionMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, RandomNumber& rng, MemoryPool& customPool)
 {
 	void* buffer = customPool.allocate<PerfectReflectionBSDF>();
-	bsdf=new (buffer)PerfectReflectionBSDF(DG,color, &customPool);
+	bsdf=new (buffer)PerfectReflectionBSDF(DG,color, &rng, &customPool);
 	bsdf->setEmission(this->getLight());
 }
 
@@ -43,10 +43,10 @@ void PerfectReflectionMaterial::getProperties( vector<float>& properties )
 	properties.push_back(1.0f);
 }
 
-void PerfectRefractionMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool)
+void PerfectRefractionMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, RandomNumber& rng, MemoryPool& customPool)
 {
 	void* buffer = customPool.allocate<PerfectRefractionBSDF>();
-	bsdf=new (buffer)PerfectRefractionBSDF(DG,color,IOR, &customPool);
+	bsdf=new (buffer)PerfectRefractionBSDF(DG,color,IOR, &rng, &customPool);
 	bsdf->setEmission(this->getLight());
 }
 
@@ -71,16 +71,16 @@ void MetalMaterial::refreshColor()
 	Vector3 colorSqrt=color.sqrtElement();
 	eta=(Vector3(1)+colorSqrt)/(Vector3(1)-colorSqrt);
 }
-void MetalMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool)
+void MetalMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, RandomNumber& rng, MemoryPool& customPool)
 {
 	void* buffer = customPool.allocate<MetalBSDF>();
-	bsdf=new (buffer)MetalBSDF(DG,eta,k,exp, &customPool);
+	bsdf=new (buffer)MetalBSDF(DG,eta,k,exp, &rng, &customPool);
 	bsdf->setEmission(this->getLight());
 }
-void DielectricMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, MemoryPool& customPool)
+void DielectricMaterial::buildBSDF(DifferentialGeometry DG,BSDF*&bsdf, RandomNumber& rng, MemoryPool& customPool)
 {
 	void* buffer = customPool.allocate<DielectricBSDF>();
-	bsdf=new (buffer)DielectricBSDF(DG,ior,color,exp, &customPool);
+	bsdf=new (buffer)DielectricBSDF(DG,ior,color,exp, &rng, &customPool);
 	bsdf->setEmission(this->getLight());
 }
 
@@ -90,10 +90,10 @@ GGXMetalMaterial::GGXMetalMaterial(string iName, unsigned int iID, Vector3 Fr, f
 	refreshColor();
 }
 
-void GGXMetalMaterial::buildBSDF(DifferentialGeometry DG, BSDF *& bsdf, MemoryPool & customPool)
+void GGXMetalMaterial::buildBSDF(DifferentialGeometry DG, BSDF *& bsdf, RandomNumber& rng, MemoryPool & customPool)
 {
 	void* buffer = customPool.allocate<GGXMetalBSDF>();
-	bsdf = new (buffer)GGXMetalBSDF(DG, eta, k, exp, &customPool);
+	bsdf = new (buffer)GGXMetalBSDF(DG, eta, k, exp, &rng, &customPool);
 	bsdf->setEmission(this->getLight());
 }
 
@@ -112,10 +112,10 @@ void GGXMetalMaterial::setRoughness(float roughness)
 	exp = roughness;
 }
 
-void GGXOpaqueMaterial::buildBSDF(DifferentialGeometry DG, BSDF *& bsdf, MemoryPool & customPool)
+void GGXOpaqueMaterial::buildBSDF(DifferentialGeometry DG, BSDF *& bsdf, RandomNumber& rng, MemoryPool & customPool)
 {
     void* buffer = customPool.allocate<GGXOpaqueBSDF>();
-    bsdf = new (buffer)GGXOpaqueBSDF(DG, m_ior, color, m_ag, &customPool);
+    bsdf = new (buffer)GGXOpaqueBSDF(DG, m_ior, color, m_ag, &rng, &customPool);
     bsdf->setEmission(this->getLight());
 }
 
@@ -124,10 +124,10 @@ void GGXOpaqueMaterial::setRoughness(float roughness)
     m_ag = roughness;
 }
 
-void GGXTransparentMaterial::buildBSDF(DifferentialGeometry DG, BSDF *& bsdf, MemoryPool & customPool)
+void GGXTransparentMaterial::buildBSDF(DifferentialGeometry DG, BSDF *& bsdf, RandomNumber& rng, MemoryPool & customPool)
 {
     void* buffer = customPool.allocate<GGXTransparentBSDF>();
-    bsdf = new (buffer)GGXTransparentBSDF(DG, m_ior, m_ag, color, &customPool);
+    bsdf = new (buffer)GGXTransparentBSDF(DG, m_ior, m_ag, color, &rng, &customPool);
     bsdf->setEmission(this->getLight());
 }
 

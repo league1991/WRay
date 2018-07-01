@@ -16,9 +16,9 @@ public:
         BSDF_GGX_OPAQUE = 7,
 	};
 
-	BSDF(const DifferentialGeometry& iDG, BSDFType itype, MemoryPool* pool,
+	BSDF(const DifferentialGeometry& iDG, BSDFType itype, RandomNumber* rng, MemoryPool* pool,
 		bool iisEmissive = false, const Vector3& iemission = Vector3(0)) :
-		DG(iDG), type(itype), isEmissive(iisEmissive), emission(0), m_memoryPool(pool) {};
+		DG(iDG), type(itype), isEmissive(iisEmissive), emission(0), m_rng(rng), m_memoryPool(pool) {};
 	virtual ~BSDF(void);
 
 	//对BSDF求值,顺带乘以入射角余弦
@@ -50,14 +50,15 @@ public:
 	bool isEmissive;
 protected:
 	Vector3 emission;
+    RandomNumber* m_rng;
     MemoryPool* m_memoryPool;
 };
 
 class LambertBSDF :public BSDF
 {
 public:
-	LambertBSDF(const DifferentialGeometry& iDG, const Vector3 &icolor, MemoryPool* pool) :
-		BSDF(iDG, BSDF_LAMBERT, pool), color(icolor) {}
+	LambertBSDF(const DifferentialGeometry& iDG, const Vector3 &icolor, RandomNumber* rng, MemoryPool* pool) :
+		BSDF(iDG, BSDF_LAMBERT, rng, pool), color(icolor) {}
 	~LambertBSDF() {}
 
 	//随机选择一条光线方向
@@ -94,8 +95,8 @@ class PhongBSDF :public LambertBSDF
 {
 public:
 	PhongBSDF(const DifferentialGeometry& iDG, const Vector3& icolor,
-		const Vector3& ispecular, float iglossiness, MemoryPool* pool) :
-		LambertBSDF(iDG, icolor, pool), specular(ispecular), glossiness(iglossiness)
+		const Vector3& ispecular, float iglossiness, RandomNumber* rng, MemoryPool* pool) :
+		LambertBSDF(iDG, icolor, rng, pool), specular(ispecular), glossiness(iglossiness)
 	{
 		type = BSDF_PHONG;
 	}
@@ -112,7 +113,7 @@ class PerfectReflectionBSDF :public BSDF
 {
 public:
 	PerfectReflectionBSDF(const DifferentialGeometry& iDG,
-		Vector3& icolor, MemoryPool* pool) :BSDF(iDG, BSDF::BSDF_PERFECTREFLECTION, pool), color(icolor) {}
+		Vector3& icolor, RandomNumber* rng, MemoryPool* pool) :BSDF(iDG, BSDF::BSDF_PERFECTREFLECTION, rng, pool), color(icolor) {}
 	~PerfectReflectionBSDF() {};
 	void sampleRay(
 		float u, float v,
@@ -135,7 +136,7 @@ class PerfectRefractionBSDF :public BSDF
 {
 public:
 	PerfectRefractionBSDF(const DifferentialGeometry& iDG,
-		Vector3& icolor, float iIOR, MemoryPool* pool) :BSDF(iDG, BSDF::BSDF_PERFECTREFRACTION, pool), color(icolor), IOR(iIOR) {}
+		Vector3& icolor, float iIOR, RandomNumber* rng, MemoryPool* pool) :BSDF(iDG, BSDF::BSDF_PERFECTREFRACTION, rng, pool), color(icolor), IOR(iIOR) {}
 	~PerfectRefractionBSDF() {}
 	void sampleRay(
 		float u, float v,
@@ -191,8 +192,8 @@ class MetalBSDF :public BSDF
 {
 public:
 	MetalBSDF(const DifferentialGeometry& iDG,
-		Vector3 ieta, Vector3 ik, float iexp, MemoryPool* pool) :
-		BSDF(iDG, BSDF_METAL, pool),
+		Vector3 ieta, Vector3 ik, float iexp, RandomNumber* rng, MemoryPool* pool) :
+		BSDF(iDG, BSDF_METAL, rng, pool),
 		fresnel(ieta, ik, iDG.normal),
 		exp(iexp) {}
 	~MetalBSDF() {}
@@ -230,8 +231,8 @@ private:
 class GGXMetalBSDF :public BSDF
 {
 public:
-	GGXMetalBSDF(const DifferentialGeometry& iDG, Vector3 ieta, Vector3 ik, float ag, MemoryPool* pool) :
-		BSDF(iDG, BSDF_GGX_METAL, pool), fresnel(ieta, ik, iDG.normal), m_distribution(&DG, ag) {}
+	GGXMetalBSDF(const DifferentialGeometry& iDG, Vector3 ieta, Vector3 ik, float ag, RandomNumber* rng, MemoryPool* pool) :
+		BSDF(iDG, BSDF_GGX_METAL, rng, pool), fresnel(ieta, ik, iDG.normal), m_distribution(&DG, ag) {}
 	~GGXMetalBSDF() {}
 	void sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
 	Vector3 evaluateFCos(Vector3&ri, const Vector3&ro);
@@ -245,8 +246,8 @@ class GGXOpaqueBSDF : public BSDF
 {
 public:
     GGXOpaqueBSDF(const DifferentialGeometry& iDG, float ior,
-        Vector3 icolor, float ag, MemoryPool* pool) :
-        BSDF(iDG, BSDF_GGX_OPAQUE, pool),
+        Vector3 icolor, float ag, RandomNumber* rng, MemoryPool* pool) :
+        BSDF(iDG, BSDF_GGX_OPAQUE, rng, pool),
         m_fresnel(ior, iDG.normal),
         m_distribution(&DG, ag),
         m_diffuseColor(icolor) {}
@@ -264,8 +265,8 @@ private:
 class GGXTransparentBSDF : public BSDF
 {
 public:
-    GGXTransparentBSDF(const DifferentialGeometry& iDG, float ior,float ag, const Vector3& color, MemoryPool* pool) :
-        BSDF(iDG, BSDF_GGX_OPAQUE, pool),
+    GGXTransparentBSDF(const DifferentialGeometry& iDG, float ior,float ag, const Vector3& color, RandomNumber* rng, MemoryPool* pool) :
+        BSDF(iDG, BSDF_GGX_OPAQUE, rng, pool),
         m_fresnel(ior, iDG.normal),
         m_distribution(&DG, ag),
         m_color(color) {}
@@ -286,8 +287,8 @@ class DielectricBSDF :public BSDF
 {
 public:
 	DielectricBSDF(const DifferentialGeometry& iDG, float iior,
-		Vector3 icolor, float iexp, MemoryPool* pool) :
-		BSDF(iDG, BSDF_DIELECTRIC, pool),
+		Vector3 icolor, float iexp, RandomNumber* rng, MemoryPool* pool) :
+		BSDF(iDG, BSDF_DIELECTRIC, rng, pool),
 		fresnel(iior, iDG.normal),
 		color(icolor), exp(iexp) {}
 	~DielectricBSDF() {}

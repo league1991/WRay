@@ -2,7 +2,7 @@
 #include "surfaceintegrator.h"
 
 class WIrradianceCacheIntegrator :
-	public WSurfaceIntegrator
+	public SurfaceIntegrator
 {
 public:
 	WIrradianceCacheIntegrator(
@@ -53,7 +53,7 @@ private:
  	Sample2D LambertBSDFSamples;
 	Sample2D SpecularBSDFSamples;
  	Sample3D lightSamples;
-	WDirectLighting Dlighting;
+	DirectLighting Dlighting;
 	PathIntegrator pathIntegrator;
 	//²åÖµÆ÷
 	WIrradianceInterpolator interpolator;

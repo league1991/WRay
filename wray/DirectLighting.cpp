@@ -3,11 +3,11 @@
 
 
 
-WDirectLighting::~WDirectLighting(void)
+DirectLighting::~DirectLighting(void)
 {
 }
 
-bool WDirectLighting::isVisible(Vector3 pos1, Vector3 pos2, int* beginNode)
+bool DirectLighting::isVisible(Vector3 pos1, Vector3 pos2, int* beginNode)
 {
 	Vector3 delta=pos2-pos1;
 	float length=delta.length();
@@ -20,14 +20,14 @@ bool WDirectLighting::isVisible(Vector3 pos1, Vector3 pos2, int* beginNode)
 	int begNode = beginNode ? *beginNode : -1;
 	return !tree->isIntersect(r, begNode);
 }
-Vector3 WDirectLighting::computeDirectLight(Light *light, BSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample,const Vector3&ro, int* nodeInfo)
+Vector3 DirectLighting::computeDirectLight(Light *light, BSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample,const Vector3&ro, int* nodeInfo)
 {
 	// Sample from one light
 	float LSu,LSv,LSw;
 	lightSample.get3D(LSu,LSv,LSw);
 	float lightPDF;
 	Vector3 lightPosition, intensity;
-	light->sampleLight(LSu,LSv,LSw,*bsdf,lightPosition,intensity,lightPDF, m_memoryPool);
+	light->sampleLight(LSu,LSv,LSw,*bsdf,lightPosition,intensity,lightPDF, m_rng, m_memoryPool);
 	lightPDF /= scene->getLightNum();
 	Vector3 lightRadiance(0.0);
 	if (!intensity.isZero())
@@ -63,7 +63,7 @@ Vector3 WDirectLighting::computeDirectLight(Light *light, BSDF *bsdf, Sample3D &
 		Material*mtl;
 		scene->getNthMaterial(mtl, DG.mtlId);
 		BSDF* sourceBSDF;
-		mtl->buildBSDF(DG, sourceBSDF, m_memoryPool);
+		mtl->buildBSDF(DG, sourceBSDF, m_rng, m_memoryPool);
 		Vector3 emission = sourceBSDF->getEmission();
 		if (!emission.isZero() && bsdfPDF > 0)
 		{
@@ -82,7 +82,7 @@ Vector3 WDirectLighting::computeDirectLight(Light *light, BSDF *bsdf, Sample3D &
 	return lightRadiance * lightWeight + bsdfRadiance * bsdfWeight;
 }
 
-Vector3 WDirectLighting::sampleAllLights(BSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample, const Vector3 &ro, int* nodeInfo)
+Vector3 DirectLighting::sampleAllLights(BSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample, const Vector3 &ro, int* nodeInfo)
 {	
 	Light*pLight;
 	Vector3 color(0);
@@ -97,13 +97,13 @@ Vector3 WDirectLighting::sampleAllLights(BSDF *bsdf, Sample3D &lightSample, Samp
 	return color + bsdf->getEmission();
 }
 
-Vector3 WDirectLighting::sampleOneLight(BSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample, const Vector3 &ro, int* nodeInfo)
+Vector3 DirectLighting::sampleOneLight(BSDF *bsdf, Sample3D &lightSample, Sample2D &bsdfSample, const Vector3 &ro, int* nodeInfo)
 {
 	Light*pLight;
 	Vector3 color(0);
 	unsigned int lightNum = scene->getLightNum();
 
-	int ithLight = RandomNumber::getGlobalObj()->randomInt(lightNum);
+	int ithLight = m_rng.randomInt(lightNum);
 	pLight = scene->getLightPointer(ithLight);
 	color += computeDirectLight(pLight, bsdf, lightSample, bsdfSample, ro, nodeInfo);
 	return color + bsdf->getEmission();

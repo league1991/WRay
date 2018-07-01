@@ -3,6 +3,6 @@
 
 
 
-WSurfaceIntegrator::~WSurfaceIntegrator(void)
+SurfaceIntegrator::~SurfaceIntegrator(void)
 {
 }

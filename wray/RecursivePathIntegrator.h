@@ -1,6 +1,6 @@
 #pragma once
 
-class WRecursivePathIntegrator:public WSurfaceIntegrator
+class WRecursivePathIntegrator:public SurfaceIntegrator
 {
 public:
 	WRecursivePathIntegrator(Scene*scene,WAccelerator*tree,
@@ -18,7 +18,7 @@ private:
 	Sample2D BSDFSamples;
 	Sample3D lightSamples;
 	//计算直接光照的对象
-	WDirectLighting Dlighting;
+	DirectLighting Dlighting;
 	//树的深度
 	unsigned int maxDepth;
 	//分支数

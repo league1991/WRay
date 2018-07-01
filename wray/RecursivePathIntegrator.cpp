@@ -6,7 +6,7 @@ WRecursivePathIntegrator::WRecursivePathIntegrator
  unsigned int ipathDepth,unsigned int inBranch,
  Sampler::SamplerType samplerType,float imultiplier):
 
-WSurfaceIntegrator(scene,tree),Dlighting(scene,tree),
+SurfaceIntegrator(scene,tree),Dlighting(scene,tree),
 multiplier(imultiplier),nBranchs(inBranch),
 lightSamples(1),BSDFSamples(1)
 
@@ -65,7 +65,7 @@ Vector3 WRecursivePathIntegrator::integrateCore( Ray ray,unsigned int depth,int 
 	if(tree->intersect(ray,DG,&endNode, beginNode))
 	{
 		scene->getNthMaterial(mtl,DG.mtlId);
-		mtl->buildBSDF(DG,bsdf, m_memoryPool);
+		mtl->buildBSDF(DG,bsdf, m_rng, m_memoryPool);
 		ro=-1*ray.direction;
 		//			timer.end();
 		//计算直接光照
