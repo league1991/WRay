@@ -2,10 +2,11 @@
 #include "MC.h"
 #include <math.h>
 
-PCGRandomObj RandomNumber::s_PCGRandObj(12345,678);
-std::mt19937 RandomNumber::s_randObj(12345);
-std::uniform_real_distribution<float> RandomNumber::s_uniformFloatObj;
-std::uniform_int_distribution<> RandomNumber::s_uniformIntObj;
+//PCGRandomObj RandomNumber::s_PCGRandObj(12345,678);
+//std::mt19937 RandomNumber::s_randObj(12345);
+//std::uniform_real_distribution<float> RandomNumber::s_uniformFloatObj;
+//std::uniform_int_distribution<> RandomNumber::s_uniformIntObj;
+RandomNumber* RandomNumber::s_globalObj = new RandomNumber();
 
 RandomNumber::RandomNumber(void)
 {
@@ -13,6 +14,30 @@ RandomNumber::RandomNumber(void)
 
 RandomNumber::~RandomNumber(void)
 {
+}
+
+float RandomNumber::randomFloat()
+{
+    //return rand() / 32767.0;
+    //return s_uniformFloatObj(s_randObj);
+    uint32_t s = m_PCGRandObj.pcgRandom();
+    return min(0.99999994f, float(s * 2.3283064365386963e-10f));
+    //return s / float(INT32_MAX);
+}
+
+int RandomNumber::randomInt(int count)
+{
+    //return rand() % count;
+    //return s_uniformIntObj(s_randObj) % count;
+    return m_PCGRandObj.pcgRandom() % count;
+}
+
+inline void RandomNumber::randomSeed(unsigned int seed)
+{
+    //srand(seed);
+    //s_randObj.seed(seed);
+    m_PCGRandObj.m_inc = seed;
+    m_PCGRandObj.m_state = 12345;
 }
 
 void RandomNumber::uniformSampleDisk(const float u1, const float u2, float &x, float &y)

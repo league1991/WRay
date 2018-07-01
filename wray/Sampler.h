@@ -20,6 +20,7 @@ public:
 	void setSeed(unsigned int iseed){seed=iseed;}
 	virtual ~Sampler(void);
 protected:
+    RandomNumber m_rng;
 	unsigned int seed;
 };
 //此Sampler用随机数对Sample赋值

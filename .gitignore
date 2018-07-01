@@ -5,3 +5,5 @@
 /x64/Release
 wray/x64/
 x64/
+wray/Win32/
+wray/wrayProfiler/

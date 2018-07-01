@@ -342,8 +342,8 @@ void GGXOpaqueBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector
         DG.bitangent*localVector.y +
         DG.normal*localVector.z;
 
-    //float u0 = RandomNumber::randomFloat();
-    //float v0 = RandomNumber::randomFloat();
+    //float u0 = RandomNumber::getGlobalObj()->randomFloat();
+    //float v0 = RandomNumber::getGlobalObj()->randomFloat();
     //Vector3 localH = m_distribution.sampleRay(u0, v0, sampleWi, wo);
     //Vector3 H =
     //    localH.x*DG.tangent +
@@ -356,7 +356,7 @@ void GGXOpaqueBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector
 
     //// Use fresnel value as the probability of reflection
     //float f = m_fresnel.evaluateF(wo);
-    //if(RandomNumber::randomFloat() > f)
+    //if(RandomNumber::getGlobalObj()->randomFloat() > f)
     //{
     //    // Refraction or scattering occurs
     //    Vector3 localVector;
@@ -403,7 +403,7 @@ void GGXTransparentBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const V
     sampleWi = wo.reflect(H);
     sampleWi.normalize();
     pdf = m_distribution.computePDF(sampleWi, wo);
-    if (RandomNumber::randomFloat() < reflProb)
+    if (RandomNumber::getGlobalObj()->randomFloat() < reflProb)
     {
         // reflection
         pdf *= reflProb;

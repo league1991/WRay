@@ -103,7 +103,7 @@ Vector3 WDirectLighting::sampleOneLight(BSDF *bsdf, Sample3D &lightSample, Sampl
 	Vector3 color(0);
 	unsigned int lightNum = scene->getLightNum();
 
-	int ithLight = RandomNumber::randomInt(lightNum);
+	int ithLight = RandomNumber::getGlobalObj()->randomInt(lightNum);
 	pLight = scene->getLightPointer(ithLight);
 	color += computeDirectLight(pLight, bsdf, lightSample, bsdfSample, ro, nodeInfo);
 	return color + bsdf->getEmission();

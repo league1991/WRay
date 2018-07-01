@@ -276,8 +276,8 @@ void WIrradianceCacheIntegrator::pathTracing(
 				pathBSDF,lightSamples,LambertBSDFSamples,ro);
 			indirectLight+=pathThroughPut*pathDirectLight;
 
-			pathBSDFU=RandomNumber::randomFloat();
-			pathBSDFV=RandomNumber::randomFloat();
+			pathBSDFU=RandomNumber::getGlobalObj()->randomFloat();
+			pathBSDFV=RandomNumber::getGlobalObj()->randomFloat();
 			pathBSDF->sampleRay(pathBSDFU,pathBSDFV,ri,ro,PDF);
 			ray.point=pathDG.position;
 			ray.direction=ri;
