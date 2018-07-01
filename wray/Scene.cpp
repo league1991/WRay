@@ -5,6 +5,7 @@ Scene::Scene(void)
 	materials=NULL;
 	nMaterials = nSubPrimitives = nTriangles = 0;
 	nTriangles = NULL;
+    m_envLight = NULL;
 }
 
 Scene::~Scene(void)

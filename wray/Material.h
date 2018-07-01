@@ -36,7 +36,7 @@ public:
 	Vector3 getLight(){return light;}
 	virtual void getProperties(vector<float>& properties){};
 	MaterialType getType(){return type;}
-	bool     isEmissive(){return light.lengthSquared() > 1e-3f;}
+    bool     isEmissive() { return light.lengthSquared() > 0; }
 protected:
 	Vector3 light;
 	Vector3 color;

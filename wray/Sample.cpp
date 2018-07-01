@@ -21,8 +21,9 @@ void Sample::clear()
 {
 	nthPoint=totalPoints=0;
 }
-void Sample::setSize(unsigned int size)
+void Sample::setSize(unsigned int isize)
 {
+    size = isize;
 	if (type == SAMPLE_1D || type == SAMPLE_SEQUENCE_2D)
 		totalPoints = size;
 	else if (type == SAMPLE_2D)
