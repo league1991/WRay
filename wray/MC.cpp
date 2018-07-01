@@ -7,6 +7,8 @@
 //std::uniform_real_distribution<float> RandomNumber::s_uniformFloatObj;
 //std::uniform_int_distribution<> RandomNumber::s_uniformIntObj;
 RandomNumber* RandomNumber::s_globalObj = new RandomNumber();
+std::unordered_map<std::thread::id, RandomNumber*> RandomNumber::s_threadRNG;
+std::mutex RandomNumber::s_lock;
 
 RandomNumber::RandomNumber(void)
 {
@@ -38,6 +40,21 @@ inline void RandomNumber::randomSeed(unsigned int seed)
     //s_randObj.seed(seed);
     m_PCGRandObj.m_inc = seed;
     m_PCGRandObj.m_state = 12345;
+}
+
+RandomNumber * RandomNumber::getGlobalObj()
+{
+    auto id = std::this_thread::get_id();
+    auto rngIt = s_threadRNG.find(id);
+    if (rngIt == s_threadRNG.end())
+    {
+        auto rng = new RandomNumber();
+        std::lock_guard<std::mutex> lock(s_lock);
+        s_threadRNG[id] = rng;
+        return rng;
+    }
+    return rngIt->second;
+    //return s_globalObj;
 }
 
 void RandomNumber::uniformSampleDisk(const float u1, const float u2, float &x, float &y)
