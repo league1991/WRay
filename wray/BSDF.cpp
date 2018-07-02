@@ -276,7 +276,8 @@ Vector3 DielectricBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vect
 
 Vector3 GGXMetalBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
 {
-    Vector3 localH = m_distribution.sampleRay(u, v, sampleWi, wo);
+    float dummy;
+    Vector3 localH = m_distribution.sampleNormal(u, v);
 	Vector3 H =
 		localH.x*DG.tangent +
 		localH.y*DG.bitangent +
@@ -334,13 +335,22 @@ float GGXDistribution::computePDF(const Vector3 & wi, const Vector3 & wo)
     return max(pm * jacobian, 0.0001f);
 }
 
-Vector3 GGXDistribution::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo) const
+Vector3 GGXDistribution::sampleNormal(float u, float v, float* pdf) const
 {
     float theta = atan(m_ag * sqrt(u) / sqrt(1.f - u));
     float phi = 2 * M_PI * v;
     float sinTheta = sin(theta);
     float cosTheta = cos(theta);
-    return Vector3(sinTheta*cos(phi), sinTheta*sin(phi), cosTheta);
+    Vector3 res(sinTheta*cos(phi), sinTheta*sin(phi), cosTheta);
+    if (pdf)
+    {
+        float cosTheta2 = cosTheta * cosTheta;
+        float tanTheta = sinTheta / cosTheta;
+        float ag2 = m_ag * m_ag;
+        float ag2tan = ag2 + tanTheta * tanTheta;
+        *pdf = ag2 / (M_PI * cosTheta2 * cosTheta2 * ag2tan * ag2tan) * cosTheta;
+    }
+    return res;
 }
 
 Vector3 GGXOpaqueBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
@@ -410,39 +420,46 @@ Vector3 GGXOpaqueBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
 
 Vector3 GGXTransparentBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
 {
-    bool oOutSide = wo.dot(DG.normal) > 0;
-    Vector3 localH = m_distribution.sampleRay(u, v, sampleWi, wo);
+    float pdfM;
+    Vector3 localH = m_distribution.sampleNormal(u, v, &pdfM);
     Vector3 H = localH.x*DG.tangent + localH.y*DG.bitangent + localH.z*DG.normal;
+
     m_fresnel.setNormal(H);
     float reflProb = m_fresnel.evaluateF(wo);
-    sampleWi = wo.reflect(H);
-    sampleWi.normalize();
-    pdf = m_distribution.computePDF(sampleWi, wo);
-    if (RandomNumber::getThreadObj()->randomFloat() < reflProb)
+
+    float cosThetaR = wo.dot(H);
+    float sinThetaR = sqrt(1 - cosThetaR * cosThetaR);
+    if (cosThetaR < 0 && sinThetaR > 1.0 / m_fresnel.getIOR())
+    {
+        // Total internal reflection
+        sampleWi = wo.reflect(H);
+        sampleWi.normalize();
+        pdf = pdfM / (4.0f * abs(wo.dot(H)));
+        return 1.0f;
+    }
+    else if (RandomNumber::getThreadObj()->randomFloat() < reflProb)
     {
         // reflection
-        pdf *= reflProb;
+        sampleWi = wo.reflect(H);
+        sampleWi.normalize();
+        pdf = pdfM * 1.0f / (4.0f * abs(wo.dot(H))) * reflProb;
+        return reflProb;
     }
     else
     {
         // refraction
+        bool oOutSide = cosThetaR > 0;
         float iorO = oOutSide?1:m_fresnel.getIOR();
         float iorI = oOutSide?m_fresnel.getIOR():1;
         bool isRefract;
         sampleWi = wo.refract(H, iorO, iorI, isRefract);
-        pdf *= (1 - reflProb);
-        if (isRefract)
-        {
-            // multiply dWrefl / dWrefr
-            float ih = abs(sampleWi.dot(H));
-            float oh = abs(wo.dot(H));
-            float numerator = 4 * iorO * iorO * ih * oh;
-            float denominator = iorI * ih + iorO * oh;
-            denominator *= denominator;
-            pdf *= numerator / denominator;
-        }
+        sampleWi.normalize();
+        float ih = sampleWi.dot(H);
+        float oh = wo.dot(H);
+        float denominator = iorI * ih + iorO * oh;
+        pdf = pdfM * iorO * iorO * abs(oh) / (denominator * denominator) * (1 - reflProb);
+        return (1 - reflProb) * iorO * iorO / (iorI * iorI);// *m_color;
     }
-    return evaluateFCos(sampleWi, wo);
 }
 
 Vector3 GGXTransparentBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)

@@ -221,7 +221,7 @@ public:
     float computePDF(const Vector3 & wi, const Vector3 & wo);
 
     float ag() const { return m_ag; }
-    Vector3 sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo) const;
+    Vector3 sampleNormal(float u, float v, float* pdf = NULL) const;
 private:
     float m_ag;
     DifferentialGeometry* m_dg;
