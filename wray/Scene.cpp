@@ -68,7 +68,7 @@ void Scene::buildScene(ObjReader &reader)
 		else if (mtl.isTransparent())
 		{
 			//materials[i] = new PerfectRefractionMaterial(mtlName, i, Vector3(diffuse.x,diffuse.y,diffuse.z), 1.33, Vector3(emission.x,emission.y,emission.z));
-            materials[i] = new GGXTransparentMaterial(mtlName, i, Vector3(diffuse.x, diffuse.y, diffuse.z), 0.1, 1.33, Vector3(emission.x, emission.y, emission.z));
+            materials[i] = new GGXTransparentMaterial(mtlName, i, Vector3(diffuse.x, diffuse.y, diffuse.z), 0.01, 1.33, Vector3(emission.x, emission.y, emission.z));
 		}
 		else
 			materials[i]=new LambertMaterial(mtlName,i,Vector3(diffuse.x,diffuse.y,diffuse.z),Vector3(emission.x,emission.y,emission.z));
