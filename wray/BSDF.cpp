@@ -124,23 +124,17 @@ float FresnelDielectric::computeR(
 float FresnelDielectric::evaluateF(const Vector3&wi)
 {
 	float cosWi = wi.dot(normal);
-	float ior, cosWt;
-	if (cosWi >= 0)
-	{
-		ior = 1 / IOR;
-		cosWt = sqrt(1.0f - ior*ior*(1.0f - cosWi*cosWi));
-		return computeR(cosWi, cosWt, IOR);
-	}
-	else
-	{
-		cosWi *= -1.0f;
-		ior = IOR;
-		float cosWtSquared = 1.0f - ior*ior*(1.0f - cosWi*cosWi);
-		if (cosWtSquared <= 0)
-			return 1.0f;
-		cosWt = sqrt(cosWtSquared);
-		return computeR(cosWi, cosWt, 1 / ior);
-	}
+    float iorI = cosWi >= 0?1:IOR;
+    float iorT = cosWi >= 0?IOR:1;
+    float sinWi2 = 1 - cosWi * cosWi;
+    float sinWt2 = sinWi2 * iorI * iorI / (iorT * iorT);
+    if (sinWt2 > 1)
+    {
+        // Total internal reflection
+        return 1.0;
+    }
+    float cosWt = sqrt(1 - sinWt2);
+    return computeR(abs(cosWi), cosWt, iorT / iorI);
 }
 FresnelConductor::FresnelConductor(
 	Vector3 ieta, Vector3 ik, Vector3 inormal) :
@@ -423,16 +417,15 @@ Vector3 GGXTransparentBSDF::sampleRay(float u, float v, Vector3 & sampleWi, cons
     float pdfM;
     Vector3 localH = m_distribution.sampleNormal(u, v, &pdfM);
     Vector3 H = localH.x*DG.tangent + localH.y*DG.bitangent + localH.z*DG.normal;
+    H.normalize();
 
     Vector3 reflDir = wo.reflect(H);
     reflDir.normalize();
-    Vector3 ri_ = reflDir.dot(H) > 0 ? reflDir : wo * -1;
-    Vector3 ro_ = wo.dot(H) > 0 ? wo : reflDir * -1;
-    float G = m_distribution.computeG(ri_, ro_, H);
+    float G = m_distribution.computeG(wo, reflDir, H);
 
     m_fresnel.setNormal(H);
     float F = m_fresnel.evaluateF(wo);
-    float reflProb = 1-F;
+    float reflProb = F;
 
     float cosThetaR = wo.dot(H);
     float sinThetaR = sqrt(1 - cosThetaR * cosThetaR);
@@ -447,13 +440,12 @@ Vector3 GGXTransparentBSDF::sampleRay(float u, float v, Vector3 & sampleWi, cons
     {
         // reflection
         sampleWi = reflDir;
-        pdf = pdfM * 1.0f / (4.0f * abs(wo.dot(H))) * reflProb;
-        return F * G;
+        pdf = pdfM / (4.0f * abs(wo.dot(H))) * reflProb;
     }
     else
     {
         // refraction
-        bool oOutSide = cosThetaR > 0;
+        bool oOutSide = wo.dot(DG.normal) > 0;
         float iorO = oOutSide?1:m_fresnel.getIOR();
         float iorI = oOutSide?m_fresnel.getIOR():1;
         bool isRefract;
@@ -463,8 +455,8 @@ Vector3 GGXTransparentBSDF::sampleRay(float u, float v, Vector3 & sampleWi, cons
         float oh = wo.dot(H);
         float denominator = iorI * ih + iorO * oh;
         pdf = pdfM * iorO * iorO * abs(oh) / (denominator * denominator) * (1 - reflProb);
-        return (1 - F) * iorO * iorO / (iorI * iorI) * G;// *m_color;
     }
+    return evaluateFCos(sampleWi, wo);
 }
 
 Vector3 GGXTransparentBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
