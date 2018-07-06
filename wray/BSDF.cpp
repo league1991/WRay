@@ -389,13 +389,14 @@ Vector3 GGXOpaqueBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
 Vector3 GGXTransparentBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
 {
     float pdfM;
-    Vector3 localH = m_distribution.sampleNormal(u, v, &pdfM);
+    GGXDistribution distribution(&DG, m_ag);
+    Vector3 localH = distribution.sampleNormal(u, v, &pdfM);
     Vector3 H = localH.x*DG.tangent + localH.y*DG.bitangent + localH.z*DG.normal;
     H.normalize();
 
     Vector3 reflDir = wo.reflect(H);
     reflDir.normalize();
-    float G = m_distribution.computeG(wo, reflDir, H);
+    float G = distribution.computeG(wo, reflDir, H);
 
     m_fresnel.setNormal(H);
     float F = m_fresnel.evaluateF(wo);
@@ -408,7 +409,7 @@ Vector3 GGXTransparentBSDF::sampleRay(float u, float v, Vector3 & sampleWi, cons
         // Total internal reflection
         sampleWi = reflDir;
         pdf = pdfM / (4.0f * abs(wo.dot(H)));
-        return 1.0f * G;
+        //return 1.0f * G;
     }
     else if (RandomNumber::getThreadObj()->randomFloat() < reflProb)
     {
@@ -435,20 +436,33 @@ Vector3 GGXTransparentBSDF::sampleRay(float u, float v, Vector3 & sampleWi, cons
 
 Vector3 GGXTransparentBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
 {
+    GGXDistribution distribution(&DG, m_ag);
     float cosWi = ri.dot(DG.normal);
     float cosWo = ro.dot(DG.normal);
     bool iOutside = cosWi > 0;
     bool oOutside = cosWo > 0;
-    if (cosWi * cosWo > 0)
+    if (cosWi > 0 && cosWo > 0)
     {
         // incoming and outgoing direction are at the same side, reflection occurs
         Vector3 rh = ri + ro;
         rh.normalize();
         m_fresnel.setNormal(rh);
-        float D = m_distribution.computeD(rh);
-        float G = m_distribution.computeG(ri, ro, rh);
+        float D = distribution.computeD(rh);
+        float G = distribution.computeG(ri, ro, rh);
         float F = m_fresnel.evaluateF(ri);
         float specular = D * G * F / (4 * cosWo);
+        return Vector3(specular);
+    }
+    else if (cosWi < 0 && cosWo < 0)
+    {
+        // incoming and outgoing direction are at the same side, reflection occurs
+        Vector3 rh = ri + ro;
+        rh.normalize();
+        m_fresnel.setNormal(rh * -1);
+        float D = distribution.computeD(rh);
+        float G = distribution.computeG(ri, ro, -1*rh);
+        float F = m_fresnel.evaluateF(ri);
+        float specular = D * G * F / (4 * abs(cosWo));
         return Vector3(specular);
     }
     else
@@ -461,12 +475,12 @@ Vector3 GGXTransparentBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
 
         m_fresnel.setNormal(rh);
         float F = m_fresnel.evaluateF(ri);
-        float D = m_distribution.computeD(rh);
+        float D = distribution.computeD(rh);
 
         Vector3 ri_ = iOutside ? ri : ri.reflect(rh) * -1;
         Vector3 ro_ = oOutside ? ro : ro.reflect(rh) * -1;
         Vector3 rh_ = rh.dot(DG.normal) > 0 ? rh : rh * -1;
-        float G = m_distribution.computeG(ri_, ro_, rh_);
+        float G = distribution.computeG(ri_, ro_, rh_);
 
         float ih = ri.dot(rh);
         float oh = ro.dot(rh);

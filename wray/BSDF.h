@@ -267,7 +267,7 @@ public:
     GGXTransparentBSDF(const DifferentialGeometry& iDG, float ior,float ag, const Vector3& color, MemoryPool* pool) :
         BSDF(iDG, BSDF_GGX_OPAQUE, pool),
         m_fresnel(ior, iDG.normal),
-        m_distribution(&DG, ag),
+        m_ag(ag),
         m_color(color) {}
 
     Vector3 sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
@@ -276,7 +276,7 @@ public:
 
     virtual bool isDeltaBSDF() { return false; }
 private:
-    GGXDistribution  m_distribution;
+    float m_ag;
     FresnelDielectric m_fresnel;
     Vector3 m_color;
 };
