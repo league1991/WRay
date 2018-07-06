@@ -271,14 +271,16 @@ Vector3 DielectricBSDF::sampleRay(float u, float v, Vector3&sampleWi, const Vect
 Vector3 GGXMetalBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vector3 & wo, float & pdf)
 {
     float dummy;
-    Vector3 localH = m_distribution.sampleNormal(u, v);
+    float ag = m_ag;
+    GGXDistribution distribution(&DG, ag);
+    Vector3 localH = distribution.sampleNormal(u, v);
 	Vector3 H =
 		localH.x*DG.tangent +
 		localH.y*DG.bitangent +
 		localH.z*DG.normal;
 	sampleWi = wo.reflect(H);
 	sampleWi.normalize();
-	pdf = m_distribution.computePDF(sampleWi, wo);
+	pdf = distribution.computePDF(sampleWi, wo);
     return evaluateFCos(sampleWi, wo);
 }
 
@@ -292,7 +294,8 @@ Vector3 GGXMetalBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
 	{
 		return Vector3(0);
 	}
-	Vector3 Fcos = m_distribution.computeD(rh)*m_distribution.computeG(ri, ro, rh) *fresnel.evaluateF(ri) / (4 * cosWo);
+    GGXDistribution distribution(&DG, m_ag);
+	Vector3 Fcos = distribution.computeD(rh)*distribution.computeG(ri, ro, rh) *fresnel.evaluateF(ri) / (4 * cosWo);
 	return Fcos;
 }
 
@@ -361,36 +364,6 @@ Vector3 GGXOpaqueBSDF::sampleRay(float u, float v, Vector3 & sampleWi, const Vec
         sampleWi *= -1;
     }
     return evaluateFCos(sampleWi, wo);
-    //float u0 = RandomNumber::getGlobalObj()->randomFloat();
-    //float v0 = RandomNumber::getGlobalObj()->randomFloat();
-    //Vector3 localH = m_distribution.sampleRay(u0, v0, sampleWi, wo);
-    //Vector3 H =
-    //    localH.x*DG.tangent +
-    //    localH.y*DG.bitangent +
-    //    localH.z*DG.normal;
-    //m_fresnel.setNormal(H);
-    //sampleWi = wo.reflect(H);
-    //sampleWi.normalize();
-    //pdf = m_distribution.computePDF(sampleWi, wo);
-
-    //// Use fresnel value as the probability of reflection
-    //float f = m_fresnel.evaluateF(wo);
-    //if(RandomNumber::getGlobalObj()->randomFloat() > f)
-    //{
-    //    // Refraction or scattering occurs
-    //    Vector3 localVector;
-    //    float pdfLambert;
-    //    RandomNumber::cosineSampleHemisphere(u, v, localVector, pdfLambert);
-    //    sampleWi =
-    //        DG.tangent*localVector.x +
-    //        DG.bitangent*localVector.y +
-    //        DG.normal*localVector.z;
-    //    pdf *= (1.0 - f) * pdfLambert;
-    //}
-    //else
-    //{
-    //    pdf *= f;
-    //}
 }
 
 Vector3 GGXOpaqueBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
@@ -403,8 +376,9 @@ Vector3 GGXOpaqueBSDF::evaluateFCos(Vector3 & ri, const Vector3 & ro)
     {
         return Vector3(0);
     }
-    float D = m_distribution.computeD(rh);
-    float G = m_distribution.computeG(ri, ro, rh);
+    GGXDistribution distribution(&DG, m_ag);
+    float D = distribution.computeD(rh);
+    float G = distribution.computeG(ri, ro, rh);
     float F = m_fresnel.evaluateF(ri);
     float specular = D * G * F / (4 * cosWo);
     float diffuseFactor = M_INV_PI*max(ri.dot(DG.normal), 0.0f);

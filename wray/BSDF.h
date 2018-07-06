@@ -231,13 +231,13 @@ class GGXMetalBSDF :public BSDF
 {
 public:
 	GGXMetalBSDF(const DifferentialGeometry& iDG, Vector3 ieta, Vector3 ik, float ag, MemoryPool* pool) :
-		BSDF(iDG, BSDF_GGX_METAL, pool), fresnel(ieta, ik, iDG.normal), m_distribution(&DG, ag) {}
+		BSDF(iDG, BSDF_GGX_METAL, pool), fresnel(ieta, ik, iDG.normal), m_ag(ag) {}
 	~GGXMetalBSDF() {}
     Vector3 sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
 	Vector3 evaluateFCos(Vector3&ri, const Vector3&ro);
 	virtual bool isDeltaBSDF() { return false; }
 private:
-    GGXDistribution  m_distribution;
+    float m_ag;
 	FresnelConductor fresnel;
 };
 
@@ -248,7 +248,7 @@ public:
         Vector3 icolor, float ag, MemoryPool* pool) :
         BSDF(iDG, BSDF_GGX_OPAQUE, pool),
         m_fresnel(ior, iDG.normal),
-        m_distribution(&DG, ag),
+        m_ag(ag),
         m_diffuseColor(icolor) {}
 
     Vector3 sampleRay(float u, float v, Vector3&sampleWi, const Vector3&wo, float&pdf);
@@ -256,7 +256,7 @@ public:
     Vector3 evaluateFCos(Vector3&ri, const Vector3&ro);
     virtual bool isDeltaBSDF() { return false; }
 private:
-    GGXDistribution  m_distribution;
+    float m_ag;
     FresnelDielectric m_fresnel;
     Vector3 m_diffuseColor;
 };
